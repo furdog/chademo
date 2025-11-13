@@ -101,7 +101,8 @@ struct _chademo_se_h109
 /** Charging control flow states defined by standard */
 enum _chademo_se_state_cf {
 	_CHADEMO_SE_STATE_CF_AWAIT_CHARGE_START_BUTTON,
-	_CHADEMO_SE_STATE_CF_TRANSMIT_CHARGE_START_SIGNAL
+	_CHADEMO_SE_STATE_CF_TRANSMIT_CHARGE_START_SIGNAL,
+	_CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER
 };
 
 /******************************************************************************
@@ -230,7 +231,8 @@ void _chademo_se_can_dev_init(struct _chademo_se_can_dev *self)
  *****************************************************************************/
 /** Events emited by main instance FSM */
 enum chademo_se_event {
-	CHADEMO_SE_EVENT_NONE
+	CHADEMO_SE_EVENT_NONE,
+	CHADEMO_SE_EVENT_CHARGE_START_BUTTON_PRESSED
 };
 
 /** Main instance. */
@@ -273,18 +275,46 @@ void chademo_se_init(struct chademo_se *self)
 	self->_h109.remaining_charge_time_min   = 0xFFu;
 }
 
-/** Sets VGPIO (only inputs are set) */
+/** Sets VGPIO (only inputs are overriden) */
 void chademo_se_set_vgpio(struct chademo_se *self,
 			  struct chademo_se_vgpio *vgpio)
 {
 	self->_vgpio.in = vgpio->in;
 }
 
-/** Gets VGPIO (only outputs can be changed) */
+/** Gets VGPIO (both inputs and outputs are overriden) */
 void chademo_se_get_vgpio(struct chademo_se *self,
 			  struct chademo_se_vgpio *vgpio)
 {
-	vgpio->out = self->_vgpio.out;
+	*vgpio = self->_vgpio;
+}
+
+bool chademo_se_put_rx_frame(struct chademo_se *self,
+			     struct chademo_se_can_frame *f)
+{
+	/* TODO */
+	(void)self;
+	(void)f;
+
+	return false;
+}
+
+bool chademo_se_get_tx_frame(struct chademo_se *self,
+			     struct chademo_se_can_frame *f)
+{
+	struct _chademo_se_can_dev *can = &self->_can;
+
+	bool frame_available = false;
+
+	if (can->tx.count > 0u) {
+		can->tx.count--;
+
+		*f = can->tx.frames[can->tx.count];
+
+		frame_available = true;
+	}
+
+	return frame_available;
 }
 
 /** Main instance FSM */
@@ -297,9 +327,29 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 
 	switch (self->_state_cf) {
 	case _CHADEMO_SE_STATE_CF_AWAIT_CHARGE_START_BUTTON:
+		if (self->_vgpio.in.bt_start != true) {
+			break;
+		}
+
+		event = CHADEMO_SE_EVENT_CHARGE_START_BUTTON_PRESSED;
+
+		/* _CHADEMO_SE_STATE_CF_TRANSMIT_CHARGE_START_SIGNAL INIT */
+		self->_state_cf =
+			_CHADEMO_SE_STATE_CF_TRANSMIT_CHARGE_START_SIGNAL;
+
 		break;
 
 	case _CHADEMO_SE_STATE_CF_TRANSMIT_CHARGE_START_SIGNAL:
+		self->_vgpio.out.sw_d1 = true;
+
+		/* _CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER INIT */
+		self->_state_cf =
+			_CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER;
+
+		break;
+
+	case _CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER:
+		/* TODO */
 		break;
 
 	default:
