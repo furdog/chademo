@@ -1,3 +1,19 @@
+/**
+ * @file chademo_se.test.c
+ * @brief CHAdeMO power supply equipment (SE) Software tests
+ *
+ * This file provides unit testing of the chademo_se.h
+ *
+ * The tests are designed to be as simple as possible and
+ * designed with Test Driven Development (TDD) aproach.
+ *
+ * ```LICENSE
+ * Copyright (c) 2025 furdog <https://github.com/furdog>
+ *
+ * SPDX-License-Identifier: 0BSD
+ * ```
+ */
+
 #include "chademo_se.h"
 
 #include <assert.h>

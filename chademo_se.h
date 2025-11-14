@@ -20,16 +20,80 @@
  * * The author claims no ownership over these third-party intellectual
  * property rights and provides this code without warranty against
  * third-party infringement.
- */
-
-/*
+ *
+ * ```LICENSE
  * Copyright (c) 2025 furdog <https://github.com/furdog>
  *
  * SPDX-License-Identifier: 0BSD
+ * ```
  */
+
+#ifndef _CHADEMO_SE_HEADER
+#define _CHADEMO_SE_HEADER
 
 #include <stdbool.h>
 #include <stdint.h>
+
+/******************************************************************************
+ * _CHADEMO_EV DEFINITIONS (EXACTLY SPECIFICATION BASED)
+ *****************************************************************************/
+/*TODO MAKE IT CORRECT*/
+enum _chademo_ev_can_frame_id {
+	_CHADEMO_EV_CAN_FRAME_ID_H100 = 0x100u,
+	_CHADEMO_EV_CAN_FRAME_ID_H101 = 0x101u
+	_CHADEMO_EV_CAN_FRAME_ID_H102 = 0x102u
+};
+
+enum _chademo_ev_field_h100_protocol_number {
+	/** Before V0.9 of standard specifications */
+	_CHADEMO_SE_FIELD_H109_PROTOCOL_NUMBER_0 = 0u,
+
+	/** V0.9 - V0.9.1 of standard specifications */
+	_CHADEMO_SE_FIELD_H109_PROTOCOL_NUMBER_1 = 1u,
+
+	/** V1.0.0 - V1.0.1 of standard specifications */
+	_CHADEMO_SE_FIELD_H109_PROTOCOL_NUMBER_2 = 2u
+};
+
+enum chademo_vehicle_can_error_flags {
+	CHADEMO_VEHICLE_ERROR_FLAG_BATT_VOLTAGE_TOO_HIGH = 1,
+	CHADEMO_VEHICLE_ERROR_FLAG_BATT_VOLTAGE_TOO_LOW	 = 2,
+	CHADEMO_VEHICLE_ERROR_FLAG_CURRENT_DEVIATION	 = 4,
+	CHADEMO_VEHICLE_ERROR_FLAG_BATT_TEMP_TOO_HIGH	 = 8,
+	CHADEMO_VEHICLE_ERROR_FLAG_VOLTAGE_DEVIATION	 = 16
+};
+
+enum chademo_vehicle_status_flags {
+	CHADEMO_VEHICLE_STATUS_FLAG_CHARGING_ENABLED		 = 1,
+	CHADEMO_VEHICLE_STATUS_FLAG_NOT_PARKED			 = 2,
+	CHADEMO_VEHICLE_STATUS_FLAG_SYSTEM_FAULT		 = 4,
+	CHADEMO_VEHICLE_STATUS_FLAG_CONTACTOR_OPEN		 = 8,
+	CHADEMO_VEHICLE_STATUS_FLAG_REQUEST_STOP_BEFORE_CHARGING = 16
+};
+
+/** H100 data structure defined by standard */
+struct _chademo_ev_h100
+{
+	uint16_t max_charge_voltage;
+	uint8_t	 soc_100_percent_const;
+};
+
+struct _chademo_ev_h101
+{
+	uint8_t max_charge_time_by_10_s;
+	uint8_t max_charge_time_by_60_s;
+	uint8_t est_charge_time;
+};
+
+struct _chademo_ev_h102
+{
+	uint8_t	 version;
+	uint16_t target_voltage;
+	uint8_t	 asking_ampers;
+	uint8_t	 errors;
+	uint8_t	 status;
+	uint8_t	 soc;
+};
 
 /******************************************************************************
  * _CHADEMO_SE DEFINITIONS (EXACTLY SPECIFICATION BASED)
@@ -162,7 +226,11 @@ struct chademo_se_can_frame {
 /** Structure that represents CAN2.0 TX */
 struct _chademo_se_can_tx
 {
-	/** Array to hold frames to be sent. */
+	/* TX-side messages */
+	struct _chademo_se_h108 h108;
+	struct _chademo_se_h109 h109;
+
+	/** Array to hold frames to be sent. TODO TX-side messages is enough */
 	struct chademo_se_can_frame frames[2];
 
 	/** The number of valid frames currently in the array. */
@@ -178,6 +246,20 @@ struct _chademo_se_can_tx
  */
 void _chademo_se_can_tx_init(struct _chademo_se_can_tx *self)
 {
+	self->h108.welding_detection_support = false;
+	self->h108.avail_output_voltage_V    = 0u;
+	self->h108.avail_output_current_A    = 0u;
+	self->h108.threshold_voltage_V       = 0u;
+
+	self->h109.protocol_number             = 0u;
+	self->h109.present_output_voltage_V    = 0u;
+	self->h109.present_output_current_A    = 0u;
+	self->h109.status                      = 0u;
+	self->h109.remaining_charge_time_x10_s = 0xFFu;
+	self->h109.remaining_charge_time_min   = 0xFFu;
+
+	/* struct chademo_se_can_frame frames[2]; */
+
 	self->count    = 0u;
 	self->timer_ms = 0u;
 }
@@ -185,9 +267,14 @@ void _chademo_se_can_tx_init(struct _chademo_se_can_tx *self)
 /******************************************************************************
  * CHADEMO_SE CAN2.0 RX ROUTINE (IMPLEMENTATION SPECIFIC)
  *****************************************************************************/
+/*TODO MAKE IT CORRECT*/
 /** Structure that represents CAN2.0 RX */
 struct _chademo_se_can_rx
 {
+	struct _chademo_ev_h100 h100;
+	struct _chademo_ev_h102 h101;
+	struct _chademo_ev_h102 h102;
+
 	/** Timer used for monitoring frame reception timeouts. */
 	uint32_t timer_ms;
 
@@ -204,10 +291,57 @@ struct _chademo_se_can_rx
  */
 void _chademo_se_can_rx_init(struct _chademo_se_can_rx *self)
 {
+	self->h100.max_charge_voltage
+	self->h100.soc_100_percent_const
+
+	self->h101.max_charge_time_by_10_s
+	self->h101.max_charge_time_by_60_s
+	self->h101.est_charge_time
+
+	self->h102.version
+	self->h102.target_voltage
+	self->h102.asking_ampers
+	self->h102.errors
+	self->h102.status
+	self->h102.soc
+
 	/* TODO implement properly */
 	self->timer_ms   = 0u;
 	self->recv_flags = 0u;
 	self->has_frames = false;
+}
+
+void _chademo_se_can_rx_put_frame(struct _chademo_se_can_rx *self,
+				  struct chademo_se_can_frame *frame)
+{
+	switch (frame->id) {
+	case _CHADEMO_EV_CAN_FRAME_ID_H100:
+		frame->data[4] =
+		    (vehicle_vars->max_charge_voltage & 0x00FF) >> 0;
+		frame->data[5] =
+		    (vehicle_vars->max_charge_voltage & 0xFF00) >> 8;
+		frame->data[6] = vehicle_vars->soc_100_percent_const;
+		break;
+
+	case _CHADEMO_EV_CAN_FRAME_ID_H101:
+		frame->data[1] = vehicle_vars->max_charge_time_by_10_s;
+		frame->data[2] = vehicle_vars->max_charge_time_by_60_s;
+		frame->data[3] = vehicle_vars->est_charge_time;
+		break;
+
+	case _CHADEMO_EV_CAN_FRAME_ID_H102:
+		frame->data[0] = vehicle_vars->version;
+		frame->data[1] = (vehicle_vars->target_voltage & 0x00FF) >> 0;
+		frame->data[2] = (vehicle_vars->target_voltage & 0xFF00) >> 8;
+		frame->data[3] = vehicle_vars->asking_ampers;
+		frame->data[4] = vehicle_vars->errors;
+		frame->data[5] = vehicle_vars->status;
+		frame->data[6] = vehicle_vars->soc;
+		break;
+
+	default:
+		break;
+	}
 }
 
 /******************************************************************************
@@ -241,9 +375,6 @@ struct chademo_se {
 
 	struct  chademo_se_vgpio   _vgpio;
 	struct _chademo_se_can_dev _can;
-
-	struct _chademo_se_h108 _h108;
-	struct _chademo_se_h109 _h109;
 };
 
 /******************************************************************************
@@ -261,18 +392,6 @@ void chademo_se_init(struct chademo_se *self)
 
 	_chademo_se_vgpio_init(&self->_vgpio);
 	_chademo_se_can_dev_init(&self->_can);
-
-	self->_h108.welding_detection_support = false;
-	self->_h108.avail_output_voltage_V    = 0u;
-	self->_h108.avail_output_current_A    = 0u;
-	self->_h108.threshold_voltage_V       = 0u;
-
-	self->_h109.protocol_number             = 0u;
-	self->_h109.present_output_voltage_V    = 0u;
-	self->_h109.present_output_current_A    = 0u;
-	self->_h109.status                      = 0u;
-	self->_h109.remaining_charge_time_x10_s = 0xFFu;
-	self->_h109.remaining_charge_time_min   = 0xFFu;
 }
 
 /** Sets VGPIO (only inputs are overriden) */
@@ -358,3 +477,5 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 
 	return event;
 }
+
+#endif  _CHADEMO_SE_HEADER
