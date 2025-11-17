@@ -21,6 +21,17 @@
  * property rights and provides this code without warranty against
  * third-party infringement.
  *
+ * **Conventions:**
+ * C89, Linux kernel style, MISRA, rule of 10, No hardware specific code,
+ * only generic C and some binding layer. Be extra specific about types.
+ * 
+ * Scientific units where posible at end of the names, for example:
+ * - timer_10s (timer_10s has a resolution of 10s per bit)
+ * - power_150w (power 150W per bit or 0.15kw per bit)
+ *
+ * Keep variables without units if they're unknown or not specified or hard
+ * to define with short notation.
+ * 
  * ```LICENSE
  * Copyright (c) 2025 furdog <https://github.com/furdog>
  *
@@ -28,8 +39,8 @@
  * ```
  */
 
-#ifndef _CHADEMO_SE_HEADER
-#define _CHADEMO_SE_HEADER
+#ifndef   CHADEMO_SE_HEADER__
+#define   CHADEMO_SE_HEADER__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -40,59 +51,87 @@
 /*TODO MAKE IT CORRECT*/
 enum _chademo_ev_can_frame_id {
 	_CHADEMO_EV_CAN_FRAME_ID_H100 = 0x100u,
-	_CHADEMO_EV_CAN_FRAME_ID_H101 = 0x101u
+	_CHADEMO_EV_CAN_FRAME_ID_H101 = 0x101u,
 	_CHADEMO_EV_CAN_FRAME_ID_H102 = 0x102u
 };
 
 enum _chademo_ev_field_h100_protocol_number {
 	/** Before V0.9 of standard specifications */
-	_CHADEMO_SE_FIELD_H109_PROTOCOL_NUMBER_0 = 0u,
+	_CHADEMO_EV_FIELD_H109_PROTOCOL_NUMBER_0 = 0u,
 
 	/** V0.9 - V0.9.1 of standard specifications */
-	_CHADEMO_SE_FIELD_H109_PROTOCOL_NUMBER_1 = 1u,
+	_CHADEMO_EV_FIELD_H109_PROTOCOL_NUMBER_1 = 1u,
 
 	/** V1.0.0 - V1.0.1 of standard specifications */
-	_CHADEMO_SE_FIELD_H109_PROTOCOL_NUMBER_2 = 2u
+	_CHADEMO_EV_FIELD_H109_PROTOCOL_NUMBER_2 = 2u
 };
 
-enum chademo_vehicle_can_error_flags {
-	CHADEMO_VEHICLE_ERROR_FLAG_BATT_VOLTAGE_TOO_HIGH = 1,
-	CHADEMO_VEHICLE_ERROR_FLAG_BATT_VOLTAGE_TOO_LOW	 = 2,
-	CHADEMO_VEHICLE_ERROR_FLAG_CURRENT_DEVIATION	 = 4,
-	CHADEMO_VEHICLE_ERROR_FLAG_BATT_TEMP_TOO_HIGH	 = 8,
-	CHADEMO_VEHICLE_ERROR_FLAG_VOLTAGE_DEVIATION	 = 16
+enum _chademo_ev_field_h102_fault {
+	/** (0: normal, 1: fault) */
+	CHADEMO_EV_FIELD_H102_FAULT_BATTERY_OVERVOLTAGE = 1u,
+
+	/** (0: normal, 1: fault) */
+	CHADEMO_EV_FIELD_H102_FAULT_BATTERY_UNDERVOLTAGE = 2u,
+
+	/** (0: normal, 1: fault) */
+	CHADEMO_EV_FIELD_H102_FAULT_BATTERY_CURRENT_DEVIATION = 4u,
+
+	/** (0: normal, 1: fault) */
+	CHADEMO_EV_FIELD_H102_FAULT_BATTERY_HIGH_TEMPERATURE = 8u,
+
+	/** (0: normal, 1: fault) */
+	CHADEMO_EV_FIELD_H102_FAULT_BATTERY_VOLTAGE_DEVIATION = 16u
 };
 
-enum chademo_vehicle_status_flags {
-	CHADEMO_VEHICLE_STATUS_FLAG_CHARGING_ENABLED		 = 1,
-	CHADEMO_VEHICLE_STATUS_FLAG_NOT_PARKED			 = 2,
-	CHADEMO_VEHICLE_STATUS_FLAG_SYSTEM_FAULT		 = 4,
-	CHADEMO_VEHICLE_STATUS_FLAG_CONTACTOR_OPEN		 = 8,
-	CHADEMO_VEHICLE_STATUS_FLAG_REQUEST_STOP_BEFORE_CHARGING = 16
+enum _chademo_ev_field_h102_status {
+	/** (0: disabled, 1: enabled) */
+	CHADEMO_EV_FIELD_H102_STATUS_CHARGING_ENABLED = 1u,
+
+	/** (0: “Parking” position, 1: other position) */
+	CHADEMO_EV_FIELD_H102_STATUS_SHIFT_POSITION_NOT_PARKED = 2u,
+
+	/** (0: normal, 1: fault) */
+	CHADEMO_EV_FIELD_H102_STATUS_CHARGING_SYS_FAULT = 4u,
+
+	/** (0: EV contactor close or during welding detection,
+	 *   1: EV contactor open or termination of welding detection) */
+	CHADEMO_EV_FIELD_H102_STATUS_CONTACTOR_OPEN = 8u,
+
+	/** (0: No request, 1: Stop request) */
+	CHADEMO_EV_FIELD_H102_STATUS_NORMAL_STOP_REQUEST_BEFORE_CHARGING = 16u
 };
 
 /** H100 data structure defined by standard */
 struct _chademo_ev_h100
 {
-	uint16_t max_charge_voltage;
-	uint8_t	 soc_100_percent_const;
+	/* uint8_t  reserved; */
+	/* uint8_t  reserved; */
+	/* uint8_t  reserved; */
+	/* uint8_t  reserved; */
+	uint16_t max_battery_voltage_V;
+	uint8_t	 charged_rate_ref_const; /* 1% / bit, 100% (fixed) = 0x64 */
+	/* uint8_t  reserved; */
 };
 
 struct _chademo_ev_h101
 {
-	uint8_t max_charge_time_by_10_s;
-	uint8_t max_charge_time_by_60_s;
-	uint8_t est_charge_time;
+	/* uint8_t  reserved; */
+	uint8_t max_charge_time_10s;
+	uint8_t max_charge_time_60s;
+	uint8_t est_charge_time_60s;
+	/* uint8_t  reserved; */
+	uint16_t total_cap_of_battery_100wh; /* 0.1 kWh/bit, 0–6553.5 kWh */
 };
 
 struct _chademo_ev_h102
 {
-	uint8_t	 version;
-	uint16_t target_voltage;
-	uint8_t	 asking_ampers;
-	uint8_t	 errors;
+	uint8_t	 control_protocol_number;
+	uint16_t target_battery_voltage;
+	uint8_t	 charging_current_request;
+	uint8_t	 fault;
 	uint8_t	 status;
-	uint8_t	 soc;
+	uint8_t	 charged_rate;
+	/* uint8_t  reserved; */
 };
 
 /******************************************************************************
@@ -153,13 +192,13 @@ struct _chademo_se_h108
 struct _chademo_se_h109
 {
 	/* Transported via h109 */
-	uint8_t  protocol_number;
+	uint8_t  control_protocol_number;
 	uint16_t present_output_voltage_V;
 	uint8_t  present_output_current_A;
 	/* uint8_t  _reserved; */
 	uint8_t  status;
-	uint8_t  remaining_charge_time_x10_s;
-	uint8_t  remaining_charge_time_min;
+	uint8_t  remaining_charge_time_10s; /* 10s/bit */
+	uint8_t  remaining_charge_time_60s; /* 60s/bit */
 };
 
 /** Charging control flow states defined by standard */
@@ -251,12 +290,12 @@ void _chademo_se_can_tx_init(struct _chademo_se_can_tx *self)
 	self->h108.avail_output_current_A    = 0u;
 	self->h108.threshold_voltage_V       = 0u;
 
-	self->h109.protocol_number             = 0u;
-	self->h109.present_output_voltage_V    = 0u;
-	self->h109.present_output_current_A    = 0u;
-	self->h109.status                      = 0u;
-	self->h109.remaining_charge_time_x10_s = 0xFFu;
-	self->h109.remaining_charge_time_min   = 0xFFu;
+	self->h109.control_protocol_number   = 0u;
+	self->h109.present_output_voltage_V  = 0u;
+	self->h109.present_output_current_A  = 0u;
+	self->h109.status                    = 0u;
+	self->h109.remaining_charge_time_10s = 0xFFu;
+	self->h109.remaining_charge_time_60s = 0xFFu;
 
 	/* struct chademo_se_can_frame frames[2]; */
 
@@ -272,7 +311,7 @@ void _chademo_se_can_tx_init(struct _chademo_se_can_tx *self)
 struct _chademo_se_can_rx
 {
 	struct _chademo_ev_h100 h100;
-	struct _chademo_ev_h102 h101;
+	struct _chademo_ev_h101 h101;
 	struct _chademo_ev_h102 h102;
 
 	/** Timer used for monitoring frame reception timeouts. */
@@ -291,19 +330,20 @@ struct _chademo_se_can_rx
  */
 void _chademo_se_can_rx_init(struct _chademo_se_can_rx *self)
 {
-	self->h100.max_charge_voltage
-	self->h100.soc_100_percent_const
+	self->h100.max_battery_voltage_V  = 0x00u;
+	self->h100.charged_rate_ref_const = 0x00u;
 
-	self->h101.max_charge_time_by_10_s
-	self->h101.max_charge_time_by_60_s
-	self->h101.est_charge_time
+	self->h101.max_charge_time_10s        = 0x00u;
+	self->h101.max_charge_time_60s        = 0x00u;
+	self->h101.est_charge_time_60s        = 0x00u;
+	self->h101.total_cap_of_battery_100wh = 0x00u;
 
-	self->h102.version
-	self->h102.target_voltage
-	self->h102.asking_ampers
-	self->h102.errors
-	self->h102.status
-	self->h102.soc
+	self->h102.control_protocol_number  = 0x00u;
+	self->h102.target_battery_voltage   = 0x00u;
+	self->h102.charging_current_request = 0x00u;
+	self->h102.fault                    = 0x00u;
+	self->h102.status                   = 0x00u;
+	self->h102.charged_rate             = 0x00u;
 
 	/* TODO implement properly */
 	self->timer_ms   = 0u;
@@ -311,7 +351,7 @@ void _chademo_se_can_rx_init(struct _chademo_se_can_rx *self)
 	self->has_frames = false;
 }
 
-void _chademo_se_can_rx_put_frame(struct _chademo_se_can_rx *self,
+/*void _chademo_se_can_rx_put_frame(struct _chademo_se_can_rx *self,
 				  struct chademo_se_can_frame *frame)
 {
 	switch (frame->id) {
@@ -342,7 +382,7 @@ void _chademo_se_can_rx_put_frame(struct _chademo_se_can_rx *self,
 	default:
 		break;
 	}
-}
+}*/
 
 /******************************************************************************
  * CHADEMO_SE CAN2.0 LOGICAL DEVICE (IMPLEMENTATION SPECIFIC)
@@ -478,4 +518,4 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 	return event;
 }
 
-#endif  _CHADEMO_SE_HEADER
+#endif /* CHADEMO_SE_HEADER__ */
