@@ -57,48 +57,48 @@ enum _chademo_ev_can_frame_id {
 
 enum _chademo_ev_field_h100_protocol_number {
 	/** Before V0.9 of standard specifications */
-	_CHADEMO_EV_FIELD_H109_PROTOCOL_NUMBER_0 = 0u,
+	_CHADEMO_EV_FIELD_H109_CONTROL_PROTOCOL_NUMBER_0 = 0u,
 
 	/** V0.9 - V0.9.1 of standard specifications */
-	_CHADEMO_EV_FIELD_H109_PROTOCOL_NUMBER_1 = 1u,
+	_CHADEMO_EV_FIELD_H109_CONTROL_PROTOCOL_NUMBER_1 = 1u,
 
 	/** V1.0.0 - V1.0.1 of standard specifications */
-	_CHADEMO_EV_FIELD_H109_PROTOCOL_NUMBER_2 = 2u
+	_CHADEMO_EV_FIELD_H109_CONTROL_PROTOCOL_NUMBER_2 = 2u
 };
 
 enum _chademo_ev_field_h102_fault {
 	/** (0: normal, 1: fault) */
-	CHADEMO_EV_FIELD_H102_FAULT_BATTERY_OVERVOLTAGE = 1u,
+	_CHADEMO_EV_FIELD_H102_FAULT_BATTERY_OVERVOLTAGE = 1u,
 
 	/** (0: normal, 1: fault) */
-	CHADEMO_EV_FIELD_H102_FAULT_BATTERY_UNDERVOLTAGE = 2u,
+	_CHADEMO_EV_FIELD_H102_FAULT_BATTERY_UNDERVOLTAGE = 2u,
 
 	/** (0: normal, 1: fault) */
-	CHADEMO_EV_FIELD_H102_FAULT_BATTERY_CURRENT_DEVIATION = 4u,
+	_CHADEMO_EV_FIELD_H102_FAULT_BATTERY_CURRENT_DEVIATION = 4u,
 
 	/** (0: normal, 1: fault) */
-	CHADEMO_EV_FIELD_H102_FAULT_BATTERY_HIGH_TEMPERATURE = 8u,
+	_CHADEMO_EV_FIELD_H102_FAULT_BATTERY_HIGH_TEMPERATURE = 8u,
 
 	/** (0: normal, 1: fault) */
-	CHADEMO_EV_FIELD_H102_FAULT_BATTERY_VOLTAGE_DEVIATION = 16u
+	_CHADEMO_EV_FIELD_H102_FAULT_BATTERY_VOLTAGE_DEVIATION = 16u
 };
 
 enum _chademo_ev_field_h102_status {
 	/** (0: disabled, 1: enabled) */
-	CHADEMO_EV_FIELD_H102_STATUS_CHARGING_ENABLED = 1u,
+	_CHADEMO_EV_FIELD_H102_STATUS_CHARGING_ENABLED = 1u,
 
 	/** (0: “Parking” position, 1: other position) */
-	CHADEMO_EV_FIELD_H102_STATUS_SHIFT_POSITION_NOT_PARKED = 2u,
+	_CHADEMO_EV_FIELD_H102_STATUS_SHIFT_POSITION_NOT_PARKED = 2u,
 
 	/** (0: normal, 1: fault) */
-	CHADEMO_EV_FIELD_H102_STATUS_CHARGING_SYS_FAULT = 4u,
+	_CHADEMO_EV_FIELD_H102_STATUS_CHARGING_SYS_FAULT = 4u,
 
 	/** (0: EV contactor close or during welding detection,
 	 *   1: EV contactor open or termination of welding detection) */
-	CHADEMO_EV_FIELD_H102_STATUS_CONTACTOR_OPEN = 8u,
+	_CHADEMO_EV_FIELD_H102_STATUS_CONTACTOR_OPEN = 8u,
 
 	/** (0: No request, 1: Stop request) */
-	CHADEMO_EV_FIELD_H102_STATUS_NORMAL_STOP_REQUEST_BEFORE_CHARGING = 16u
+	_CHADEMO_EV_FIELD_H102_STATUS_NORMAL_STOP_REQUEST_BEFORE_CHARGING = 16u
 };
 
 /** H100 data structure defined by standard */
@@ -146,13 +146,13 @@ enum _chademo_se_can_frame_id {
 /** Protocol number within h109 message */
 enum _chademo_se_field_h109_protocol_number {
 	/** Before V0.9 of standard specifications */
-	_CHADEMO_SE_FIELD_H109_PROTOCOL_NUMBER_0 = 0u,
+	_CHADEMO_SE_FIELD_H109_CONTROL_PROTOCOL_NUMBER_0 = 0u,
 
 	/** V0.9 - V0.9.1 of standard specifications */
-	_CHADEMO_SE_FIELD_H109_PROTOCOL_NUMBER_1 = 1u,
+	_CHADEMO_SE_FIELD_H109_CONTROL_PROTOCOL_NUMBER_1 = 1u,
 
 	/** V1.0.0 - V1.0.1 of standard specifications */
-	_CHADEMO_SE_FIELD_H109_PROTOCOL_NUMBER_2 = 2u
+	_CHADEMO_SE_FIELD_H109_CONTROL_PROTOCOL_NUMBER_2 = 2u
 };
 
 /** Status flags within h109 message */
@@ -351,38 +351,39 @@ void _chademo_se_can_rx_init(struct _chademo_se_can_rx *self)
 	self->has_frames = false;
 }
 
-/*void _chademo_se_can_rx_put_frame(struct _chademo_se_can_rx *self,
-				  struct chademo_se_can_frame *frame)
+void _chademo_se_can_rx_put_frame(struct _chademo_se_can_rx   *self,
+				  struct chademo_se_can_frame *f)
 {
-	switch (frame->id) {
+	switch (f->id) {
 	case _CHADEMO_EV_CAN_FRAME_ID_H100:
-		frame->data[4] =
-		    (vehicle_vars->max_charge_voltage & 0x00FF) >> 0;
-		frame->data[5] =
-		    (vehicle_vars->max_charge_voltage & 0xFF00) >> 8;
-		frame->data[6] = vehicle_vars->soc_100_percent_const;
+		self->h100.max_battery_voltage_V  = f->data[4] << 0u;
+		self->h100.max_battery_voltage_V |= f->data[5] << 8u;
+
+		self->h100.charged_rate_ref_const = f->data[6];
 		break;
 
 	case _CHADEMO_EV_CAN_FRAME_ID_H101:
-		frame->data[1] = vehicle_vars->max_charge_time_by_10_s;
-		frame->data[2] = vehicle_vars->max_charge_time_by_60_s;
-		frame->data[3] = vehicle_vars->est_charge_time;
+		self->h101.max_charge_time_10s = f->data[1];
+		self->h101.max_charge_time_60s = f->data[2];
+		self->h101.est_charge_time_60s = f->data[3];
+
+		self->h101.total_cap_of_battery_100wh  = f->data[5] << 0u;
+		self->h101.total_cap_of_battery_100wh |= f->data[6] << 8u;
 		break;
 
 	case _CHADEMO_EV_CAN_FRAME_ID_H102:
-		frame->data[0] = vehicle_vars->version;
-		frame->data[1] = (vehicle_vars->target_voltage & 0x00FF) >> 0;
-		frame->data[2] = (vehicle_vars->target_voltage & 0xFF00) >> 8;
-		frame->data[3] = vehicle_vars->asking_ampers;
-		frame->data[4] = vehicle_vars->errors;
-		frame->data[5] = vehicle_vars->status;
-		frame->data[6] = vehicle_vars->soc;
+		self->h102.control_protocol_number  = f->data[0];
+		self->h102.target_battery_voltage   = f->data[1] << 0u;
+		self->h102.target_battery_voltage  |= f->data[2] << 8u;
+		self->h102.charging_current_request = f->data[3];
+		self->h102.fault                    = f->data[4];
+		self->h102.status                   = f->data[5];
+		self->h102.charged_rate             = f->data[6];
 		break;
-
 	default:
 		break;
 	}
-}*/
+}
 
 /******************************************************************************
  * CHADEMO_SE CAN2.0 LOGICAL DEVICE (IMPLEMENTATION SPECIFIC)
