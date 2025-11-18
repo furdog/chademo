@@ -50,7 +50,7 @@ void chademo_se_test_charge_start_signal(struct chademo_se *self)
 }
 
 /** _CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER */
-void chademo_se_test_rx_from_ev(struct chademo_se *self)
+void chademo_se_test_rx_from_ev_and_tx_after(struct chademo_se *self)
 {
 	/* TX frame sent from charger */
 	struct chademo_se_can_frame tx;
@@ -83,6 +83,13 @@ void chademo_se_test_rx_from_ev(struct chademo_se *self)
 	assert(chademo_se_get_tx_frame(self, &tx) == false);
 }
 
+/** _CHADEMO_SE_STATE_CF_PROCESS_INFO_BEFORE_CHARGING */
+void chademo_se_test_process_info_before_charging(struct chademo_se *self)
+{
+	assert(chademo_se_step(self, 0) ==
+		CHADEMO_SE_EVENT_INFO_BEFORE_CHARGING_IS_PROCESSED);
+}
+
 /** Tests all conditions sequentially */
 void chademo_se_test_normal_run(struct chademo_se *self)
 {
@@ -90,7 +97,8 @@ void chademo_se_test_normal_run(struct chademo_se *self)
 
 	chademo_se_test_charge_start_button_pressed(self);
 	chademo_se_test_charge_start_signal(self);
-	chademo_se_test_rx_from_ev(self);
+	chademo_se_test_rx_from_ev_and_tx_after(self);
+	chademo_se_test_process_info_before_charging(self);
 }
 
 /** Runs all tests */

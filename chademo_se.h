@@ -206,7 +206,9 @@ enum _chademo_se_state_cf {
 	_CHADEMO_SE_STATE_CF_AWAIT_CHARGE_START_BUTTON,
 	_CHADEMO_SE_STATE_CF_TRANSMIT_CHARGE_START_SIGNAL,
 	_CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER,
-	_CHADEMO_SE_STATE_CF_PROCESS_INFO_BEFORE_CHARGING
+	_CHADEMO_SE_STATE_CF_PROCESS_INFO_BEFORE_CHARGING,
+	_CHADEMO_SE_STATE_CF_LOCK_CHARHING_CONNECTOR,
+	_CHADEMO_SE_STATE_CF_CHECK_EV_CONTACTORS_ARE_OPEN
 };
 
 /******************************************************************************
@@ -554,7 +556,9 @@ void _chademo_se_can_dev_init(struct _chademo_se_can_dev *self)
 enum chademo_se_event {
 	CHADEMO_SE_EVENT_NONE,
 	CHADEMO_SE_EVENT_CHARGE_START_BUTTON_PRESSED,
-	CHADEMO_SE_EVENT_GOT_EV_INITIAL_PARAMS
+	CHADEMO_SE_EVENT_GOT_EV_INITIAL_PARAMS,
+	CHADEMO_SE_EVENT_INFO_BEFORE_CHARGING_IS_PROCESSED,
+	CHADEMO_SE_EVENT_VEHICLE_CHARGE_PERMISSION
 };
 
 /** Main instance. */
@@ -656,7 +660,7 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 		break;
 
 	case _CHADEMO_SE_STATE_CF_TRANSMIT_CHARGE_START_SIGNAL:
-		self->_vgpio.out.sw_d1 = true;
+		self->_vgpio.out.sw_d1 = true; /* CONNECTOR PIN: 5 */
 
 		/* _CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER INIT */
 		self->_state_cf =
@@ -673,9 +677,10 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 			break;
 		}
 
+		/* Charger params must be set by user after this event! */
 		event = CHADEMO_SE_EVENT_GOT_EV_INITIAL_PARAMS;
 
-		/* _CHADEMO_SE_STATE_CF_... INIT */
+		/* _CHADEMO_SE_STATE_CF_PROCESS_INFO_BEFORE_CHARGING INIT */
 		self->_state_cf =
 			_CHADEMO_SE_STATE_CF_PROCESS_INFO_BEFORE_CHARGING;
 
@@ -686,10 +691,38 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 	case _CHADEMO_SE_STATE_CF_PROCESS_INFO_BEFORE_CHARGING:
 		/* See A.7.2.7.2 */
 
+		/* TODO more validation */
+
 		if ((self->_can.rx.h100.max_battery_voltage_V >
 		     self->_can.tx.h108.avail_output_voltage_V)) {
 			    /* TODO terminate */
 		}
+
+		/* TODO calculate approximate estimated charge time
+		 * based on current and voltage demand and pack kwh */
+
+		event = CHADEMO_SE_EVENT_INFO_BEFORE_CHARGING_IS_PROCESSED;
+
+		/* _CHADEMO_SE_STATE_CF_LOCK_CHARHING_CONNECTOR INIT */
+		self->_state_cf = _CHADEMO_SE_STATE_CF_LOCK_CHARHING_CONNECTOR;
+
+		break;
+
+	case _CHADEMO_SE_STATE_CF_LOCK_CHARHING_CONNECTOR:
+		/* Wait for vehicle readiness */
+		if (self->_vgpio.in.oc_j != true) { /* CONNECTOR PIN: 4 */
+			break;
+		}
+
+		event = CHADEMO_SE_EVENT_VEHICLE_CHARGE_PERMISSION;
+
+		/* _CHADEMO_SE_STATE_CF_CHECK_EV_CONTACTORS_ARE_OPEN INIT */
+		self->_state_cf =
+			_CHADEMO_SE_STATE_CF_CHECK_EV_CONTACTORS_ARE_OPEN;
+		break;
+
+	case _CHADEMO_SE_STATE_CF_CHECK_EV_CONTACTORS_ARE_OPEN:
+		/* TODO */
 
 		break;
 
