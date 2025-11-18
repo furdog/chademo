@@ -205,7 +205,8 @@ struct _chademo_se_h109
 enum _chademo_se_state_cf {
 	_CHADEMO_SE_STATE_CF_AWAIT_CHARGE_START_BUTTON,
 	_CHADEMO_SE_STATE_CF_TRANSMIT_CHARGE_START_SIGNAL,
-	_CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER
+	_CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER,
+	_CHADEMO_SE_STATE_CF_PROCESS_INFO_BEFORE_CHARGING
 };
 
 /******************************************************************************
@@ -262,9 +263,17 @@ struct chademo_se_can_frame {
 /******************************************************************************
  * CHADEMO_SE CAN2.0 TX ROUTINE (IMPLEMENTATION SPECIFIC)
  *****************************************************************************/
+enum _chademo_se_can_tx_state {
+	_CHADEMO_SE_CAN_TX_STATE_IDLE,
+	_CHADEMO_SE_CAN_TX_STATE_TRANSMISSION,
+	_CHADEMO_SE_CAN_TX_STATE_DELAY
+};
+
 /** Structure that represents CAN2.0 TX */
 struct _chademo_se_can_tx
 {
+	uint8_t state;
+
 	/* TX-side messages */
 	struct _chademo_se_h108 h108;
 	struct _chademo_se_h109 h109;
@@ -285,6 +294,8 @@ struct _chademo_se_can_tx
  */
 void _chademo_se_can_tx_init(struct _chademo_se_can_tx *self)
 {
+	self->state = _CHADEMO_SE_CAN_TX_STATE_IDLE;
+
 	self->h108.welding_detection_support = false;
 	self->h108.avail_output_voltage_V    = 0u;
 	self->h108.avail_output_current_A    = 0u;
@@ -303,13 +314,106 @@ void _chademo_se_can_tx_init(struct _chademo_se_can_tx *self)
 	self->timer_ms = 0u;
 }
 
+void _chademo_se_can_tx_pack_frames(struct _chademo_se_can_tx *self)
+{
+	struct chademo_se_can_frame *f;
+
+	/* We transmit exactly two frames. */
+	self->count = 2u;
+
+	f = &self->frames[0];
+	f->id = _CHADEMO_SE_CAN_FRAME_ID_H108;
+	f->len = 8u;
+	f->data[0] =  self->h108.welding_detection_support;
+	f->data[1] = (self->h108.avail_output_voltage_V & 0x00FFu) >> 0u;
+	f->data[2] = (self->h108.avail_output_voltage_V & 0xFF00u) >> 8u;
+	f->data[3] =  self->h108.avail_output_current_A;
+	f->data[4] = (self->h108.threshold_voltage_V & 0x00FFu) >> 0u;
+	f->data[5] = (self->h108.threshold_voltage_V & 0xFF00u) >> 8u;
+	f->data[6] = 0x00u;
+	f->data[7] = 0x00u;
+
+	f = &self->frames[1];
+	f->id = _CHADEMO_SE_CAN_FRAME_ID_H109;
+	f->len = 8u;
+	f->data[0] = self->h109.control_protocol_number;
+	f->data[1] = (self->h109.present_output_voltage_V & 0x00FFu) >> 0u;
+	f->data[2] = (self->h109.present_output_voltage_V & 0xFF00u) >> 8u;
+	f->data[3] = self->h109.present_output_current_A;
+	f->data[4] = 0x00u;
+	f->data[5] = self->h109.status;
+	f->data[6] = self->h109.remaining_charge_time_10s;
+	f->data[7] = self->h109.remaining_charge_time_60s;
+}
+
+void _chademo_se_can_tx_start(struct _chademo_se_can_tx *self)
+{
+	_chademo_se_can_tx_init(self);
+
+	self->state = _CHADEMO_SE_CAN_TX_STATE_TRANSMISSION;
+}
+
+void _chademo_se_can_tx_stop(struct _chademo_se_can_tx *self)
+{
+	_chademo_se_can_tx_init(self);
+
+	self->state = _CHADEMO_SE_CAN_TX_STATE_IDLE;
+}
+
+void _chademo_se_can_tx_step(struct _chademo_se_can_tx *self,
+			     uint32_t delta_time_ms)
+{
+	/* TODO check for untransmitted frames */
+
+	switch (self->state) {
+	case _CHADEMO_SE_CAN_TX_STATE_TRANSMISSION:
+		_chademo_se_can_tx_pack_frames(self);
+
+		/* _CHADEMO_SE_CAN_TX_STATE_DELAY INIT */
+		self->state = _CHADEMO_SE_CAN_TX_STATE_DELAY;
+		self->timer_ms = 0u;
+		break;
+
+	case _CHADEMO_SE_CAN_TX_STATE_DELAY:
+		self->timer_ms += delta_time_ms;
+
+		/* 100ms delay between messages */
+		if (self->timer_ms < 100u) {
+			break;
+		}
+
+		/* _CHADEMO_SE_CAN_TX_STATE_TRANSMISSION INIT */
+		self->state = _CHADEMO_SE_CAN_TX_STATE_TRANSMISSION;
+		break;
+
+	case _CHADEMO_SE_CAN_TX_STATE_IDLE:
+		/* Do nothing here */
+		break;
+
+	default:
+		/* Something really gone wrong here
+		 * (probably memory corruption or worse)
+		 * We must immediately go into termination and never
+		 * start again until fault is diagnosed properly.
+		 *
+		 * TODO */
+		 break;
+	}
+}
+
 /******************************************************************************
  * CHADEMO_SE CAN2.0 RX ROUTINE (IMPLEMENTATION SPECIFIC)
  *****************************************************************************/
-/*TODO MAKE IT CORRECT*/
+enum _chademo_se_can_rx_state {
+	_CHADEMO_SE_CAN_RX_STATE_IDLE,
+	_CHADEMO_SE_CAN_RX_STATE_LISTEN
+};
+
 /** Structure that represents CAN2.0 RX */
 struct _chademo_se_can_rx
 {
+	uint8_t state;
+
 	struct _chademo_ev_h100 h100;
 	struct _chademo_ev_h101 h101;
 	struct _chademo_ev_h102 h102;
@@ -330,6 +434,8 @@ struct _chademo_se_can_rx
  */
 void _chademo_se_can_rx_init(struct _chademo_se_can_rx *self)
 {
+	self->state = _CHADEMO_SE_CAN_RX_STATE_IDLE;
+
 	self->h100.max_battery_voltage_V  = 0x00u;
 	self->h100.charged_rate_ref_const = 0x00u;
 
@@ -351,15 +457,19 @@ void _chademo_se_can_rx_init(struct _chademo_se_can_rx *self)
 	self->has_frames = false;
 }
 
-void _chademo_se_can_rx_put_frame(struct _chademo_se_can_rx   *self,
-				  struct chademo_se_can_frame *f)
+void _chademo_se_can_rx_unpack_frame(struct _chademo_se_can_rx   *self,
+				     struct chademo_se_can_frame *f)
 {
+	bool valid_frame = true;
+
 	switch (f->id) {
 	case _CHADEMO_EV_CAN_FRAME_ID_H100:
 		self->h100.max_battery_voltage_V  = f->data[4] << 0u;
 		self->h100.max_battery_voltage_V |= f->data[5] << 8u;
 
 		self->h100.charged_rate_ref_const = f->data[6];
+
+		self->recv_flags |= (1u << 0u);
 		break;
 
 	case _CHADEMO_EV_CAN_FRAME_ID_H101:
@@ -369,6 +479,8 @@ void _chademo_se_can_rx_put_frame(struct _chademo_se_can_rx   *self,
 
 		self->h101.total_cap_of_battery_100wh  = f->data[5] << 0u;
 		self->h101.total_cap_of_battery_100wh |= f->data[6] << 8u;
+
+		self->recv_flags |= (1u << 1u);
 		break;
 
 	case _CHADEMO_EV_CAN_FRAME_ID_H102:
@@ -379,10 +491,44 @@ void _chademo_se_can_rx_put_frame(struct _chademo_se_can_rx   *self,
 		self->h102.fault                    = f->data[4];
 		self->h102.status                   = f->data[5];
 		self->h102.charged_rate             = f->data[6];
+
+		self->recv_flags |= (1u << 2u);
 		break;
+
 	default:
+		valid_frame = false;
 		break;
 	}
+
+	if (valid_frame && (self->recv_flags == ((1u << 3u) - 1u))) {
+		self->has_frames = true;
+		self->timer_ms   = 0u;
+	}
+}
+
+void _chademo_se_can_rx_start(struct _chademo_se_can_rx *self)
+{
+	/* We won't assume a shit, just reset all the time. */
+	_chademo_se_can_rx_init(self);
+
+	self->state = _CHADEMO_SE_CAN_RX_STATE_LISTEN;
+}
+
+void _chademo_se_can_rx_stop(struct _chademo_se_can_rx *self)
+{
+	/* We won't assume a shit, just reset all the time. */
+	_chademo_se_can_rx_init(self);
+
+	self->state = _CHADEMO_SE_CAN_RX_STATE_IDLE;
+}
+
+void _chademo_se_can_rx_step(struct _chademo_se_can_rx *self,
+			     uint32_t delta_time_ms)
+{
+	(void)self;
+	(void)delta_time_ms;
+	/* TODO check timeouts */
+	/* TODO check errors */
 }
 
 /******************************************************************************
@@ -407,7 +553,8 @@ void _chademo_se_can_dev_init(struct _chademo_se_can_dev *self)
 /** Events emited by main instance FSM */
 enum chademo_se_event {
 	CHADEMO_SE_EVENT_NONE,
-	CHADEMO_SE_EVENT_CHARGE_START_BUTTON_PRESSED
+	CHADEMO_SE_EVENT_CHARGE_START_BUTTON_PRESSED,
+	CHADEMO_SE_EVENT_GOT_EV_INITIAL_PARAMS
 };
 
 /** Main instance. */
@@ -449,14 +596,21 @@ void chademo_se_get_vgpio(struct chademo_se *self,
 	*vgpio = self->_vgpio;
 }
 
+/** CAN2.0 frames from EV must go here.
+ *  Returns true if frame has been consumed.
+ *  Frame may not be consumed if EVSE is not in LISTEN mode. */
 bool chademo_se_put_rx_frame(struct chademo_se *self,
 			     struct chademo_se_can_frame *f)
 {
-	/* TODO */
-	(void)self;
-	(void)f;
+	bool has_consumed_frame = false;
 
-	return false;
+	if (self->_can.rx.state == (uint8_t)_CHADEMO_SE_CAN_RX_STATE_LISTEN) {
+		_chademo_se_can_rx_unpack_frame(&self->_can.rx, f);
+
+		has_consumed_frame = true;
+	}
+
+	return has_consumed_frame;
 }
 
 bool chademo_se_get_tx_frame(struct chademo_se *self,
@@ -483,8 +637,10 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 {
 	enum chademo_se_event event = CHADEMO_SE_EVENT_NONE;
 
-	(void)delta_time_ms; /* TODO remove */
+	/* Run CAN2.0 RX FSM subroutine. IDLE state by default until started */
+	_chademo_se_can_rx_step(&self->_can.rx, delta_time_ms);
 
+	/* State machine reflecs chademo charger control flow precisely */
 	switch (self->_state_cf) {
 	case _CHADEMO_SE_STATE_CF_AWAIT_CHARGE_START_BUTTON:
 		if (self->_vgpio.in.bt_start != true) {
@@ -506,15 +662,49 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 		self->_state_cf =
 			_CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER;
 
+		_chademo_se_can_rx_start(&self->_can.rx);
 		break;
 
 	case _CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER:
-		/* TODO */
+		/* TODO timeout */
+
+		/* Await for all RX frames */
+		if (!self->_can.rx.has_frames) {
+			break;
+		}
+
+		event = CHADEMO_SE_EVENT_GOT_EV_INITIAL_PARAMS;
+
+		/* _CHADEMO_SE_STATE_CF_... INIT */
+		self->_state_cf =
+			_CHADEMO_SE_STATE_CF_PROCESS_INFO_BEFORE_CHARGING;
+
+		_chademo_se_can_tx_start(&self->_can.tx);
+
+		break;
+
+	case _CHADEMO_SE_STATE_CF_PROCESS_INFO_BEFORE_CHARGING:
+		/* See A.7.2.7.2 */
+
+		if ((self->_can.rx.h100.max_battery_voltage_V >
+		     self->_can.tx.h108.avail_output_voltage_V)) {
+			    /* TODO terminate */
+		}
+
 		break;
 
 	default:
+		/* Something really gone wrong here
+		 * (probably memory corruption or worse)
+		 * We must immediately go into termination and never
+		 * start again until fault is diagnosed properly.
+		 *
+		 * TODO */
 		break;
 	}
+
+	/* Run CAN2.0 TX FSM subroutine. IDLE state by default until started */
+	_chademo_se_can_tx_step(&self->_can.tx, delta_time_ms);
 
 	return event;
 }

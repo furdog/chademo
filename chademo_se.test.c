@@ -18,8 +18,10 @@
 
 #include <assert.h>
 
+/** Main chademo SE instance we will perform test on */
 struct chademo_se chse_main;
 
+/** _CHADEMO_SE_STATE_CF_AWAIT_CHARGE_START_BUTTON */
 void chademo_se_test_charge_start_button_pressed(struct chademo_se *self)
 {
 	struct chademo_se_vgpio vgpio;
@@ -34,6 +36,7 @@ void chademo_se_test_charge_start_button_pressed(struct chademo_se *self)
 		CHADEMO_SE_EVENT_CHARGE_START_BUTTON_PRESSED);
 }
 
+/** _CHADEMO_SE_STATE_CF_TRANSMIT_CHARGE_START_SIGNAL */
 void chademo_se_test_charge_start_signal(struct chademo_se *self)
 {
 	struct chademo_se_vgpio vgpio;
@@ -46,14 +49,51 @@ void chademo_se_test_charge_start_signal(struct chademo_se *self)
 	assert(vgpio.out.sw_d1 == true);
 }
 
+/** _CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER */
+void chademo_se_test_rx_from_ev(struct chademo_se *self)
+{
+	/* TX frame sent from charger */
+	struct chademo_se_can_frame tx;
+
+	/* We receive 3 frames from vehicle */
+	struct chademo_se_can_frame rx[3] = {
+		{0x100u, 8u, {0x00u, 0x00u, 0x00u, 0x00u,
+			      0x00u, 0x00u, 0x00u, 0x00u}},
+		{0x101u, 8u, {0x00u, 0x00u, 0x00u, 0x00u,
+			      0x00u, 0x00u, 0x00u, 0x00u}},
+		{0x102u, 8u, {0x00u, 0x00u, 0x00u, 0x00u,
+			      0x00u, 0x00u, 0x00u, 0x00u}}
+	};
+
+	chademo_se_put_rx_frame(self, &rx[0]);
+	assert(chademo_se_step(self, 0) == CHADEMO_SE_EVENT_NONE);
+
+	chademo_se_put_rx_frame(self, &rx[1]);
+	assert(chademo_se_step(self, 0) == CHADEMO_SE_EVENT_NONE);
+
+	assert(chademo_se_get_tx_frame(self, &tx) == false);
+
+	chademo_se_put_rx_frame(self, &rx[2]);
+	assert(chademo_se_step(self, 0) ==
+	       CHADEMO_SE_EVENT_GOT_EV_INITIAL_PARAMS);
+
+	/* Two frames must be emited by charger */
+	assert(chademo_se_get_tx_frame(self, &tx) == true);
+	assert(chademo_se_get_tx_frame(self, &tx) == true);
+	assert(chademo_se_get_tx_frame(self, &tx) == false);
+}
+
+/** Tests all conditions sequentially */
 void chademo_se_test_normal_run(struct chademo_se *self)
 {
 	chademo_se_init(self);	
 
 	chademo_se_test_charge_start_button_pressed(self);
 	chademo_se_test_charge_start_signal(self);
+	chademo_se_test_rx_from_ev(self);
 }
 
+/** Runs all tests */
 int main()
 {
 	chademo_se_test_normal_run(&chse_main);
