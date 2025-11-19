@@ -39,17 +39,16 @@
  * ```
  */
 
-#ifndef   CHADEMO_SE_HEADER__
-#define   CHADEMO_SE_HEADER__
+#ifndef   CHADEMO_SE_DEFINITION_HEADER_GUARD
+#define   CHADEMO_SE_DEFINITION_HEADER_GUARD
 
 #include <stdbool.h>
 #include <stdint.h>
 
-/* Skip certain definitions if already EV header is already included */
-#if       !defined(CHADEMO_EV_HEADER__)
-
+/* Skip certain definitions if EV header is already included */
+#if       !defined(CHADEMO_EV_DEFINITION_HEADER_GUARD)
 /******************************************************************************
- * _CHADEMO_XX DEFINITIONS (IMPLEMENTATION SPECIFIC, COMMON FOR EV AND SE)
+ * _CHADEMO_XX DEFINITIONS (COMMON FOR EV AND SE)
  *****************************************************************************/
 /** CAN2.0 simplified frame structure. */
 struct chademo_xx_can_frame {
@@ -65,7 +64,7 @@ struct chademo_xx_can_frame {
 #define chademo_ev_can_frame chademo_xx_can_frame
 
 /******************************************************************************
- * _CHADEMO_EV DEFINITIONS (EXACTLY SPECIFICATION BASED)
+ * _CHADEMO_EV DEFINITIONS
  *****************************************************************************/
 /** Frame ID's used by vehicle (EV) */
 enum _chademo_ev_can_frame_id {
@@ -154,7 +153,7 @@ struct _chademo_ev_h102
 };
 
 /******************************************************************************
- * _CHADEMO_SE DEFINITIONS (EXACTLY SPECIFICATION BASED)
+ * _CHADEMO_SE DEFINITIONS
  *****************************************************************************/
 /** Frame identifiers used to be sent via chademo SE */
 enum _chademo_se_can_frame_id {
@@ -219,11 +218,10 @@ struct _chademo_se_h109
 	uint8_t  remaining_charge_time_10s; /* 10s/bit */
 	uint8_t  remaining_charge_time_60s; /* 60s/bit */
 };
-
 #endif /* !defined(CHADEMO_EV_HEADER__) */
 
 /******************************************************************************
- * CHADEMO_SE VIRTUAL CAN2.0 TX ROUTINE (IMPLEMENTATION SPECIFIC)
+ * CHADEMO_SE VIRTUAL CAN2.0 TX ROUTINE
  *****************************************************************************/
 enum _chademo_se_vcan_tx_state {
 	_CHADEMO_SE_VCAN_TX_STATE_IDLE,
@@ -364,7 +362,7 @@ void _chademo_se_vcan_tx_step(struct _chademo_se_vcan_tx *self,
 }
 
 /******************************************************************************
- * CHADEMO_SE VIRTUAL CAN2.0 RX ROUTINE (IMPLEMENTATION SPECIFIC)
+ * CHADEMO_SE VIRTUAL CAN2.0 RX ROUTINE
  *****************************************************************************/
 enum _chademo_se_vcan_rx_state {
 	_CHADEMO_SE_VCAN_RX_STATE_IDLE,
@@ -462,6 +460,7 @@ void _chademo_se_vcan_rx_unpack_frame(struct _chademo_se_vcan_rx   *self,
 		break;
 	}
 
+	/* TODO reset timer only if all frames have been get */
 	if (valid_frame && (self->recv_flags == ((1u << 3u) - 1u))) {
 		self->has_frames = true;
 		self->timer_ms   = 0u;
@@ -494,7 +493,7 @@ void _chademo_se_vcan_rx_step(struct _chademo_se_vcan_rx *self,
 }
 
 /******************************************************************************
- * CHADEMO_SE VIRTUAL CAN2.0 LOGICAL DEVICE (IMPLEMENTATION SPECIFIC)
+ * CHADEMO_SE VIRTUAL CAN2.0 LOGICAL DEVICE
  *****************************************************************************/
 /** Communication device (CAN2.0) logical representation */
 struct _chademo_se_vcan_dev
@@ -526,7 +525,76 @@ void _chademo_se_vsens_init(struct chademo_se_vsens *self)
 }
 
 /******************************************************************************
- * CHADEMO_SE VIRTUAL GPIO (EXACTLY SPECIFICATION BASED)
+ * CHADEMO_SE VIRTUAL POWER SUPPLY UNIT
+ *****************************************************************************/
+/** Virtual PSU internal state */
+enum _chademo_se_vpsu_state {
+	_CHADEMO_SE_VPSU_STATE_IDLE,    /**< Do nothing */
+	_CHADEMO_SE_VPSU_STATE_BOOT,    /**< Boot (softstart, etc) */
+	_CHADEMO_SE_VPSU_STATE_RUNNING, /**< Active current output */
+	_CHADEMO_SE_VPSU_STATE_SHUTDOWN /**< Must drop current */
+};
+
+/** Virtual PSU fault flags.
+ *  User must map these faults FROM external PSU hardware. */
+enum chademo_se_vpsu_flags_fault {
+	CHADEMO_SE_VPSU_FLAGS_FAULT_OVERVOLTAGE = 1u,
+	CHADEMO_SE_VPSU_FLAGS_FAULT_OVERCURRENT = 2u,
+	CHADEMO_SE_VPSU_FLAGS_FAULT_OVERTEMP    = 4u,
+	CHADEMO_SE_VPSU_FLAGS_FAULT_OTHER       = 8u,
+
+	/** API fault, set by default (indicates user API usage error) */
+	CHADEMO_SE_VPSU_FLAGS_FAULT_API         = 16u
+};
+
+/** Params that must be set by chademo_se (READ only).
+ *  User must read these and map them TO PSU hardware. */
+struct chademo_se_vpsu_config {
+	uint16_t set_voltage_dc_V;
+	uint8_t  set_current_dc_A;
+};
+
+
+/** Params that must be set by external PSU hardware.
+ *  User must map theese FROM real PSU hardware. */
+struct chademo_se_vpsu_outputs {
+	uint16_t voltage_dc_V;
+	uint8_t  current_dc_A;
+};
+
+/** Virtual PSU used internally by chademo_se. */
+struct _chademo_se_vpsu {
+	uint8_t state;
+
+	struct chademo_se_vpsu_config  config;
+	struct chademo_se_vpsu_outputs outputs;
+
+	uint8_t flags_fault;
+};
+
+void _chademo_se_vpsu_init(struct _chademo_se_vpsu *self)
+{
+	self->state = _CHADEMO_SE_VPSU_STATE_IDLE;
+
+	self->config.set_voltage_dc_V = 0u;
+	self->config.set_current_dc_A = 0u;
+
+	/** Set maximum by default, to prevent user from ignoring these */
+	self->outputs.voltage_dc_V = 0xFFFF;
+	self->outputs.current_dc_A = 0xFF;
+
+	/** Set API fault by default. */
+	self->flags_fault = CHADEMO_SE_VPSU_FLAGS_FAULT_API;
+}
+
+void _chademo_se_vpsu_step(struct _chademo_se_vpsu *self)
+{
+	/* TODO fsm */
+	(void)self;
+}
+
+/******************************************************************************
+ * CHADEMO_SE VIRTUAL GPIO
  *****************************************************************************/
 /** Virtual GPIO inputs.
  *  Everything from outside hardware should be mapped here. */
@@ -576,7 +644,8 @@ enum _chademo_se_state_cf {
 	_CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER,
 	_CHADEMO_SE_STATE_CF_PROCESS_INFO_BEFORE_CHARGING,
 	_CHADEMO_SE_STATE_CF_LOCK_CHARHING_CONNECTOR,
-	_CHADEMO_SE_STATE_CF_CHECK_EV_CONTACTORS_ARE_OPEN
+	_CHADEMO_SE_STATE_CF_CHECK_EV_CONTACTORS_ARE_OPEN,
+	_CHADEMO_SE_STATE_CF_INSULATION_TEST_ON_DC_CIRCUIT
 };
 
 /** Events emited by main instance FSM */
@@ -585,7 +654,8 @@ enum chademo_se_event {
 	CHADEMO_SE_EVENT_CHARGE_START_BUTTON_PRESSED,
 	CHADEMO_SE_EVENT_GOT_EV_INITIAL_PARAMS,
 	CHADEMO_SE_EVENT_INFO_BEFORE_CHARGING_IS_PROCESSED,
-	CHADEMO_SE_EVENT_VEHICLE_CHARGE_PERMISSION
+	CHADEMO_SE_EVENT_VEHICLE_CHARGE_PERMISSION,
+	CHADEMO_SE_EVENT_EV_CONTACTORS_ARE_OPEN
 };
 
 /** Main instance. */
@@ -610,6 +680,7 @@ void chademo_se_init(struct chademo_se *self)
 {
 	self->_state_cf = _CHADEMO_SE_STATE_CF_AWAIT_CHARGE_START_BUTTON;
 
+	/* Initialize virtual io devices */
 	_chademo_se_vcan_dev_init(&self->_vcan);
 	_chademo_se_vsens_init(&self->_vsens);
 	_chademo_se_vgpio_init(&self->_vgpio);
@@ -773,8 +844,20 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 		break;
 
 	case _CHADEMO_SE_STATE_CF_CHECK_EV_CONTACTORS_ARE_OPEN:
-		/* TODO */
+		if (self->_vsens.out_terminals_voltage_V >= 10u) {
+			/* TODO terminate */
+			break;
+		}
 
+		event = CHADEMO_SE_EVENT_EV_CONTACTORS_ARE_OPEN;
+
+		/* _CHADEMO_SE_STATE_CF_INSULATION_TEST_ON_DC_CIRCUIT INIT */
+		self->_state_cf =
+			_CHADEMO_SE_STATE_CF_INSULATION_TEST_ON_DC_CIRCUIT;
+
+		break;
+
+	case _CHADEMO_SE_STATE_CF_INSULATION_TEST_ON_DC_CIRCUIT:
 		break;
 
 	default:
@@ -793,4 +876,4 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 	return event;
 }
 
-#endif /* CHADEMO_SE_HEADER__ */
+#endif /* CHADEMO_SE_DEFINITION_HEADER_GUARD */

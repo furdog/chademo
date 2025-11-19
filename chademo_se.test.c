@@ -99,12 +99,27 @@ void chademo_se_test_ev_charge_allowed(struct chademo_se *self)
 
 	chademo_se_get_vgpio(self, &vgpio);
 
+	assert(chademo_se_step(self, 0) == CHADEMO_SE_EVENT_NONE);
+
 	vgpio.in.oc_j = true;
 
 	chademo_se_set_vgpio(self, &vgpio);
 
 	assert(chademo_se_step(self, 0) ==
 		CHADEMO_SE_EVENT_VEHICLE_CHARGE_PERMISSION);
+}
+
+/** _CHADEMO_SE_STATE_CF_CHECK_EV_CONTACTORS_ARE_OPEN */
+void chademo_se_test_check_ev_contactors_are_open(struct chademo_se *self)
+{
+	struct chademo_se_vsens vsens;
+
+	vsens.out_terminals_voltage_V = 0u;
+
+	chademo_se_set_vsens(self, &vsens);
+
+	assert(chademo_se_step(self, 0) ==
+		CHADEMO_SE_EVENT_EV_CONTACTORS_ARE_OPEN);	
 }
 
 /** Tests all conditions sequentially */
@@ -117,6 +132,7 @@ void chademo_se_test_normal_run(struct chademo_se *self)
 	chademo_se_test_rx_from_ev_and_tx_after(self);
 	chademo_se_test_process_info_before_charging(self);
 	chademo_se_test_ev_charge_allowed(self);
+	chademo_se_test_check_ev_contactors_are_open(self);
 }
 
 /** Runs all tests */
