@@ -24,14 +24,14 @@ struct chademo_se chse_main;
 /** _CHADEMO_SE_STATE_CF_AWAIT_CHARGE_START_BUTTON */
 void chademo_se_test_charge_start_button_pressed(struct chademo_se *self)
 {
-	struct chademo_se_vgpio vgpio;
+	struct chademo_se_vio_gpio vgpio;
 
-	chademo_se_get_vgpio(self, &vgpio);	
+	chademo_se_vio_gpio_get_inputs(&self->vio.gpio, &vgpio);
 
 	assert(chademo_se_step(self, 0) == CHADEMO_SE_EVENT_NONE);
 	vgpio.in.bt_start = true;
 
-	chademo_se_set_vgpio(self, &vgpio);
+	chademo_se_vio_gpio_set_inputs(&self->vio.gpio, &vgpio);
 	assert(chademo_se_step(self, 0) ==
 		CHADEMO_SE_EVENT_CHARGE_START_BUTTON_PRESSED);
 }
@@ -39,14 +39,14 @@ void chademo_se_test_charge_start_button_pressed(struct chademo_se *self)
 /** _CHADEMO_SE_STATE_CF_TRANSMIT_CHARGE_START_SIGNAL */
 void chademo_se_test_charge_start_signal(struct chademo_se *self)
 {
-	struct chademo_se_vgpio vgpio;
+	struct chademo_se_vio_gpio vgpio;
 
-	chademo_se_get_vgpio(self, &vgpio);
+	chademo_se_vio_gpio_get_outputs(&self->vio.gpio, &vgpio);
 
 	assert(vgpio.out.sw_d1 == false);
 	assert(chademo_se_step(self, 0) == CHADEMO_SE_EVENT_NONE);
 
-	chademo_se_get_vgpio(self, &vgpio);
+	chademo_se_vio_gpio_get_outputs(&self->vio.gpio, &vgpio);
 
 	assert(vgpio.out.sw_d1 == true);
 }
@@ -67,22 +67,23 @@ void chademo_se_test_rx_from_ev_and_tx_after(struct chademo_se *self)
 			      0x00u, 0x00u, 0x00u, 0x00u}}
 	};
 
-	chademo_se_put_vcan_rx_frame(self, &rx[0]);
+	chademo_se_vio_can_dev_push_frame(&self->vio.can, &rx[0]);
 	assert(chademo_se_step(self, 0) == CHADEMO_SE_EVENT_NONE);
 
-	chademo_se_put_vcan_rx_frame(self, &rx[1]);
+	chademo_se_vio_can_dev_push_frame(&self->vio.can, &rx[1]);
 	assert(chademo_se_step(self, 0) == CHADEMO_SE_EVENT_NONE);
 
-	assert(chademo_se_get_vcan_tx_frame(self, &tx) == false);
+	assert(chademo_se_vio_can_dev_pop_frame(&self->vio.can, &tx) ==
+	       false);
 
-	chademo_se_put_vcan_rx_frame(self, &rx[2]);
+	chademo_se_vio_can_dev_push_frame(&self->vio.can, &rx[2]);
 	assert(chademo_se_step(self, 0) ==
 	       CHADEMO_SE_EVENT_GOT_EV_INITIAL_PARAMS);
 
 	/* Two frames must be emited by charger */
-	assert(chademo_se_get_vcan_tx_frame(self, &tx) == true);
-	assert(chademo_se_get_vcan_tx_frame(self, &tx) == true);
-	assert(chademo_se_get_vcan_tx_frame(self, &tx) == false);
+	assert(chademo_se_vio_can_dev_pop_frame(&self->vio.can, &tx) == true);
+	assert(chademo_se_vio_can_dev_pop_frame(&self->vio.can, &tx) == true);
+	assert(chademo_se_vio_can_dev_pop_frame(&self->vio.can, &tx) == false);
 }
 
 /** _CHADEMO_SE_STATE_CF_PROCESS_INFO_BEFORE_CHARGING */
@@ -95,15 +96,15 @@ void chademo_se_test_process_info_before_charging(struct chademo_se *self)
 /** _CHADEMO_SE_STATE_CF_LOCK_CHARHING_CONNECTOR */
 void chademo_se_test_ev_charge_allowed(struct chademo_se *self)
 {
-	struct chademo_se_vgpio vgpio;
+	struct chademo_se_vio_gpio vgpio;
 
-	chademo_se_get_vgpio(self, &vgpio);
+	chademo_se_vio_gpio_get_inputs(&self->vio.gpio, &vgpio);
 
 	assert(chademo_se_step(self, 0) == CHADEMO_SE_EVENT_NONE);
 
 	vgpio.in.oc_j = true;
 
-	chademo_se_set_vgpio(self, &vgpio);
+	chademo_se_vio_gpio_set_inputs(&self->vio.gpio, &vgpio);
 
 	assert(chademo_se_step(self, 0) ==
 		CHADEMO_SE_EVENT_VEHICLE_CHARGE_PERMISSION);
@@ -112,11 +113,7 @@ void chademo_se_test_ev_charge_allowed(struct chademo_se *self)
 /** _CHADEMO_SE_STATE_CF_CHECK_EV_CONTACTORS_ARE_OPEN */
 void chademo_se_test_check_ev_contactors_are_open(struct chademo_se *self)
 {
-	struct chademo_se_vsens vsens;
-
-	vsens.out_terminals_voltage_V = 0u;
-
-	chademo_se_set_vsens(self, &vsens);
+	self->vio.sensors.out_terminals_voltage_V = 0u;
 
 	assert(chademo_se_step(self, 0) ==
 		CHADEMO_SE_EVENT_EV_CONTACTORS_ARE_OPEN);	
