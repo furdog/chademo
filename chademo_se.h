@@ -223,14 +223,14 @@ struct _chademo_se_h109
 /******************************************************************************
  * CHADEMO_SE VIRTUAL CAN2.0 TX ROUTINE
  *****************************************************************************/
-enum _chademo_se_vio_can_tx_state {
-	_CHADEMO_SE_VIO_CAN_TX_STATE_IDLE,
-	_CHADEMO_SE_VIO_CAN_TX_STATE_TRANSMISSION,
-	_CHADEMO_SE_VIO_CAN_TX_STATE_DELAY
+enum _chademo_se_vcan_tx_state {
+	_CHADEMO_SE_VCAN_TX_STATE_IDLE,
+	_CHADEMO_SE_VCAN_TX_STATE_TRANSMISSION,
+	_CHADEMO_SE_VCAN_TX_STATE_DELAY
 };
 
 /** Structure that represents CAN2.0 TX */
-struct _chademo_se_vio_can_tx
+struct _chademo_se_vcan_tx
 {
 	uint8_t state;
 
@@ -252,9 +252,9 @@ struct _chademo_se_vio_can_tx
  * @brief Initializes the CAN2.0 tx structure.
  * @param self Pointer to the tx instance.
  */
-void _chademo_se_vio_can_tx_init(struct _chademo_se_vio_can_tx *self)
+void _chademo_se_vcan_tx_init(struct _chademo_se_vcan_tx *self)
 {
-	self->state = _CHADEMO_SE_VIO_CAN_TX_STATE_IDLE;
+	self->state = _CHADEMO_SE_VCAN_TX_STATE_IDLE;
 
 	self->h108.welding_detection_support = false;
 	self->h108.avail_output_voltage_V    = 0u;
@@ -274,8 +274,8 @@ void _chademo_se_vio_can_tx_init(struct _chademo_se_vio_can_tx *self)
 	self->timer_ms = 0u;
 }
 
-void _chademo_se_vio_can_tx_pack_frames(
-				       struct _chademo_se_vio_can_tx *self)
+void _chademo_se_vcan_tx_pack_frames(
+				       struct _chademo_se_vcan_tx *self)
 {
 	struct chademo_se_can_frame *f;
 
@@ -307,35 +307,35 @@ void _chademo_se_vio_can_tx_pack_frames(
 	f->data[7] = self->h109.remaining_charge_time_60s;
 }
 
-void _chademo_se_vio_can_tx_start(struct _chademo_se_vio_can_tx *self)
+void _chademo_se_vcan_tx_start(struct _chademo_se_vcan_tx *self)
 {
-	_chademo_se_vio_can_tx_init(self);
+	_chademo_se_vcan_tx_init(self);
 
-	self->state = _CHADEMO_SE_VIO_CAN_TX_STATE_TRANSMISSION;
+	self->state = _CHADEMO_SE_VCAN_TX_STATE_TRANSMISSION;
 }
 
-void _chademo_se_vio_can_tx_stop(struct _chademo_se_vio_can_tx *self)
+void _chademo_se_vcan_tx_stop(struct _chademo_se_vcan_tx *self)
 {
-	_chademo_se_vio_can_tx_init(self);
+	_chademo_se_vcan_tx_init(self);
 
-	self->state = _CHADEMO_SE_VIO_CAN_TX_STATE_IDLE;
+	self->state = _CHADEMO_SE_VCAN_TX_STATE_IDLE;
 }
 
-void _chademo_se_vio_can_tx_step(struct _chademo_se_vio_can_tx *self,
+void _chademo_se_vcan_tx_step(struct _chademo_se_vcan_tx *self,
 				     uint32_t delta_time_ms)
 {
 	/* TODO check for untransmitted frames */
 
 	switch (self->state) {
-	case _CHADEMO_SE_VIO_CAN_TX_STATE_TRANSMISSION:
-		_chademo_se_vio_can_tx_pack_frames(self);
+	case _CHADEMO_SE_VCAN_TX_STATE_TRANSMISSION:
+		_chademo_se_vcan_tx_pack_frames(self);
 
-		/* _CHADEMO_SE_VIO_CAN_TX_STATE_DELAY INIT */
-		self->state = _CHADEMO_SE_VIO_CAN_TX_STATE_DELAY;
+		/* _CHADEMO_SE_VCAN_TX_STATE_DELAY INIT */
+		self->state = _CHADEMO_SE_VCAN_TX_STATE_DELAY;
 		self->timer_ms = 0u;
 		break;
 
-	case _CHADEMO_SE_VIO_CAN_TX_STATE_DELAY:
+	case _CHADEMO_SE_VCAN_TX_STATE_DELAY:
 		self->timer_ms += delta_time_ms;
 
 		/* 100ms delay between messages */
@@ -343,11 +343,11 @@ void _chademo_se_vio_can_tx_step(struct _chademo_se_vio_can_tx *self,
 			break;
 		}
 
-		/* _CHADEMO_SE_VIO_CAN_TX_STATE_TRANSMISSION INIT */
-		self->state = _CHADEMO_SE_VIO_CAN_TX_STATE_TRANSMISSION;
+		/* _CHADEMO_SE_VCAN_TX_STATE_TRANSMISSION INIT */
+		self->state = _CHADEMO_SE_VCAN_TX_STATE_TRANSMISSION;
 		break;
 
-	case _CHADEMO_SE_VIO_CAN_TX_STATE_IDLE:
+	case _CHADEMO_SE_VCAN_TX_STATE_IDLE:
 		/* Do nothing here */
 		break;
 
@@ -365,13 +365,13 @@ void _chademo_se_vio_can_tx_step(struct _chademo_se_vio_can_tx *self,
 /******************************************************************************
  * CHADEMO_SE VIRTUAL CAN2.0 RX ROUTINE
  *****************************************************************************/
-enum _chademo_se_vio_can_rx_state {
-	_CHADEMO_SE_VIO_CAN_RX_STATE_IDLE,
-	_CHADEMO_SE_VIO_CAN_RX_STATE_LISTEN
+enum _chademo_se_vcan_rx_state {
+	_CHADEMO_SE_VCAN_RX_STATE_IDLE,
+	_CHADEMO_SE_VCAN_RX_STATE_LISTEN
 };
 
 /** Structure that represents CAN2.0 RX */
-struct _chademo_se_vio_can_rx
+struct _chademo_se_vcan_rx
 {
 	uint8_t state;
 
@@ -393,9 +393,9 @@ struct _chademo_se_vio_can_rx
  * @brief Initializes the CAN2.0 rx structure.
  * @param self Pointer to the rx instance.
  */
-void _chademo_se_vio_can_rx_init(struct _chademo_se_vio_can_rx *self)
+void _chademo_se_vcan_rx_init(struct _chademo_se_vcan_rx *self)
 {
-	self->state = _CHADEMO_SE_VIO_CAN_RX_STATE_IDLE;
+	self->state = _CHADEMO_SE_VCAN_RX_STATE_IDLE;
 
 	self->h100.max_battery_voltage_V  = 0x00u;
 	self->h100.charged_rate_ref_const = 0x00u;
@@ -418,8 +418,8 @@ void _chademo_se_vio_can_rx_init(struct _chademo_se_vio_can_rx *self)
 	self->has_frames = false;
 }
 
-void _chademo_se_vio_can_rx_unpack_frame(
-				       struct _chademo_se_vio_can_rx *self,
+void _chademo_se_vcan_rx_unpack_frame(
+				       struct _chademo_se_vcan_rx *self,
 				       struct chademo_se_can_frame *f)
 {
 	bool valid_frame = true;
@@ -469,23 +469,23 @@ void _chademo_se_vio_can_rx_unpack_frame(
 	}
 }
 
-void _chademo_se_vio_can_rx_start(struct _chademo_se_vio_can_rx *self)
+void _chademo_se_vcan_rx_start(struct _chademo_se_vcan_rx *self)
 {
 	/* We won't assume a shit, just reset all the time. */
-	_chademo_se_vio_can_rx_init(self);
+	_chademo_se_vcan_rx_init(self);
 
-	self->state = _CHADEMO_SE_VIO_CAN_RX_STATE_LISTEN;
+	self->state = _CHADEMO_SE_VCAN_RX_STATE_LISTEN;
 }
 
-void _chademo_se_vio_can_rx_stop(struct _chademo_se_vio_can_rx *self)
+void _chademo_se_vcan_rx_stop(struct _chademo_se_vcan_rx *self)
 {
 	/* We won't assume a shit, just reset all the time. */
-	_chademo_se_vio_can_rx_init(self);
+	_chademo_se_vcan_rx_init(self);
 
-	self->state = _CHADEMO_SE_VIO_CAN_RX_STATE_IDLE;
+	self->state = _CHADEMO_SE_VCAN_RX_STATE_IDLE;
 }
 
-void _chademo_se_vio_can_rx_step(struct _chademo_se_vio_can_rx *self,
+void _chademo_se_vcan_rx_step(struct _chademo_se_vcan_rx *self,
 			     uint32_t delta_time_ms)
 {
 	(void)self;
@@ -495,71 +495,16 @@ void _chademo_se_vio_can_rx_step(struct _chademo_se_vio_can_rx *self,
 }
 
 /******************************************************************************
- * CHADEMO_SE VIRTUAL CAN2.0 LOGICAL DEVICE
- *****************************************************************************/
-/** Communication device (CAN2.0) logical representation */
-struct chademo_se_vio_can_dev
-{
-	struct _chademo_se_vio_can_tx _tx;
-	struct _chademo_se_vio_can_rx _rx;
-};
-
-void _chademo_se_vio_can_dev_init(struct chademo_se_vio_can_dev *self)
-{
-	_chademo_se_vio_can_tx_init(&self->_tx);
-	_chademo_se_vio_can_rx_init(&self->_rx);
-}
-
-/** CAN2.0 frames from EV must go here.
- *  Returns true if frame has been consumed.
- *  Frame may not be consumed if charger is not in LISTEN mode. */
-bool chademo_se_vio_can_dev_push_frame(
-				      struct chademo_se_vio_can_dev *self,
-				      struct chademo_se_can_frame *f)
-{
-	bool has_consumed_frame = false;
-
-	if (self->_rx.state ==
-	    (uint8_t)_CHADEMO_SE_VIO_CAN_RX_STATE_LISTEN) {
-		_chademo_se_vio_can_rx_unpack_frame(&self->_rx, f);
-
-		has_consumed_frame = true;
-	}
-
-	return has_consumed_frame;
-}
-
-/** CAN2.0 frames from charger emited here (popped from internal TX buffer).
- *  Returns true if frame has been returned.
- *  Frame may not be returned if internal buffer is empty. */
-bool chademo_se_vio_can_dev_pop_frame(
-				      struct chademo_se_vio_can_dev *self,
-				      struct chademo_se_can_frame *f)
-{
-	bool frame_available = false;
-
-	if (self->_tx.count > 0u) {
-		self->_tx.count--;
-
-		*f = self->_tx.frames[self->_tx.count];
-
-		frame_available = true;
-	}
-
-	return frame_available;
-}
-
-/******************************************************************************
  * CHADEMO_SE VIRTUAL SENSORS (VOLTAGE, CURRENT, LEAKAGE, ETC)
  *****************************************************************************/
 /** Virtual sensor inputs.
  *  Everything from outside hardware should be mapped here. */
-struct chademo_se_vio_sensors {
+struct chademo_se_vsensors {
 	/** Measures voltage on EV terminals */
 	uint16_t out_terminals_voltage_V;
 };
 
-void _chademo_se_vio_sensors_init(struct chademo_se_vio_sensors *self)
+void _chademo_se_vsensors_init(struct chademo_se_vsensors *self)
 {
 	/* Assume maximum voltage, until other value been providen */
 	self->out_terminals_voltage_V = 0xFFFF;
@@ -569,28 +514,28 @@ void _chademo_se_vio_sensors_init(struct chademo_se_vio_sensors *self)
  * CHADEMO_SE VIRTUAL POWER SUPPLY UNIT
  *****************************************************************************/
 /** Virtual PSU internal state */
-enum _chademo_se_vio_psu_state {
-	_CHADEMO_SE_VIO_PSU_STATE_IDLE,    /**< Do nothing */
-	_CHADEMO_SE_VIO_PSU_STATE_BOOT,    /**< Boot (softstart, etc) */
-	_CHADEMO_SE_VIO_PSU_STATE_RUNNING, /**< Active current output */
-	_CHADEMO_SE_VIO_PSU_STATE_SHUTDOWN /**< Must drop current */
+enum _chademo_se_vpsu_state {
+	_CHADEMO_SE_VPSU_STATE_IDLE,    /**< Do nothing */
+	_CHADEMO_SE_VPSU_STATE_BOOT,    /**< Boot (softstart, etc) */
+	_CHADEMO_SE_VPSU_STATE_RUNNING, /**< Active current output */
+	_CHADEMO_SE_VPSU_STATE_SHUTDOWN /**< Must drop current */
 };
 
 /** Virtual PSU fault flags.
  *  User must map these faults FROM external PSU hardware. */
-enum chademo_se_vio_psu_flags_fault {
-	CHADEMO_SE_VIO_PSU_FLAGS_FAULT_OVERVOLTAGE = 1u,
-	CHADEMO_SE_VIO_PSU_FLAGS_FAULT_OVERCURRENT = 2u,
-	CHADEMO_SE_VIO_PSU_FLAGS_FAULT_OVERTEMP    = 4u,
-	CHADEMO_SE_VIO_PSU_FLAGS_FAULT_OTHER       = 8u,
+enum chademo_se_vpsu_flags_fault {
+	CHADEMO_SE_VPSU_FLAGS_FAULT_OVERVOLTAGE = 1u,
+	CHADEMO_SE_VPSU_FLAGS_FAULT_OVERCURRENT = 2u,
+	CHADEMO_SE_VPSU_FLAGS_FAULT_OVERTEMP    = 4u,
+	CHADEMO_SE_VPSU_FLAGS_FAULT_OTHER       = 8u,
 
 	/** API fault, set by default (indicates user API usage error) */
-	CHADEMO_SE_VIO_PSU_FLAGS_FAULT_API         = 16u
+	CHADEMO_SE_VPSU_FLAGS_FAULT_API         = 16u
 };
 
 /** Params that must be set by chademo_se (READ only).
  *  User must read these and map them TO PSU hardware. */
-struct chademo_se_vio_psu_config {
+struct chademo_se_vpsu_config {
 	uint16_t set_voltage_dc_V;
 	uint8_t  set_current_dc_A;
 };
@@ -598,37 +543,37 @@ struct chademo_se_vio_psu_config {
 
 /** Params that must be set by external PSU hardware.
  *  User must map theese FROM real PSU hardware. */
-struct chademo_se_vio_psu_outputs {
+struct chademo_se_vpsu_outputs {
 	uint16_t voltage_dc_V;
 	uint8_t  current_dc_A;
 };
 
 /** Virtual PSU used internally by chademo_se. */
-struct chademo_se_vio_psu {
-	uint8_t _state;
+struct _chademo_se_vpsu {
+	uint8_t state;
 
-	struct chademo_se_vio_psu_config  _config;
-	struct chademo_se_vio_psu_outputs _outputs;
+	struct chademo_se_vpsu_config  config;
+	struct chademo_se_vpsu_outputs outputs;
 
-	uint8_t _flags_fault;
+	uint8_t flags_fault;
 };
 
-void _chademo_se_vio_psu_init(struct chademo_se_vio_psu *self)
+void _chademo_se_vpsu_init(struct _chademo_se_vpsu *self)
 {
-	self->_state = _CHADEMO_SE_VIO_PSU_STATE_IDLE;
+	self->state = _CHADEMO_SE_VPSU_STATE_IDLE;
 
-	self->_config.set_voltage_dc_V = 0u;
-	self->_config.set_current_dc_A = 0u;
+	self->config.set_voltage_dc_V = 0u;
+	self->config.set_current_dc_A = 0u;
 
 	/** Set maximum by default, to prevent user from ignoring these */
-	self->_outputs.voltage_dc_V = 0xFFFF;
-	self->_outputs.current_dc_A = 0xFF;
+	self->outputs.voltage_dc_V = 0xFFFF;
+	self->outputs.current_dc_A = 0xFF;
 
 	/** Set API fault by default. */
-	self->_flags_fault = CHADEMO_SE_VIO_PSU_FLAGS_FAULT_API;
+	self->flags_fault = CHADEMO_SE_VPSU_FLAGS_FAULT_API;
 }
 
-void _chademo_se_vio_psu_step(struct chademo_se_vio_psu *self)
+void _chademo_se_vpsu_step(struct _chademo_se_vpsu *self)
 {
 	/* TODO fsm */
 	(void)self;
@@ -639,7 +584,7 @@ void _chademo_se_vio_psu_step(struct chademo_se_vio_psu *self)
  *****************************************************************************/
 /** Virtual GPIO inputs.
  *  Everything from outside hardware should be mapped here. */
-struct _chademo_se_vio_gpio_in {
+struct _chademo_se_vgpio_in {
 	bool oc_j; /**< Opto-coupler: vehicle charge permission */
 
 	/* Not a part of main CHAdeMO circuit
@@ -651,19 +596,19 @@ struct _chademo_se_vio_gpio_in {
 
 /** Virtual GPIO outputs.
  *  All the signals here must be mapped to hardware output GPIO's */
-struct _chademo_se_vio_gpio_out {
+struct _chademo_se_vgpio_out {
 	bool sw_d1; /**< Switch: charge sequence signal 1 */
 	bool sw_d2; /**< Switch: charge sequence signal 2 */
 };
 
 /** Virtual GPIO consist of inputs and outputs */
-struct chademo_se_vio_gpio
+struct chademo_se_vgpio
 {
-	struct _chademo_se_vio_gpio_in  in;  /**< Input  virtual GPIO */
-	struct _chademo_se_vio_gpio_out out; /**< Output virtual GPIO */
+	struct _chademo_se_vgpio_in  in;  /**< Input  virtual GPIO */
+	struct _chademo_se_vgpio_out out; /**< Output virtual GPIO */
 };
 
-void _chademo_se_vio_gpio_init(struct chademo_se_vio_gpio *self)
+void _chademo_se_vgpio_init(struct chademo_se_vgpio *self)
 {
 	self->in.oc_j = false;
 
@@ -673,59 +618,6 @@ void _chademo_se_vio_gpio_init(struct chademo_se_vio_gpio *self)
 
 	self->out.sw_d1 = false;
 	self->out.sw_d2 = false;
-}
-
-/** Reads vgpio inputs and stores result into a destination `dst` */
-void chademo_se_vio_gpio_get_inputs(struct chademo_se_vio_gpio *self,
-				    struct chademo_se_vio_gpio *dst)
-{
-	dst->in = self->in;
-}
-
-/** Sets vgpio inputs from source `src` */
-void chademo_se_vio_gpio_set_inputs(struct chademo_se_vio_gpio *self,
-				    struct chademo_se_vio_gpio *src)
-{
-	self->in = src->in;
-}
-
-/** Gets vgpio outputs and stores result into a destination `dst` */
-void chademo_se_vio_gpio_get_outputs(struct chademo_se_vio_gpio *self,
-				     struct chademo_se_vio_gpio *dst)
-{
-	dst->out = self->out;
-}
-
-/******************************************************************************
- * CHADEMO_SE MAIN VIRTUAL IO
- *****************************************************************************/
-/** All virtual devices, gpios, sensors, etc - goes here.
- *  This structure unifies it all. */
-struct chademo_se_vio {
-	struct  chademo_se_vio_can_dev can; /**< Virtual CAN2.0 device */
-	struct  chademo_se_vio_sensors sensors; /**< Virtual Sensors */
-	struct  chademo_se_vio_gpio    gpio; /**< Virtual GPIO */
-	struct  chademo_se_vio_psu     psu;  /**< Virtual PSU */
-};
-
-void _chademo_se_vio_init(struct chademo_se_vio *self)
-{
-	_chademo_se_vio_can_dev_init(&self->can);
-	_chademo_se_vio_sensors_init(&self->sensors);
-	_chademo_se_vio_gpio_init(&self->gpio);
-	_chademo_se_vio_psu_init(&self->psu);
-}
-
-void _chademo_se_vio_step(struct chademo_se_vio *self,
-			  uint32_t delta_time_ms)
-{
-	struct chademo_se_vio_can_dev *vcan = &self->can;
-
-	/* Run CAN2.0 TX FSM subroutine. IDLE state by default until started */
-	_chademo_se_vio_can_tx_step(&vcan->_tx, delta_time_ms);
-
-	/* Run CAN2.0 RX FSM subroutine. IDLE state by default until started */
-	_chademo_se_vio_can_rx_step(&vcan->_rx, delta_time_ms);
 }
 
 /******************************************************************************
@@ -756,8 +648,11 @@ enum chademo_se_event {
 struct chademo_se {
 	enum _chademo_se_state_cf _state_cf;
 
-	/** Virtual IO */
-	struct chademo_se_vio vio;
+	struct  _chademo_se_vcan_tx  _can_tx;
+	struct  _chademo_se_vcan_rx  _can_rx;
+	struct   chademo_se_vsensors _sensors;
+	struct   chademo_se_vgpio    _gpio;
+	struct  _chademo_se_vpsu     _psu;
 };
 
 /******************************************************************************
@@ -768,23 +663,96 @@ void chademo_se_init(struct chademo_se *self)
 {
 	self->_state_cf = _CHADEMO_SE_STATE_CF_AWAIT_CHARGE_START_BUTTON;
 
-	_chademo_se_vio_init(&self->vio);
+	_chademo_se_vcan_tx_init(&self->_can_tx);
+	_chademo_se_vcan_rx_init(&self->_can_rx);
+	_chademo_se_vsensors_init(&self->_sensors);
+	_chademo_se_vgpio_init(&self->_gpio);
+	_chademo_se_vpsu_init(&self->_psu);
+}
+
+/** Reads vgpio inputs and stores result into a destination `dst` */
+void chademo_se_get_vgpio_inputs(struct chademo_se *self,
+				 struct chademo_se_vgpio *dst)
+{
+	dst->in = self->_gpio.in;
+}
+
+/** Sets vgpio inputs from source `src` */
+void chademo_se_set_vgpio_inputs(struct chademo_se *self,
+				 struct chademo_se_vgpio *src)
+{
+	self->_gpio.in = src->in;
+}
+
+/** Gets vgpio outputs and stores result into a destination `dst` */
+void chademo_se_get_vgpio_outputs(struct chademo_se *self,
+				  struct chademo_se_vgpio *dst)
+{
+	dst->out = self->_gpio.out;
+}
+
+/** Sets vsensors inputs from source `src` */
+void chademo_se_set_vsensors_inputs(struct chademo_se *self,
+				    struct chademo_se_vsensors *src)
+{
+	self->_sensors = *src;
+}
+
+/** CAN2.0 frames from EV must go here.
+ *  Returns true if frame has been consumed.
+ *  Frame may not be consumed if charger is not in LISTEN mode. */
+bool chademo_se_push_vcan_frame(struct chademo_se *self,
+				struct chademo_se_can_frame *f)
+{
+	bool has_consumed_frame = false;
+
+	if (self->_can_rx.state ==
+	    (uint8_t)_CHADEMO_SE_VCAN_RX_STATE_LISTEN) {
+		_chademo_se_vcan_rx_unpack_frame(&self->_can_rx, f);
+
+		has_consumed_frame = true;
+	}
+
+	return has_consumed_frame;
+}
+
+/** CAN2.0 frames from charger emited here (popped from internal TX buffer).
+ *  Returns true if frame has been returned.
+ *  Frame may not be returned if internal buffer is empty. */
+bool chademo_se_pop_vcan_frame(struct chademo_se *self,
+			       struct chademo_se_can_frame *f)
+{
+	bool frame_available = false;
+
+	if (self->_can_tx.count > 0u) {
+		self->_can_tx.count--;
+
+		*f = self->_can_tx.frames[self->_can_tx.count];
+
+		frame_available = true;
+	}
+
+	return frame_available;
 }
 
 /** Main instance FSM. Must be called inside main loop. */
 enum chademo_se_event chademo_se_step(struct chademo_se *self,
 				      uint32_t delta_time_ms)
 {
-	struct  chademo_se_vio_can_dev *vcan  = &self->vio.can;
-	struct  chademo_se_vio_sensors *vsens = &self->vio.sensors;
-	struct  chademo_se_vio_gpio    *vgpio = &self->vio.gpio;
+	struct  _chademo_se_vcan_tx *tx = &self->_can_tx;
+	struct  _chademo_se_vcan_rx *rx = &self->_can_rx;
+
+	struct  chademo_se_vsensors *sensors = &self->_sensors;
+	struct  chademo_se_vgpio    *gpio    = &self->_gpio;
 
 	enum chademo_se_event event = CHADEMO_SE_EVENT_NONE;
+
+	_chademo_se_vcan_rx_step(rx, delta_time_ms);
 
 	/* State machine reflecs chademo charger control flow precisely */
 	switch (self->_state_cf) {
 	case _CHADEMO_SE_STATE_CF_AWAIT_CHARGE_START_BUTTON:
-		if (vgpio->in.bt_start != true) {
+		if (gpio->in.bt_start != true) {
 			break;
 		}
 
@@ -797,20 +765,20 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 		break;
 
 	case _CHADEMO_SE_STATE_CF_TRANSMIT_CHARGE_START_SIGNAL:
-		vgpio->out.sw_d1 = true; /* CONNECTOR PIN: 5 */
+		gpio->out.sw_d1 = true; /* CONNECTOR PIN: 5 */
 
 		/* _CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER INIT */
 		self->_state_cf =
 			_CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER;
 
-		_chademo_se_vio_can_rx_start(&vcan->_rx);
+		_chademo_se_vcan_rx_start(rx);
 		break;
 
 	case _CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER:
 		/* TODO timeout */
 
 		/* Await for all RX frames */
-		if (!vcan->_rx.has_frames) {
+		if (!rx->has_frames) {
 			break;
 		}
 
@@ -821,7 +789,7 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 		self->_state_cf =
 			_CHADEMO_SE_STATE_CF_PROCESS_INFO_BEFORE_CHARGING;
 
-		_chademo_se_vio_can_tx_start(&vcan->_tx);
+		_chademo_se_vcan_tx_start(tx);
 
 		break;
 
@@ -830,8 +798,8 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 
 		/* TODO more validation */
 
-		if ((vcan->_rx.h100.max_battery_voltage_V >
-		     vcan->_tx.h108.avail_output_voltage_V)) {
+		if ((rx->h100.max_battery_voltage_V >
+		     tx->h108.avail_output_voltage_V)) {
 			    /* TODO terminate */
 		}
 
@@ -847,7 +815,7 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 
 	case _CHADEMO_SE_STATE_CF_LOCK_CHARHING_CONNECTOR:
 		/* Wait for vehicle readiness */
-		if (vgpio->in.oc_j != true) { /* CONNECTOR PIN: 4 */
+		if (gpio->in.oc_j != true) { /* CONNECTOR PIN: 4 */
 			break;
 		}
 
@@ -859,7 +827,7 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 		break;
 
 	case _CHADEMO_SE_STATE_CF_CHECK_EV_CONTACTORS_ARE_OPEN:
-		if (vsens->out_terminals_voltage_V >= 10u) {
+		if (sensors->out_terminals_voltage_V >= 10u) {
 			/* TODO terminate */
 			break;
 		}
@@ -885,7 +853,7 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 		break;
 	}
 
-	_chademo_se_vio_step(&self->vio, delta_time_ms);
+	_chademo_se_vcan_tx_step(tx, delta_time_ms);
 
 	return event;
 }
