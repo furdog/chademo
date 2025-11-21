@@ -274,8 +274,7 @@ void _chademo_se_vcan_tx_init(struct _chademo_se_vcan_tx *self)
 	self->timer_ms = 0u;
 }
 
-void _chademo_se_vcan_tx_pack_frames(
-				       struct _chademo_se_vcan_tx *self)
+void _chademo_se_vcan_tx_pack_frames(struct _chademo_se_vcan_tx *self)
 {
 	struct chademo_se_can_frame *f;
 
@@ -536,16 +535,16 @@ enum chademo_se_vpsu_flags_fault {
 /** Params that must be set by chademo_se (READ only).
  *  User must read these and map them TO PSU hardware. */
 struct chademo_se_vpsu_config {
-	uint16_t set_voltage_dc_V;
-	uint8_t  set_current_dc_A;
+	uint16_t set_voltage_dc_V; /**< Voltage point set by chademo_se */
+	uint8_t  set_current_dc_A; /**< Current point set by chademo_se */
 };
 
 
 /** Params that must be set by external PSU hardware.
  *  User must map theese FROM real PSU hardware. */
 struct chademo_se_vpsu_outputs {
-	uint16_t voltage_dc_V;
-	uint8_t  current_dc_A;
+	uint16_t voltage_dc_V; /**< Voltage measurements on the PSU side */
+	uint8_t  current_dc_A; /**< Current measurements on the PSU side */
 };
 
 /** Virtual PSU used internally by chademo_se. */
@@ -631,7 +630,10 @@ enum _chademo_se_state_cf {
 	_CHADEMO_SE_STATE_CF_PROCESS_INFO_BEFORE_CHARGING,
 	_CHADEMO_SE_STATE_CF_LOCK_CHARHING_CONNECTOR,
 	_CHADEMO_SE_STATE_CF_CHECK_EV_CONTACTORS_ARE_OPEN,
-	_CHADEMO_SE_STATE_CF_INSULATION_TEST_ON_DC_CIRCUIT
+	_CHADEMO_SE_STATE_CF_INSULATION_TEST_ON_DC_CIRCUIT,
+	_CHADEMO_SE_STATE_CF_CHECK_TERMINATION_OF_INSULATION_TEST,
+	_CHADEMO_SE_STATE_CF_TRANSMIT_SIGNAL_OF_CHARGER_SETUP_COMPLETION,
+	_CHADEMO_SE_STATE_CF_START_CHARGING_CURRENT_OUTPUT
 };
 
 /** Events emited by main instance FSM */
@@ -751,6 +753,7 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 
 	/* State machine reflecs chademo charger control flow precisely */
 	switch (self->_state_cf) {
+	/* "Charge start button" ON */
 	case _CHADEMO_SE_STATE_CF_AWAIT_CHARGE_START_BUTTON:
 		if (gpio->in.bt_start != true) {
 			break;
@@ -764,6 +767,7 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 
 		break;
 
+	/* Transmit charge start signal */
 	case _CHADEMO_SE_STATE_CF_TRANSMIT_CHARGE_START_SIGNAL:
 		gpio->out.sw_d1 = true; /* CONNECTOR PIN: 5 */
 
@@ -774,6 +778,8 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 		_chademo_se_vcan_rx_start(rx);
 		break;
 
+	/* Receive initial vehicle CAN data and
+	   transmit charger CAN data in return */
 	case _CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER:
 		/* TODO timeout */
 
@@ -793,6 +799,9 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 
 		break;
 
+	/* Process the information for charge control
+	   before charging (Battery compatibility, charging
+	   time calculation etc.) */
 	case _CHADEMO_SE_STATE_CF_PROCESS_INFO_BEFORE_CHARGING:
 		/* See A.7.2.7.2 */
 
@@ -813,6 +822,7 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 
 		break;
 
+	/* Lock charging connector */
 	case _CHADEMO_SE_STATE_CF_LOCK_CHARHING_CONNECTOR:
 		/* Wait for vehicle readiness */
 		if (gpio->in.oc_j != true) { /* CONNECTOR PIN: 4 */
@@ -826,9 +836,11 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 			_CHADEMO_SE_STATE_CF_CHECK_EV_CONTACTORS_ARE_OPEN;
 		break;
 
+	/* Check that EV contactors are surely opened
+	   (Voltage on output terminals is less than 10V.) */
 	case _CHADEMO_SE_STATE_CF_CHECK_EV_CONTACTORS_ARE_OPEN:
 		if (sensors->out_terminals_voltage_V >= 10u) {
-			/* TODO terminate */
+			/* TODO terminate or wait ??? */
 			break;
 		}
 
@@ -840,7 +852,43 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 
 		break;
 
+	/* Insulation test on output DC circuit */
 	case _CHADEMO_SE_STATE_CF_INSULATION_TEST_ON_DC_CIRCUIT:
+		/* Insulation test is mostly transparent for the vehicle.
+		 * We might skip this step for the future. */
+		/* TODO implement */
+
+	   /* _CHADEMO_SE_STATE_CF_CHECK_TERMINATION_OF_INSULATION_TEST INIT */
+		self->_state_cf =
+		     _CHADEMO_SE_STATE_CF_CHECK_TERMINATION_OF_INSULATION_TEST;
+		break;
+
+	/* Check the termination of insulation test
+	   (Voltage on output terminals is less than 20V.) */
+	case _CHADEMO_SE_STATE_CF_CHECK_TERMINATION_OF_INSULATION_TEST:
+		if (sensors->out_terminals_voltage_V >= 20u) {
+			/* TODO terminate or wait ??? */
+			break;
+		}
+
+    /* _CHADEMO_SE_STATE_CF_TRANSMIT_SIGNAL_OF_CHARGER_SETUP_COMPLETION INIT */
+		self->_state_cf =
+	      _CHADEMO_SE_STATE_CF_TRANSMIT_SIGNAL_OF_CHARGER_SETUP_COMPLETION;
+
+		break;
+
+	/* Transmit the signal of charger setup completion */
+	case _CHADEMO_SE_STATE_CF_TRANSMIT_SIGNAL_OF_CHARGER_SETUP_COMPLETION:
+		gpio->out.sw_d2 = true; /* CONNECTOR PIN: 10 */
+
+		/* _CHADEMO_SE_STATE_CF_START_CHARGING_CURRENT_OUTPUT INIT */
+		self->_state_cf =
+		     _CHADEMO_SE_STATE_CF_START_CHARGING_CURRENT_OUTPUT;
+		break;
+
+	/* Start charging current output */
+	case _CHADEMO_SE_STATE_CF_START_CHARGING_CURRENT_OUTPUT:
+		/* TODO implement */
 		break;
 
 	default:
