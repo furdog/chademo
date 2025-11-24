@@ -509,49 +509,52 @@ void _chademo_se_vsensors_init(struct chademo_se_vsensors *self)
 }
 
 /******************************************************************************
- * CHADEMO_SE VIRTUAL POWER SUPPLY UNIT (TODO rename to PSU controller, psuctl)
+ * CHADEMO_SE POWER SUPPLY UNIT CONTROLLER (controls external PSU)
  *****************************************************************************/
-enum chademo_se_vpsu_event {
-	/** No events emited by virtual PSU controller */
-	CHADEMO_SE_VPSU_EVENT_NONE,
+/** Events emited by PSU controller */
+enum chademo_se_psuctl_event {
+	/** No events emited by PSU controller */
+	CHADEMO_SE_PSUCTL_EVENT_NONE,
 
 	/** Virtual PSU controller awaits inputs to be configured */
-	CHADEMO_SE_VPSU_EVENT_PLEASE_PROVIDE_INPUTS,
+	CHADEMO_SE_PSUCTL_EVENT_PLEASE_PROVIDE_INPUTS,
 
 	/** Virtual PSU controller tells that PSU can be powered */
-	CHADEMO_SE_VPSU_EVENT_PSU_CAN_BE_POWERED,
+	CHADEMO_SE_PSUCTL_EVENT_PSU_CAN_BE_POWERED,
 
 	/** Virtual PSU controller tells that PSU can provide power */
-	CHADEMO_SE_VPSU_EVENT_PSU_CAN_PROVIDE_POWER,
+	CHADEMO_SE_PSUCTL_EVENT_PSU_CAN_PROVIDE_POWER,
 
 	/** Virtual PSU controller tells that PSU must be shutdown */
-	CHADEMO_SE_VPSU_EVENT_PSU_MUST_SHUTDOWN
+	CHADEMO_SE_PSUCTL_EVENT_PSU_MUST_SHUTDOWN
 };
 
-/** Virtual PSU internal state */
-enum _chademo_se_vpsu_state {
-	_CHADEMO_SE_VPSU_STATE_IDLE,    /**< Do nothing */
-	_CHADEMO_SE_VPSU_STATE_CONFIG,  /**< Config state (for USER) */
-	_CHADEMO_SE_VPSU_STATE_BOOT,    /**< Boot (softstart, etc) */
-	_CHADEMO_SE_VPSU_STATE_RUNNING, /**< Active current output */
-	_CHADEMO_SE_VPSU_STATE_SHUTDOWN /**< Must drop current */
+/** PSU controller internal state */
+enum _chademo_se_psuctl_state {
+	_CHADEMO_SE_PSUCTL_STATE_IDLE,    /**< Do nothing */
+	_CHADEMO_SE_PSUCTL_STATE_CONFIG,  /**< Config state (for USER) */
+	_CHADEMO_SE_PSUCTL_STATE_BOOT,    /**< Boot (softstart, etc) */
+	_CHADEMO_SE_PSUCTL_STATE_RUNNING, /**< Active current output */
+	_CHADEMO_SE_PSUCTL_STATE_SHUTDOWN /**< Must drop current */
 };
 
-/** Virtual PSU fault flags.
- *  User must map these faults FROM external PSU hardware. */
-enum chademo_se_vpsu_flags_fault {
-	CHADEMO_SE_VPSU_FLAGS_FAULT_OVERVOLTAGE = 1u,
-	CHADEMO_SE_VPSU_FLAGS_FAULT_OVERCURRENT = 2u,
-	CHADEMO_SE_VPSU_FLAGS_FAULT_OVERTEMP    = 4u,
-	CHADEMO_SE_VPSU_FLAGS_FAULT_OTHER       = 8u,
+/** PSU controller fault flags (must be mapped from real PSU by USER) */
+enum chademo_se_psuctl_flags_fault {
+	CHADEMO_SE_PSUCTL_FLAGS_FAULT_OVERVOLTAGE = 1u,
+	CHADEMO_SE_PSUCTL_FLAGS_FAULT_OVERCURRENT = 2u,
+	CHADEMO_SE_PSUCTL_FLAGS_FAULT_OVERTEMP    = 4u,
+	CHADEMO_SE_PSUCTL_FLAGS_FAULT_MALFUNCTION = 8u,
+	CHADEMO_SE_PSUCTL_FLAGS_FAULT_OTHER       = 16u,
 
 	/** API fault, set by default (indicates user API usage error) */
-	CHADEMO_SE_VPSU_FLAGS_FAULT_API         = 16u
+	CHADEMO_SE_PSUCTL_FLAGS_FAULT_API         = 16u
 };
 
 /** Params that must be set by external PSU hardware.
  *  User must map theese FROM real PSU hardware. */
-struct chademo_se_vpsu_inputs {
+struct chademo_se_psuctl_inputs {
+	bool ready_for_operation; /**< USER must tell if PSU is ready */
+
 	uint16_t voltage_dc_V; /**< Voltage measurements providen by USER */
 	uint8_t  current_dc_A; /**< Current measurements providen by USER */
 
@@ -559,25 +562,25 @@ struct chademo_se_vpsu_inputs {
 };
 
 /** Params that must be set by chademo_se (READ only).
- *  User must read these and map them TO PSU hardware. */
-struct chademo_se_vpsu_outputs {
-	uint8_t event; /** Last event */
+ *  User must read these and map them to PSU hardware. */
+struct chademo_se_psuctl_outputs {
+	uint8_t event; /**< Last event emited by psuctl */
 
 	uint16_t set_voltage_dc_V; /**< Voltage point set by chademo_se */
 	uint8_t  set_current_dc_A; /**< Current point set by chademo_se */
 };
 
-/** Virtual PSU used internally by chademo_se. */
-struct _chademo_se_vpsu {
+/** PSU controller used internally by chademo_se. */
+struct _chademo_se_psuctl {
 	uint8_t state;
 
-	struct chademo_se_vpsu_inputs  inputs;
-	struct chademo_se_vpsu_outputs outputs;
+	struct chademo_se_psuctl_inputs  inputs;
+	struct chademo_se_psuctl_outputs outputs;
 };
 
-void _chademo_se_vpsu_init(struct _chademo_se_vpsu *self)
+void _chademo_se_psuctl_init(struct _chademo_se_psuctl *self)
 {
-	self->state = _CHADEMO_SE_VPSU_STATE_IDLE;
+	self->state = _CHADEMO_SE_PSUCTL_STATE_IDLE;
 
 	self->outputs.set_voltage_dc_V = 0u;
 	self->outputs.set_current_dc_A = 0u;
@@ -587,43 +590,77 @@ void _chademo_se_vpsu_init(struct _chademo_se_vpsu *self)
 	self->inputs.current_dc_A = 0xFF;
 
 	/** Set API fault by default. */
-	self->inputs.flags_fault = CHADEMO_SE_VPSU_FLAGS_FAULT_API;
+	self->inputs.flags_fault = CHADEMO_SE_PSUCTL_FLAGS_FAULT_API;
 }
 
-void _chademo_se_vpsu_start(struct _chademo_se_vpsu *self)
+void _chademo_se_psuctl_start(struct _chademo_se_psuctl *self)
 {
-	_chademo_se_vpsu_init(self);
+	_chademo_se_psuctl_init(self);
 
-	self->state = _CHADEMO_SE_VPSU_STATE_CONFIG;
+	self->state = _CHADEMO_SE_PSUCTL_STATE_CONFIG;
 }
 
-void _chademo_se_vpsu_stop(struct _chademo_se_vpsu *self)
+void _chademo_se_psuctl_stop(struct _chademo_se_psuctl *self)
 {
-	if ((self->state > (uint8_t)_CHADEMO_SE_VPSU_STATE_IDLE) &&
-	    (self->state < (uint8_t)_CHADEMO_SE_VPSU_STATE_SHUTDOWN)) {
-		self->state = _CHADEMO_SE_VPSU_STATE_SHUTDOWN;
+	if ((self->state > (uint8_t)_CHADEMO_SE_PSUCTL_STATE_IDLE) &&
+	    (self->state < (uint8_t)_CHADEMO_SE_PSUCTL_STATE_SHUTDOWN)) {
+		self->state = _CHADEMO_SE_PSUCTL_STATE_SHUTDOWN;
 	}
 }
 
-void _chademo_se_vpsu_detect_faults(struct _chademo_se_vpsu *self)
+void _chademo_se_psuctl_detect_faults(struct _chademo_se_psuctl *self)
 {
 	if (self->inputs.flags_fault > 0u) {
-		self->state = _CHADEMO_SE_VPSU_STATE_SHUTDOWN;
-		self->outputs.event = CHADEMO_SE_VPSU_EVENT_PSU_MUST_SHUTDOWN;
+		self->state = _CHADEMO_SE_PSUCTL_STATE_SHUTDOWN;
+		self->outputs.event =
+			CHADEMO_SE_PSUCTL_EVENT_PSU_MUST_SHUTDOWN;
 	}
 }
 
-void _chademo_se_vpsu_step(struct _chademo_se_vpsu *self)
+void _chademo_se_psuctl_step(struct _chademo_se_psuctl *self,
+			     uint32_t delta_time_ms)
 {
+	(void)delta_time_ms;
+
 	switch (self->state) {
-	case _CHADEMO_SE_VPSU_STATE_IDLE:
+	case _CHADEMO_SE_PSUCTL_STATE_IDLE:
 		break;
 
-	case _CHADEMO_SE_VPSU_STATE_CONFIG:
+	case _CHADEMO_SE_PSUCTL_STATE_CONFIG:
 		self->outputs.event =
-			CHADEMO_SE_VPSU_EVENT_PLEASE_PROVIDE_INPUTS;
+			CHADEMO_SE_PSUCTL_EVENT_PLEASE_PROVIDE_INPUTS;
 
 		/* TODO check inputs */
+
+		/* _CHADEMO_SE_PSUCTL_STATE_BOOT INIT */
+		self->state = _CHADEMO_SE_PSUCTL_STATE_BOOT;
+		break;
+
+	case _CHADEMO_SE_PSUCTL_STATE_BOOT:
+		_chademo_se_psuctl_detect_faults(self);
+
+		/* Wait user to acknowledge full readiness */
+		if (self->inputs.ready_for_operation) {
+			break;
+		}
+
+		self->outputs.event =
+			CHADEMO_SE_PSUCTL_EVENT_PSU_CAN_PROVIDE_POWER;
+
+		/* _CHADEMO_SE_PSUCTL_STATE_RUNNING INIT */
+		self->state = _CHADEMO_SE_PSUCTL_STATE_RUNNING;
+		break;
+
+	case _CHADEMO_SE_PSUCTL_STATE_RUNNING:
+		_chademo_se_psuctl_detect_faults(self);
+		break;
+
+	case _CHADEMO_SE_PSUCTL_STATE_SHUTDOWN:
+		self->outputs.event =
+			CHADEMO_SE_PSUCTL_EVENT_PSU_MUST_SHUTDOWN;
+
+		/* _CHADEMO_SE_PSUCTL_STATE_IDLE INIT */
+		self->state = _CHADEMO_SE_PSUCTL_STATE_IDLE;
 		break;
 
 	default:
@@ -713,7 +750,7 @@ struct chademo_se {
 	struct  _chademo_se_vcan_rx  _can_rx;
 	struct   chademo_se_vsensors _sensors;
 	struct   chademo_se_vgpio    _gpio;
-	struct  _chademo_se_vpsu     _psu;
+	struct  _chademo_se_psuctl   _psuctl;
 };
 
 /******************************************************************************
@@ -728,7 +765,7 @@ void chademo_se_init(struct chademo_se *self)
 	_chademo_se_vcan_rx_init(&self->_can_rx);
 	_chademo_se_vsensors_init(&self->_sensors);
 	_chademo_se_vgpio_init(&self->_gpio);
-	_chademo_se_vpsu_init(&self->_psu);
+	_chademo_se_psuctl_init(&self->_psuctl);
 }
 
 /** Reads vgpio inputs and stores result into a destination `dst` */
@@ -759,11 +796,11 @@ void chademo_se_set_vsensors_inputs(struct chademo_se *self,
 	self->_sensors = *src;
 }
 
-/** Gets vpsu outputs and stores result into a destination `dst` */
-void chademo_se_get_vpusu_outputs(struct chademo_se *self,
-				  struct chademo_se_vpsu_outputs *dst)
+/** Gets psuctl outputs and stores result into a destination `dst` */
+void chademo_se_get_psuctl_outputs(struct chademo_se *self,
+				   struct chademo_se_psuctl_outputs *dst)
 {
-	*dst = self->_psu.outputs;
+	*dst = self->_psuctl.outputs;
 }
 
 /** CAN2.0 frames from EV must go here.
@@ -813,7 +850,7 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 	struct  chademo_se_vsensors *sensors = &self->_sensors;
 	struct  chademo_se_vgpio    *gpio    = &self->_gpio;
 
-	struct  _chademo_se_vpsu *psu = &self->_psu;
+	struct  _chademo_se_psuctl *psuctl = &self->_psuctl;
 
 	enum chademo_se_event event = CHADEMO_SE_EVENT_NONE;
 
@@ -834,7 +871,7 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 			_CHADEMO_SE_STATE_CF_TRANSMIT_CHARGE_START_SIGNAL;
 
 		/* We can start PSU to prepare for charging. */
-		_chademo_se_vpsu_start(psu);
+		_chademo_se_psuctl_start(psuctl);
 
 		break;
 
@@ -960,11 +997,11 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 		}
 
 		/* Try to equalize PSU voltage (if that's required) */
-		psu->outputs.set_voltage_dc_V =
+		psuctl->outputs.set_voltage_dc_V =
 			sensors->out_terminals_voltage_V;
 
 		/* Break if PSU still booting, or... Whatever? */
-		if (psu->state != (uint8_t)_CHADEMO_SE_VPSU_STATE_RUNNING) {
+		if (psuctl->state != (uint8_t)_CHADEMO_SE_PSUCTL_STATE_RUNNING) {
 			break;
 		}
 
