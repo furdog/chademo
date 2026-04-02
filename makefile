@@ -1,4 +1,7 @@
-.PHONY: all docs misra test clean
+# makefile version: v0.1.1
+
+# Always rebuild
+.PHONY: all misra test coverage docs clean
 
 # Variables
 MISRA_REPO := https://github.com/furdog/MISRA.git
@@ -10,7 +13,10 @@ TEST_OUTPUT := test_out
 DOXYFILE := docs/Doxyfile
 
 # Default target
-all: misra test docs
+all: format misra test coverage docs
+
+format:
+	clang-format -style=file:linux_kernel.clang-format -i $(addprefix *,.h .c) || true
 
 # Target for running MISRA checks and setup
 misra: $(MISRA_SCRIPT)
@@ -44,12 +50,30 @@ test: $(SOURCE_FILES)
 	@echo "--- Compiling and running tests ---"
 	# Compile the test source file(s)
 	gcc $(SOURCE_FILES) -std=c89 -pedantic -Wall -Wextra -g \
-	  -fsanitize=undefined -fsanitize-undefined-trap-on-error \
+	  -fsanitize=undefined -fsanitize-undefined-trap-on-error -fanalyzer \
 	  -o $(TEST_OUTPUT)
 	# Run the compiled test executable
 	./$(TEST_OUTPUT)
 	# Clean up the test executable
 	@rm -f $(TEST_OUTPUT)
+
+coverage:
+	@echo "--- Cleaning old coverage data ---"
+	rm -rf coverage
+
+	@echo "--- Creating coverage report ---"
+	mkdir -p coverage
+
+	# Compile the test source file(s)
+	gcc $(SOURCE_FILES) -std=c89 -pedantic -Wall -Wextra -g \
+	  -fsanitize=undefined -fsanitize-undefined-trap-on-error -fanalyzer \
+	  --coverage -o coverage/$(TEST_OUTPUT)
+
+	# Run the compiled test executable
+	cd coverage && ./$(TEST_OUTPUT)
+
+	cd coverage && lcov --capture --directory . --output-file coverage.info --rc lcov_branch_coverage=1
+	cd coverage && genhtml --legend --rc genhtml_branch_coverage=1 coverage.info -o html
 
 # Target for generating documentation
 docs: $(DOXYFILE)
@@ -64,3 +88,4 @@ clean:
 	@rm -rf $(MISRA_DIR) # Remove the whole MISRA repo to reset
 	@rm -f $(TEST_OUTPUT)
 	@rm -rf docs/html docs/latex # Add other Doxygen output directories as needed
+	@rm -rf coverage

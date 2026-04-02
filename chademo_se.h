@@ -3,7 +3,7 @@
  * @brief CHAdeMO power supply equipment (SE) Logic (Hardware-Agnostic)
  *
  * This file contains the software implementation of the CHAdeMO EVSE logic.
- * The design is hardware-agnostic, requiring an external adaptation layer 
+ * The design is hardware-agnostic, requiring an external adaptation layer
  * for hardware interaction.
  *
  * **Reference Specification:**
@@ -24,14 +24,14 @@
  * **Conventions:**
  * C89, Linux kernel style, MISRA, rule of 10, No hardware specific code,
  * only generic C and some binding layer. Be extra specific about types.
- * 
+ *
  * Scientific units where posible at end of the names, for example:
  * - timer_10s (timer_10s has a resolution of 10s per bit)
  * - power_150w (power 150W per bit or 0.15kw per bit)
  *
  * Keep variables without units if they're unknown or not specified or hard
  * to define with short notation.
- * 
+ *
  * ```LICENSE
  * Copyright (c) 2025 furdog <https://github.com/furdog>
  *
@@ -39,22 +39,22 @@
  * ```
  */
 
-#ifndef   CHADEMO_SE_DEFINITION_HEADER_GUARD
-#define   CHADEMO_SE_DEFINITION_HEADER_GUARD
+#ifndef CHADEMO_SE_DEFINITION_HEADER_GUARD
+#define CHADEMO_SE_DEFINITION_HEADER_GUARD
 
 #include <stdbool.h>
 #include <stdint.h>
 
 /* Skip certain definitions if EV header is already included */
-#if       !defined(CHADEMO_EV_DEFINITION_HEADER_GUARD)
+#if !defined(CHADEMO_EV_DEFINITION_HEADER_GUARD)
 /******************************************************************************
  * _CHADEMO_XX DEFINITIONS (COMMON FOR EV AND SE)
  *****************************************************************************/
 /** CAN2.0 simplified frame structure. */
 struct chademo_xx_can_frame {
 	uint32_t id;	  /**< Frame identifier. */
-	uint8_t  len;	  /**< Data length code (0-8). */
-	uint8_t  data[8]; /**< Frame data payload. */
+	uint8_t	 len;	  /**< Data length code (0-8). */
+	uint8_t	 data[8]; /**< Frame data payload. */
 };
 
 /** Label for chademo_xx_can_frame */
@@ -120,19 +120,17 @@ enum _chademo_ev_field_h102_status {
 };
 
 /** H100 data structure defined by standard */
-struct _chademo_ev_h100
-{
+struct _chademo_ev_h100 {
 	/* uint8_t  reserved; */
 	/* uint8_t  reserved; */
 	/* uint8_t  reserved; */
 	/* uint8_t  reserved; */
 	uint16_t max_battery_voltage_V;
 	uint8_t	 charged_rate_ref_const; /* 1% / bit, 100% (fixed) = 0x64 */
-	/* uint8_t  reserved; */
+					 /* uint8_t  reserved; */
 };
 
-struct _chademo_ev_h101
-{
+struct _chademo_ev_h101 {
 	/* uint8_t  reserved; */
 	uint8_t max_charge_time_10s;
 	uint8_t max_charge_time_60s;
@@ -141,8 +139,7 @@ struct _chademo_ev_h101
 	uint16_t total_cap_of_battery_100wh; /* 0.1 kWh/bit, 0–6553.5 kWh */
 };
 
-struct _chademo_ev_h102
-{
+struct _chademo_ev_h102 {
 	uint8_t	 control_protocol_number;
 	uint16_t target_battery_voltage;
 	uint8_t	 charging_current_request;
@@ -196,27 +193,25 @@ enum _chademo_se_field_h109_status {
 };
 
 /** H108 data structure defined by standard */
-struct _chademo_se_h108
-{
-	bool     welding_detection_support;
+struct _chademo_se_h108 {
+	bool	 welding_detection_support;
 	uint16_t avail_output_voltage_V;
-	uint8_t  avail_output_current_A;
+	uint8_t	 avail_output_current_A;
 	uint16_t threshold_voltage_V;
 	/* uint8_t  reserved; */
 	/* uint8_t  reserved; */
 };
 
 /** H109 data structure defined by standard */
-struct _chademo_se_h109
-{
+struct _chademo_se_h109 {
 	/* Transported via h109 */
-	uint8_t  control_protocol_number;
+	uint8_t	 control_protocol_number;
 	uint16_t present_output_voltage_V;
-	uint8_t  present_output_current_A;
+	uint8_t	 present_output_current_A;
 	/* uint8_t  _reserved; */
-	uint8_t  status;
-	uint8_t  remaining_charge_time_10s; /* 10s/bit */
-	uint8_t  remaining_charge_time_60s; /* 60s/bit */
+	uint8_t status;
+	uint8_t remaining_charge_time_10s; /* 10s/bit */
+	uint8_t remaining_charge_time_60s; /* 60s/bit */
 };
 #endif /* !defined(CHADEMO_EV_HEADER__) */
 
@@ -230,8 +225,7 @@ enum _chademo_se_vcan_tx_state {
 };
 
 /** Structure that represents CAN2.0 TX */
-struct _chademo_se_vcan_tx
-{
+struct _chademo_se_vcan_tx {
 	uint8_t state;
 
 	/* TX-side messages */
@@ -259,12 +253,12 @@ void _chademo_se_vcan_tx_init(struct _chademo_se_vcan_tx *self)
 	self->h108.welding_detection_support = false;
 	self->h108.avail_output_voltage_V    = 0u;
 	self->h108.avail_output_current_A    = 0u;
-	self->h108.threshold_voltage_V       = 0u;
+	self->h108.threshold_voltage_V	     = 0u;
 
 	self->h109.control_protocol_number   = 0u;
 	self->h109.present_output_voltage_V  = 0u;
 	self->h109.present_output_current_A  = 0u;
-	self->h109.status                    = 0u;
+	self->h109.status		     = 0u;
 	self->h109.remaining_charge_time_10s = 0xFFu;
 	self->h109.remaining_charge_time_60s = 0xFFu;
 
@@ -281,21 +275,21 @@ void _chademo_se_vcan_tx_pack_frames(struct _chademo_se_vcan_tx *self)
 	/* We transmit exactly two frames. */
 	self->count = 2u;
 
-	f = &self->frames[0];
-	f->id = _CHADEMO_SE_CAN_FRAME_ID_H108;
-	f->len = 8u;
-	f->data[0] =  self->h108.welding_detection_support;
+	f	   = &self->frames[0];
+	f->id	   = _CHADEMO_SE_CAN_FRAME_ID_H108;
+	f->len	   = 8u;
+	f->data[0] = self->h108.welding_detection_support;
 	f->data[1] = (self->h108.avail_output_voltage_V & 0x00FFu) >> 0u;
 	f->data[2] = (self->h108.avail_output_voltage_V & 0xFF00u) >> 8u;
-	f->data[3] =  self->h108.avail_output_current_A;
+	f->data[3] = self->h108.avail_output_current_A;
 	f->data[4] = (self->h108.threshold_voltage_V & 0x00FFu) >> 0u;
 	f->data[5] = (self->h108.threshold_voltage_V & 0xFF00u) >> 8u;
 	f->data[6] = 0x00u;
 	f->data[7] = 0x00u;
 
-	f = &self->frames[1];
-	f->id = _CHADEMO_SE_CAN_FRAME_ID_H109;
-	f->len = 8u;
+	f	   = &self->frames[1];
+	f->id	   = _CHADEMO_SE_CAN_FRAME_ID_H109;
+	f->len	   = 8u;
 	f->data[0] = self->h109.control_protocol_number;
 	f->data[1] = (self->h109.present_output_voltage_V & 0x00FFu) >> 0u;
 	f->data[2] = (self->h109.present_output_voltage_V & 0xFF00u) >> 8u;
@@ -321,7 +315,7 @@ void _chademo_se_vcan_tx_stop(struct _chademo_se_vcan_tx *self)
 }
 
 void _chademo_se_vcan_tx_step(struct _chademo_se_vcan_tx *self,
-				     uint32_t delta_time_ms)
+			      uint32_t			  delta_time_ms)
 {
 	/* TODO check for untransmitted frames */
 
@@ -330,7 +324,7 @@ void _chademo_se_vcan_tx_step(struct _chademo_se_vcan_tx *self,
 		_chademo_se_vcan_tx_pack_frames(self);
 
 		/* _CHADEMO_SE_VCAN_TX_STATE_DELAY INIT */
-		self->state = _CHADEMO_SE_VCAN_TX_STATE_DELAY;
+		self->state    = _CHADEMO_SE_VCAN_TX_STATE_DELAY;
 		self->timer_ms = 0u;
 		break;
 
@@ -357,7 +351,7 @@ void _chademo_se_vcan_tx_step(struct _chademo_se_vcan_tx *self,
 		 * start again until fault is diagnosed properly.
 		 *
 		 * TODO */
-		 break;
+		break;
 	}
 }
 
@@ -370,8 +364,7 @@ enum _chademo_se_vcan_rx_state {
 };
 
 /** Structure that represents CAN2.0 RX */
-struct _chademo_se_vcan_rx
-{
+struct _chademo_se_vcan_rx {
 	uint8_t state;
 
 	struct _chademo_ev_h100 h100;
@@ -399,25 +392,25 @@ void _chademo_se_vcan_rx_init(struct _chademo_se_vcan_rx *self)
 	self->h100.max_battery_voltage_V  = 0x00u;
 	self->h100.charged_rate_ref_const = 0x00u;
 
-	self->h101.max_charge_time_10s        = 0x00u;
-	self->h101.max_charge_time_60s        = 0x00u;
-	self->h101.est_charge_time_60s        = 0x00u;
+	self->h101.max_charge_time_10s	      = 0x00u;
+	self->h101.max_charge_time_60s	      = 0x00u;
+	self->h101.est_charge_time_60s	      = 0x00u;
 	self->h101.total_cap_of_battery_100wh = 0x00u;
 
 	self->h102.control_protocol_number  = 0x00u;
 	self->h102.target_battery_voltage   = 0x00u;
 	self->h102.charging_current_request = 0x00u;
-	self->h102.fault                    = 0x00u;
-	self->h102.status                   = 0x00u;
-	self->h102.charged_rate             = 0x00u;
+	self->h102.fault		    = 0x00u;
+	self->h102.status		    = 0x00u;
+	self->h102.charged_rate		    = 0x00u;
 
 	/* TODO implement properly */
-	self->timer_ms   = 0u;
+	self->timer_ms	 = 0u;
 	self->recv_flags = 0u;
 	self->has_frames = false;
 }
 
-void _chademo_se_vcan_rx_unpack_frame(struct _chademo_se_vcan_rx *self,
+void _chademo_se_vcan_rx_unpack_frame(struct _chademo_se_vcan_rx  *self,
 				      struct chademo_se_can_frame *f)
 {
 	bool valid_frame = true;
@@ -444,13 +437,13 @@ void _chademo_se_vcan_rx_unpack_frame(struct _chademo_se_vcan_rx *self,
 		break;
 
 	case _CHADEMO_EV_CAN_FRAME_ID_H102:
-		self->h102.control_protocol_number  = f->data[0];
-		self->h102.target_battery_voltage   = f->data[1] << 0u;
-		self->h102.target_battery_voltage  |= f->data[2] << 8u;
-		self->h102.charging_current_request = f->data[3];
-		self->h102.fault                    = f->data[4];
-		self->h102.status                   = f->data[5];
-		self->h102.charged_rate             = f->data[6];
+		self->h102.control_protocol_number   = f->data[0];
+		self->h102.target_battery_voltage    = f->data[1] << 0u;
+		self->h102.target_battery_voltage   |= f->data[2] << 8u;
+		self->h102.charging_current_request  = f->data[3];
+		self->h102.fault		     = f->data[4];
+		self->h102.status		     = f->data[5];
+		self->h102.charged_rate		     = f->data[6];
 
 		self->recv_flags |= (1u << 2u);
 		break;
@@ -463,7 +456,7 @@ void _chademo_se_vcan_rx_unpack_frame(struct _chademo_se_vcan_rx *self,
 	/* TODO reset timer only if all frames have been get */
 	if (valid_frame && (self->recv_flags == ((1u << 3u) - 1u))) {
 		self->has_frames = true;
-		self->timer_ms   = 0u;
+		self->timer_ms	 = 0u;
 	}
 }
 
@@ -484,7 +477,7 @@ void _chademo_se_vcan_rx_stop(struct _chademo_se_vcan_rx *self)
 }
 
 void _chademo_se_vcan_rx_step(struct _chademo_se_vcan_rx *self,
-			     uint32_t delta_time_ms)
+			      uint32_t			  delta_time_ms)
 {
 	(void)self;
 	(void)delta_time_ms;
@@ -531,9 +524,9 @@ enum chademo_se_psuctl_event {
 
 /** PSU controller internal state */
 enum _chademo_se_psuctl_state {
-	_CHADEMO_SE_PSUCTL_STATE_IDLE,    /**< Do nothing */
+	_CHADEMO_SE_PSUCTL_STATE_IDLE,	  /**< Do nothing */
 	_CHADEMO_SE_PSUCTL_STATE_CONFIG,  /**< Config state (for USER) */
-	_CHADEMO_SE_PSUCTL_STATE_BOOT,    /**< Boot (softstart, etc) */
+	_CHADEMO_SE_PSUCTL_STATE_BOOT,	  /**< Boot (softstart, etc) */
 	_CHADEMO_SE_PSUCTL_STATE_RUNNING, /**< Active current output */
 	_CHADEMO_SE_PSUCTL_STATE_SHUTDOWN /**< Must drop current */
 };
@@ -542,12 +535,12 @@ enum _chademo_se_psuctl_state {
 enum chademo_se_psuctl_flags_fault {
 	CHADEMO_SE_PSUCTL_FLAGS_FAULT_OVERVOLTAGE = 1u,
 	CHADEMO_SE_PSUCTL_FLAGS_FAULT_OVERCURRENT = 2u,
-	CHADEMO_SE_PSUCTL_FLAGS_FAULT_OVERTEMP    = 4u,
+	CHADEMO_SE_PSUCTL_FLAGS_FAULT_OVERTEMP	  = 4u,
 	CHADEMO_SE_PSUCTL_FLAGS_FAULT_MALFUNCTION = 8u,
-	CHADEMO_SE_PSUCTL_FLAGS_FAULT_OTHER       = 16u,
+	CHADEMO_SE_PSUCTL_FLAGS_FAULT_OTHER	  = 16u,
 
 	/** API fault, set by default (indicates user API usage error) */
-	CHADEMO_SE_PSUCTL_FLAGS_FAULT_API         = 16u
+	CHADEMO_SE_PSUCTL_FLAGS_FAULT_API = 16u
 };
 
 /** Params that must be set by external PSU hardware.
@@ -556,9 +549,9 @@ struct chademo_se_psuctl_inputs {
 	bool ready_for_operation; /**< USER must tell if PSU is ready */
 
 	uint16_t voltage_dc_V; /**< Voltage measurements providen by USER */
-	uint8_t  current_dc_A; /**< Current measurements providen by USER */
+	uint8_t	 current_dc_A; /**< Current measurements providen by USER */
 
-	uint8_t  flags_fault; /**< fault flags providen by USER */
+	uint8_t flags_fault; /**< fault flags providen by USER */
 };
 
 /** Params that must be set by chademo_se (READ only).
@@ -567,14 +560,14 @@ struct chademo_se_psuctl_outputs {
 	uint8_t event; /**< Last event emited by psuctl */
 
 	uint16_t set_voltage_dc_V; /**< Voltage point set by chademo_se */
-	uint8_t  set_current_dc_A; /**< Current point set by chademo_se */
+	uint8_t	 set_current_dc_A; /**< Current point set by chademo_se */
 };
 
 /** PSU controller used internally by chademo_se. */
 struct _chademo_se_psuctl {
 	uint8_t state;
 
-	struct chademo_se_psuctl_inputs  inputs;
+	struct chademo_se_psuctl_inputs	 inputs;
 	struct chademo_se_psuctl_outputs outputs;
 };
 
@@ -613,12 +606,12 @@ void _chademo_se_psuctl_detect_faults(struct _chademo_se_psuctl *self)
 	if (self->inputs.flags_fault > 0u) {
 		self->state = _CHADEMO_SE_PSUCTL_STATE_SHUTDOWN;
 		self->outputs.event =
-			CHADEMO_SE_PSUCTL_EVENT_PSU_MUST_SHUTDOWN;
+		    CHADEMO_SE_PSUCTL_EVENT_PSU_MUST_SHUTDOWN;
 	}
 }
 
 void _chademo_se_psuctl_step(struct _chademo_se_psuctl *self,
-			     uint32_t delta_time_ms)
+			     uint32_t			delta_time_ms)
 {
 	(void)delta_time_ms;
 
@@ -628,7 +621,7 @@ void _chademo_se_psuctl_step(struct _chademo_se_psuctl *self,
 
 	case _CHADEMO_SE_PSUCTL_STATE_CONFIG:
 		self->outputs.event =
-			CHADEMO_SE_PSUCTL_EVENT_PLEASE_PROVIDE_INPUTS;
+		    CHADEMO_SE_PSUCTL_EVENT_PLEASE_PROVIDE_INPUTS;
 
 		/* TODO check inputs */
 
@@ -645,7 +638,7 @@ void _chademo_se_psuctl_step(struct _chademo_se_psuctl *self,
 		}
 
 		self->outputs.event =
-			CHADEMO_SE_PSUCTL_EVENT_PSU_CAN_PROVIDE_POWER;
+		    CHADEMO_SE_PSUCTL_EVENT_PSU_CAN_PROVIDE_POWER;
 
 		/* _CHADEMO_SE_PSUCTL_STATE_RUNNING INIT */
 		self->state = _CHADEMO_SE_PSUCTL_STATE_RUNNING;
@@ -657,7 +650,7 @@ void _chademo_se_psuctl_step(struct _chademo_se_psuctl *self,
 
 	case _CHADEMO_SE_PSUCTL_STATE_SHUTDOWN:
 		self->outputs.event =
-			CHADEMO_SE_PSUCTL_EVENT_PSU_MUST_SHUTDOWN;
+		    CHADEMO_SE_PSUCTL_EVENT_PSU_MUST_SHUTDOWN;
 
 		/* _CHADEMO_SE_PSUCTL_STATE_IDLE INIT */
 		self->state = _CHADEMO_SE_PSUCTL_STATE_IDLE;
@@ -685,8 +678,8 @@ struct _chademo_se_vgpio_in {
 	/* Not a part of main CHAdeMO circuit
 	 * ( Colors: O - obligatory, R - recomended ): */
 	bool bt_emergency; /**< Button (O: red): emergency stop signal */
-	bool bt_start;     /**< Button (R: blue): charge start signal */
-	bool bt_stop;      /**< Button (R: green): charge stop signal */
+	bool bt_start;	   /**< Button (R: blue): charge start signal */
+	bool bt_stop;	   /**< Button (R: green): charge stop signal */
 };
 
 /** Virtual GPIO outputs.
@@ -697,8 +690,7 @@ struct _chademo_se_vgpio_out {
 };
 
 /** Virtual GPIO consist of inputs and outputs */
-struct chademo_se_vgpio
-{
+struct chademo_se_vgpio {
 	struct _chademo_se_vgpio_in  in;  /**< Input  virtual GPIO */
 	struct _chademo_se_vgpio_out out; /**< Output virtual GPIO */
 };
@@ -746,11 +738,11 @@ enum chademo_se_event {
 struct chademo_se {
 	enum _chademo_se_state_cf _state_cf;
 
-	struct  _chademo_se_vcan_tx  _can_tx;
-	struct  _chademo_se_vcan_rx  _can_rx;
-	struct   chademo_se_vsensors _sensors;
-	struct   chademo_se_vgpio    _gpio;
-	struct  _chademo_se_psuctl   _psuctl;
+	struct _chademo_se_vcan_tx _can_tx;
+	struct _chademo_se_vcan_rx _can_rx;
+	struct chademo_se_vsensors _sensors;
+	struct chademo_se_vgpio	   _gpio;
+	struct _chademo_se_psuctl  _psuctl;
 };
 
 /******************************************************************************
@@ -769,35 +761,35 @@ void chademo_se_init(struct chademo_se *self)
 }
 
 /** Reads vgpio inputs and stores result into a destination `dst` */
-void chademo_se_get_vgpio_inputs(struct chademo_se *self,
+void chademo_se_get_vgpio_inputs(struct chademo_se	 *self,
 				 struct chademo_se_vgpio *dst)
 {
 	dst->in = self->_gpio.in;
 }
 
 /** Sets vgpio inputs from source `src` */
-void chademo_se_set_vgpio_inputs(struct chademo_se *self,
+void chademo_se_set_vgpio_inputs(struct chademo_se	 *self,
 				 struct chademo_se_vgpio *src)
 {
 	self->_gpio.in = src->in;
 }
 
 /** Gets vgpio outputs and stores result into a destination `dst` */
-void chademo_se_get_vgpio_outputs(struct chademo_se *self,
+void chademo_se_get_vgpio_outputs(struct chademo_se	  *self,
 				  struct chademo_se_vgpio *dst)
 {
 	dst->out = self->_gpio.out;
 }
 
 /** Sets vsensors inputs from source `src` */
-void chademo_se_set_vsensors_inputs(struct chademo_se *self,
+void chademo_se_set_vsensors_inputs(struct chademo_se	       *self,
 				    struct chademo_se_vsensors *src)
 {
 	self->_sensors = *src;
 }
 
 /** Gets psuctl outputs and stores result into a destination `dst` */
-void chademo_se_get_psuctl_outputs(struct chademo_se *self,
+void chademo_se_get_psuctl_outputs(struct chademo_se		    *self,
 				   struct chademo_se_psuctl_outputs *dst)
 {
 	*dst = self->_psuctl.outputs;
@@ -806,13 +798,12 @@ void chademo_se_get_psuctl_outputs(struct chademo_se *self,
 /** CAN2.0 frames from EV must go here.
  *  Returns true if frame has been consumed.
  *  Frame may not be consumed if charger is not in LISTEN mode. */
-bool chademo_se_push_vcan_frame(struct chademo_se *self,
+bool chademo_se_push_vcan_frame(struct chademo_se	    *self,
 				struct chademo_se_can_frame *f)
 {
 	bool has_consumed_frame = false;
 
-	if (self->_can_rx.state ==
-	    (uint8_t)_CHADEMO_SE_VCAN_RX_STATE_LISTEN) {
+	if (self->_can_rx.state == (uint8_t)_CHADEMO_SE_VCAN_RX_STATE_LISTEN) {
 		_chademo_se_vcan_rx_unpack_frame(&self->_can_rx, f);
 
 		has_consumed_frame = true;
@@ -824,7 +815,7 @@ bool chademo_se_push_vcan_frame(struct chademo_se *self,
 /** CAN2.0 frames from charger emited here (popped from internal TX buffer).
  *  Returns true if frame has been returned.
  *  Frame may not be returned if internal buffer is empty. */
-bool chademo_se_pop_vcan_frame(struct chademo_se *self,
+bool chademo_se_pop_vcan_frame(struct chademo_se	   *self,
 			       struct chademo_se_can_frame *f)
 {
 	bool frame_available = false;
@@ -842,15 +833,15 @@ bool chademo_se_pop_vcan_frame(struct chademo_se *self,
 
 /** Main instance FSM. Must be called inside main loop. */
 enum chademo_se_event chademo_se_step(struct chademo_se *self,
-				      uint32_t delta_time_ms)
+				      uint32_t		 delta_time_ms)
 {
-	struct  _chademo_se_vcan_tx *tx = &self->_can_tx;
-	struct  _chademo_se_vcan_rx *rx = &self->_can_rx;
+	struct _chademo_se_vcan_tx *tx = &self->_can_tx;
+	struct _chademo_se_vcan_rx *rx = &self->_can_rx;
 
-	struct  chademo_se_vsensors *sensors = &self->_sensors;
-	struct  chademo_se_vgpio    *gpio    = &self->_gpio;
+	struct chademo_se_vsensors *sensors = &self->_sensors;
+	struct chademo_se_vgpio	   *gpio    = &self->_gpio;
 
-	struct  _chademo_se_psuctl *psuctl = &self->_psuctl;
+	struct _chademo_se_psuctl *psuctl = &self->_psuctl;
 
 	enum chademo_se_event event = CHADEMO_SE_EVENT_NONE;
 
@@ -868,7 +859,7 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 
 		/* _CHADEMO_SE_STATE_CF_TRANSMIT_CHARGE_START_SIGNAL INIT */
 		self->_state_cf =
-			_CHADEMO_SE_STATE_CF_TRANSMIT_CHARGE_START_SIGNAL;
+		    _CHADEMO_SE_STATE_CF_TRANSMIT_CHARGE_START_SIGNAL;
 
 		/* We can start PSU to prepare for charging. */
 		_chademo_se_psuctl_start(psuctl);
@@ -881,7 +872,7 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 
 		/* _CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER INIT */
 		self->_state_cf =
-			_CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER;
+		    _CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER;
 
 		_chademo_se_vcan_rx_start(rx);
 		break;
@@ -901,7 +892,7 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 
 		/* _CHADEMO_SE_STATE_CF_PROCESS_INFO_BEFORE_CHARGING INIT */
 		self->_state_cf =
-			_CHADEMO_SE_STATE_CF_PROCESS_INFO_BEFORE_CHARGING;
+		    _CHADEMO_SE_STATE_CF_PROCESS_INFO_BEFORE_CHARGING;
 
 		_chademo_se_vcan_tx_start(tx);
 
@@ -917,7 +908,7 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 
 		if ((rx->h100.max_battery_voltage_V >
 		     tx->h108.avail_output_voltage_V)) {
-			    /* TODO terminate */
+			/* TODO terminate */
 		}
 
 		/* TODO calculate approximate estimated charge time
@@ -941,7 +932,7 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 
 		/* _CHADEMO_SE_STATE_CF_CHECK_EV_CONTACTORS_ARE_OPEN INIT */
 		self->_state_cf =
-			_CHADEMO_SE_STATE_CF_CHECK_EV_CONTACTORS_ARE_OPEN;
+		    _CHADEMO_SE_STATE_CF_CHECK_EV_CONTACTORS_ARE_OPEN;
 		break;
 
 	/* Check that EV contactors are surely opened
@@ -956,7 +947,7 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 
 		/* _CHADEMO_SE_STATE_CF_INSULATION_TEST_ON_DC_CIRCUIT INIT */
 		self->_state_cf =
-			_CHADEMO_SE_STATE_CF_INSULATION_TEST_ON_DC_CIRCUIT;
+		    _CHADEMO_SE_STATE_CF_INSULATION_TEST_ON_DC_CIRCUIT;
 
 		break;
 
@@ -966,9 +957,10 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 		 * We might skip this step for the future. */
 		/* TODO implement */
 
-	   /* _CHADEMO_SE_STATE_CF_CHECK_TERMINATION_OF_INSULATION_TEST INIT */
+		/* _CHADEMO_SE_STATE_CF_CHECK_TERMINATION_OF_INSULATION_TEST
+		 * INIT */
 		self->_state_cf =
-		     _CHADEMO_SE_STATE_CF_CHECK_TERMINATION_OF_INSULATION_TEST;
+		    _CHADEMO_SE_STATE_CF_CHECK_TERMINATION_OF_INSULATION_TEST;
 		break;
 
 	/* Check the termination of insulation test
@@ -979,9 +971,10 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 			break;
 		}
 
-    /* _CHADEMO_SE_STATE_CF_TRANSMIT_SIGNAL_OF_CHARGER_SETUP_COMPLETION INIT */
+		/* _CHADEMO_SE_STATE_CF_TRANSMIT_SIGNAL_OF_CHARGER_SETUP_COMPLETION
+		 * INIT */
 		self->_state_cf =
-	      _CHADEMO_SE_STATE_CF_TRANSMIT_SIGNAL_OF_CHARGER_SETUP_COMPLETION;
+		    _CHADEMO_SE_STATE_CF_TRANSMIT_SIGNAL_OF_CHARGER_SETUP_COMPLETION;
 
 		break;
 
@@ -998,16 +991,17 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 
 		/* Try to equalize PSU voltage (if that's required) */
 		psuctl->outputs.set_voltage_dc_V =
-			sensors->out_terminals_voltage_V;
+		    sensors->out_terminals_voltage_V;
 
 		/* Break if PSU still booting, or... Whatever? */
-		if (psuctl->state != (uint8_t)_CHADEMO_SE_PSUCTL_STATE_RUNNING) {
+		if (psuctl->state !=
+		    (uint8_t)_CHADEMO_SE_PSUCTL_STATE_RUNNING) {
 			break;
 		}
 
 		/* _CHADEMO_SE_STATE_CF_START_CHARGING_CURRENT_OUTPUT INIT */
 		self->_state_cf =
-		     _CHADEMO_SE_STATE_CF_START_CHARGING_CURRENT_OUTPUT;
+		    _CHADEMO_SE_STATE_CF_START_CHARGING_CURRENT_OUTPUT;
 
 		break;
 
