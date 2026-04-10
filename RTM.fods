@@ -1,0 +1,1220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:rpt="http://openoffice.org/2005/report" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:css3t="http://www.w3.org/TR/css3-text/" xmlns:presentation="urn:oasis:names:tc:opendocument:xmlns:presentation:1.0" office:version="1.4" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
+ <office:meta><meta:generator>LibreOffice/25.2.7.2$Windows_X86_64 LibreOffice_project/5cbfd1ab6520636bb5f7b99185aa69bd7456825d</meta:generator><dc:date>2026-04-10T18:45:26.085116600</dc:date><meta:editing-duration>PT3H35M13S</meta:editing-duration><meta:editing-cycles>18</meta:editing-cycles><meta:document-statistic meta:table-count="1" meta:cell-count="135" meta:object-count="0"/></office:meta>
+ <office:settings>
+  <config:config-item-set config:name="ooo:view-settings">
+   <config:config-item config:name="VisibleAreaTop" config:type="int">0</config:config-item>
+   <config:config-item config:name="VisibleAreaLeft" config:type="int">0</config:config-item>
+   <config:config-item config:name="VisibleAreaWidth" config:type="int">39846</config:config-item>
+   <config:config-item config:name="VisibleAreaHeight" config:type="int">52199</config:config-item>
+   <config:config-item-map-indexed config:name="Views">
+    <config:config-item-map-entry>
+     <config:config-item config:name="ViewId" config:type="string">view1</config:config-item>
+     <config:config-item-map-named config:name="Tables">
+      <config:config-item-map-entry config:name="Аркуш1">
+       <config:config-item config:name="CursorPositionX" config:type="int">11</config:config-item>
+       <config:config-item config:name="CursorPositionY" config:type="int">25</config:config-item>
+       <config:config-item config:name="ActiveSplitRange" config:type="short">2</config:config-item>
+       <config:config-item config:name="PositionLeft" config:type="int">0</config:config-item>
+       <config:config-item config:name="PositionRight" config:type="int">0</config:config-item>
+       <config:config-item config:name="PositionTop" config:type="int">0</config:config-item>
+       <config:config-item config:name="PositionBottom" config:type="int">0</config:config-item>
+       <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
+       <config:config-item config:name="ZoomValue" config:type="int">85</config:config-item>
+       <config:config-item config:name="PageViewZoomValue" config:type="int">60</config:config-item>
+       <config:config-item config:name="ShowGrid" config:type="boolean">true</config:config-item>
+       <config:config-item config:name="AnchoredTextOverflowLegacy" config:type="boolean">false</config:config-item>
+       <config:config-item config:name="LegacySingleLineFontwork" config:type="boolean">false</config:config-item>
+       <config:config-item config:name="ConnectorUseSnapRect" config:type="boolean">false</config:config-item>
+       <config:config-item config:name="IgnoreBreakAfterMultilineField" config:type="boolean">false</config:config-item>
+      </config:config-item-map-entry>
+     </config:config-item-map-named>
+     <config:config-item config:name="ActiveTable" config:type="string">Аркуш1</config:config-item>
+     <config:config-item config:name="HorizontalScrollbarWidth" config:type="int">1655</config:config-item>
+     <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
+     <config:config-item config:name="ZoomValue" config:type="int">85</config:config-item>
+     <config:config-item config:name="PageViewZoomValue" config:type="int">60</config:config-item>
+     <config:config-item config:name="ShowPageBreakPreview" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="ShowZeroValues" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="ShowNotes" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="ShowNoteAuthor" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="ShowFormulasMarks" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="ShowGrid" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="GridColor" config:type="int">12632256</config:config-item>
+     <config:config-item config:name="ShowPageBreaks" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="HasColumnRowHeaders" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="HasSheetTabs" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="IsOutlineSymbolsSet" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="IsValueHighlightingEnabled" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="IsSnapToRaster" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="RasterIsVisible" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="RasterResolutionX" config:type="int">1000</config:config-item>
+     <config:config-item config:name="RasterResolutionY" config:type="int">1000</config:config-item>
+     <config:config-item config:name="RasterSubdivisionX" config:type="int">1</config:config-item>
+     <config:config-item config:name="RasterSubdivisionY" config:type="int">1</config:config-item>
+     <config:config-item config:name="IsRasterAxisSynchronized" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="FormulaBarHeight" config:type="short">1</config:config-item>
+     <config:config-item config:name="AnchoredTextOverflowLegacy" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="LegacySingleLineFontwork" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="ConnectorUseSnapRect" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="IgnoreBreakAfterMultilineField" config:type="boolean">false</config:config-item>
+    </config:config-item-map-entry>
+   </config:config-item-map-indexed>
+  </config:config-item-set>
+  <config:config-item-set config:name="ooo:configuration-settings">
+   <config:config-item config:name="AllowPrintJobCancel" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="ApplyUserData" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="AutoCalculate" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="CharacterCompressionType" config:type="short">0</config:config-item>
+   <config:config-item config:name="EmbedAsianScriptFonts" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="EmbedComplexScriptFonts" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="EmbedFonts" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="EmbedLatinScriptFonts" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="EmbedOnlyUsedFonts" config:type="boolean">false</config:config-item>
+   <config:config-item-map-indexed config:name="ForbiddenCharacters">
+    <config:config-item-map-entry>
+     <config:config-item config:name="Language" config:type="string">en</config:config-item>
+     <config:config-item config:name="Country" config:type="string">US</config:config-item>
+     <config:config-item config:name="Variant" config:type="string"/>
+     <config:config-item config:name="BeginLine" config:type="string"/>
+     <config:config-item config:name="EndLine" config:type="string"/>
+    </config:config-item-map-entry>
+    <config:config-item-map-entry>
+     <config:config-item config:name="Language" config:type="string">uk</config:config-item>
+     <config:config-item config:name="Country" config:type="string">UA</config:config-item>
+     <config:config-item config:name="Variant" config:type="string"/>
+     <config:config-item config:name="BeginLine" config:type="string"/>
+     <config:config-item config:name="EndLine" config:type="string"/>
+    </config:config-item-map-entry>
+   </config:config-item-map-indexed>
+   <config:config-item config:name="GridColor" config:type="int">12632256</config:config-item>
+   <config:config-item config:name="HasColumnRowHeaders" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="HasSheetTabs" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="ImagePreferredDPI" config:type="int">0</config:config-item>
+   <config:config-item config:name="IsDocumentShared" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="IsKernAsianPunctuation" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="IsOutlineSymbolsSet" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="IsRasterAxisSynchronized" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="IsSnapToRaster" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="LinkUpdateMode" config:type="short">3</config:config-item>
+   <config:config-item config:name="LoadReadonly" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="PrinterName" config:type="string">Microsoft Print to PDF</config:config-item>
+   <config:config-item config:name="PrinterPaperFromSetup" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="PrinterSetup" config:type="base64Binary">ZBb+/01pY3Jvc29mdCBQcmludCB0byBQREYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATWljcm9zb2Z0IFByaW50IFRvIFBERgAAAAAAAAAAAAAWAAEANhUAAAAAAAAEAAhSAAAEdAAAM1ROVwAAAAAKAE0AaQBjAHIAbwBzAG8AZgB0ACAAUAByAGkAbgB0ACAAdABvACAAUABEAEYAAAAAAAAAAAAAAAAAAAAAAAAAAAABBAMG3ABQFAMvAQABAAkAmgs0CGQAAQAPAFgCAgABAFgCAwABAEEANAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAIAAAABAAAA/////0dJUzQAAAAAAAAAAAAAAABESU5VIgDIACQDLBE/XXt+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAAAAUAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAyAAAAFNNVEoAAAAAEAC4AHsAMAA4ADQARgAwADEARgBBAC0ARQA2ADMANAAtADQARAA3ADcALQA4ADMARQBFAC0AMAA3ADQAOAAxADcAQwAwADMANQA4ADEAfQAAAFJFU0RMTABVbmlyZXNETEwAUGFwZXJTaXplAEE0AE9yaWVudGF0aW9uAFBPUlRSQUlUAFJlc29sdXRpb24AUmVzT3B0aW9uMQBDb2xvck1vZGUAQ29sb3IAAAAAAAAAAAAAAAAAAAAAAAAsEQAAVjRETQEAAAAAAAAAnApwIhwAAADsAAAAAwAAAPoBTwg05ndNg+4HSBfANYHQAAAATAAAAAMAAAAACAAAAAAAAAAAAAADAAAAAAgAACoAAAAACAAAAwAAAEAAAABWAAAAABAAAEQAbwBjAHUAbQBlAG4AdABVAHMAZQByAFAAYQBzAHMAdwBvAHIAZAAAAEQAbwBjAHUAbQBlAG4AdABPAHcAbgBlAHIAUABhAHMAcwB3AG8AcgBkAAAARABvAGMAdQBtAGUAbgB0AEMAcgB5AHAAdABTAGUAYwB1AHIAaQB0AHkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEgBDT01QQVRfRFVQTEVYX01PREUTAER1cGxleE1vZGU6OlVua25vd24MAFBSSU5URVJfTkFNRRYATWljcm9zb2Z0IFByaW50IHRvIFBERgsARFJJVkVSX05BTUUWAE1pY3Jvc29mdCBQcmludCBUbyBQREY=</config:config-item>
+   <config:config-item config:name="RasterIsVisible" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="RasterResolutionX" config:type="int">1000</config:config-item>
+   <config:config-item config:name="RasterResolutionY" config:type="int">1000</config:config-item>
+   <config:config-item config:name="RasterSubdivisionX" config:type="int">1</config:config-item>
+   <config:config-item config:name="RasterSubdivisionY" config:type="int">1</config:config-item>
+   <config:config-item config:name="SaveThumbnail" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="SaveVersionOnClose" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="ShowFormulasMarks" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="ShowGrid" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="ShowNoteAuthor" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="ShowNotes" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="ShowPageBreaks" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="ShowZeroValues" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="SyntaxStringRef" config:type="short">7</config:config-item>
+   <config:config-item config:name="UpdateFromTemplate" config:type="boolean">true</config:config-item>
+   <config:config-item-map-named config:name="ScriptConfiguration">
+    <config:config-item-map-entry config:name="Аркуш1">
+     <config:config-item config:name="CodeName" config:type="string">Аркуш1</config:config-item>
+    </config:config-item-map-entry>
+   </config:config-item-map-named>
+  </config:config-item-set>
+ </office:settings>
+ <office:scripts>
+  <office:script script:language="ooo:Basic">
+   <ooo:libraries xmlns:ooo="http://openoffice.org/2004/office" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <ooo:library-embedded ooo:name="Standard"/>
+   </ooo:libraries>
+  </office:script>
+ </office:scripts>
+ <office:font-face-decls>
+  <style:font-face style:name="Arial" svg:font-family="Arial" style:font-family-generic="system" style:font-pitch="variable"/>
+  <style:font-face style:name="Liberation Sans" svg:font-family="&apos;Liberation Sans&apos;" style:font-family-generic="swiss" style:font-pitch="variable"/>
+  <style:font-face style:name="Liberation Serif" svg:font-family="&apos;Liberation Serif&apos;" style:font-family-generic="roman" style:font-pitch="variable"/>
+  <style:font-face style:name="Microsoft YaHei" svg:font-family="&apos;Microsoft YaHei&apos;" style:font-family-generic="system" style:font-pitch="variable"/>
+  <style:font-face style:name="Segoe UI" svg:font-family="&apos;Segoe UI&apos;" style:font-family-generic="system" style:font-pitch="variable"/>
+  <style:font-face style:name="Tahoma" svg:font-family="Tahoma" style:font-family-generic="system" style:font-pitch="variable"/>
+ </office:font-face-decls>
+ <office:styles>
+  <style:default-style style:family="table-cell">
+   <style:paragraph-properties style:tab-stop-distance="1.25cm"/>
+   <style:text-properties style:font-name="Liberation Sans" fo:font-size="10pt" fo:language="uk" fo:country="UA" style:font-name-asian="Microsoft YaHei" style:font-size-asian="10pt" style:language-asian="zh" style:country-asian="CN" style:font-name-complex="Arial" style:font-size-complex="10pt" style:language-complex="hi" style:country-complex="IN"/>
+  </style:default-style>
+  <style:default-style style:family="graphic">
+   <style:graphic-properties svg:stroke-color="#3465a4" draw:fill-color="#729fcf" fo:wrap-option="no-wrap" draw:shadow-offset-x="0.3cm" draw:shadow-offset-y="0.3cm" style:writing-mode="page"/>
+   <style:paragraph-properties style:text-autospace="ideograph-alpha" style:punctuation-wrap="simple" style:line-break="strict" loext:tab-stop-distance="0cm" style:writing-mode="page" style:font-independent-line-spacing="false">
+    <style:tab-stops/>
+   </style:paragraph-properties>
+   <style:text-properties style:use-window-font-color="true" loext:opacity="0%" style:font-name="Liberation Serif" fo:font-size="12pt" fo:language="uk" fo:country="UA" style:letter-kerning="true" style:font-name-asian="Segoe UI" style:font-size-asian="12pt" style:language-asian="zh" style:country-asian="CN" style:font-name-complex="Tahoma" style:font-size-complex="12pt" style:language-complex="hi" style:country-complex="IN"/>
+  </style:default-style>
+  <style:style style:name="Default" style:family="graphic"/>
+  <style:style style:name="Note" style:family="graphic" style:parent-style-name="Default">
+   <style:graphic-properties draw:stroke="solid" draw:marker-start="Стилі_20_стрілок_20_1" draw:marker-start-width="0.2cm" draw:marker-start-center="false" draw:fill="solid" draw:fill-color="#e8a202" draw:auto-grow-height="true" draw:auto-grow-width="false" fo:padding-top="0.1cm" fo:padding-bottom="0.1cm" fo:padding-left="0.1cm" fo:padding-right="0.1cm" draw:shadow="visible" draw:shadow-offset-x="0.1cm" draw:shadow-offset-y="0.1cm"/>
+   <style:text-properties style:font-name="Liberation Sans" fo:font-family="&apos;Liberation Sans&apos;" style:font-family-generic="swiss" style:font-pitch="variable" fo:font-size="10pt" style:font-name-asian="Microsoft YaHei" style:font-family-asian="&apos;Microsoft YaHei&apos;" style:font-family-generic-asian="system" style:font-pitch-asian="variable" style:font-size-asian="10pt" style:font-name-complex="Arial" style:font-family-complex="Arial" style:font-family-generic-complex="system" style:font-pitch-complex="variable" style:font-size-complex="10pt"/>
+  </style:style>
+  <number:number-style style:name="N0">
+   <number:number number:min-integer-digits="1"/>
+  </number:number-style>
+  <style:style style:name="Default" style:family="table-cell"/>
+  <style:style style:name="Heading" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:wrap-option="no-wrap" style:shrink-to-fit="false"/>
+   <style:text-properties fo:font-size="24pt" fo:font-style="normal" fo:font-weight="bold" style:font-size-asian="24pt" style:font-style-asian="normal" style:font-weight-asian="bold" style:font-size-complex="24pt" style:font-style-complex="normal" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="Heading_20_1" style:display-name="Heading 1" style:family="table-cell" style:parent-style-name="Heading">
+   <style:table-cell-properties fo:wrap-option="no-wrap" style:shrink-to-fit="false"/>
+   <style:text-properties fo:font-size="18pt" style:font-size-asian="18pt" style:font-size-complex="18pt"/>
+  </style:style>
+  <style:style style:name="Heading_20_2" style:display-name="Heading 2" style:family="table-cell" style:parent-style-name="Heading">
+   <style:table-cell-properties fo:wrap-option="no-wrap" style:shrink-to-fit="false"/>
+   <style:text-properties fo:font-size="12pt" style:font-size-asian="12pt" style:font-size-complex="12pt"/>
+  </style:style>
+  <style:style style:name="Text" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:wrap-option="no-wrap" style:shrink-to-fit="false"/>
+  </style:style>
+  <style:style style:name="Note" style:family="table-cell" style:parent-style-name="Text">
+   <style:table-cell-properties fo:background-color="#ffffcc" style:diagonal-bl-tr="none" style:diagonal-tl-br="none" fo:wrap-option="no-wrap" fo:border="0.74pt solid #808080" style:shrink-to-fit="false"/>
+   <style:text-properties fo:color="#333333"/>
+  </style:style>
+  <style:style style:name="Footnote" style:family="table-cell" style:parent-style-name="Text">
+   <style:table-cell-properties fo:wrap-option="no-wrap" style:shrink-to-fit="false"/>
+   <style:text-properties fo:color="#808080" fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic"/>
+  </style:style>
+  <style:style style:name="Hyperlink" style:family="table-cell" style:parent-style-name="Text">
+   <style:table-cell-properties fo:wrap-option="no-wrap" style:shrink-to-fit="false"/>
+   <style:text-properties fo:color="#0000ee" style:text-underline-style="solid" style:text-underline-width="auto" style:text-underline-color="#0000ee"/>
+  </style:style>
+  <style:style style:name="Status" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:wrap-option="no-wrap" style:shrink-to-fit="false"/>
+  </style:style>
+  <style:style style:name="Good" style:family="table-cell" style:parent-style-name="Status">
+   <style:table-cell-properties fo:background-color="#ccffcc" fo:wrap-option="no-wrap" style:shrink-to-fit="false"/>
+   <style:text-properties fo:color="#006600"/>
+  </style:style>
+  <style:style style:name="Neutral" style:family="table-cell" style:parent-style-name="Status">
+   <style:table-cell-properties fo:background-color="#ffffcc" fo:wrap-option="no-wrap" style:shrink-to-fit="false"/>
+   <style:text-properties fo:color="#996600"/>
+  </style:style>
+  <style:style style:name="Bad" style:family="table-cell" style:parent-style-name="Status">
+   <style:table-cell-properties fo:background-color="#ffcccc" fo:wrap-option="no-wrap" style:shrink-to-fit="false"/>
+   <style:text-properties fo:color="#cc0000"/>
+  </style:style>
+  <style:style style:name="Warning" style:family="table-cell" style:parent-style-name="Status">
+   <style:table-cell-properties fo:wrap-option="no-wrap" style:shrink-to-fit="false"/>
+   <style:text-properties fo:color="#cc0000"/>
+  </style:style>
+  <style:style style:name="Error" style:family="table-cell" style:parent-style-name="Status">
+   <style:table-cell-properties fo:background-color="#cc0000" fo:wrap-option="no-wrap" style:shrink-to-fit="false"/>
+   <style:text-properties fo:color="#ffffff" fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="Accent" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:wrap-option="no-wrap" style:shrink-to-fit="false"/>
+   <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="Accent_20_1" style:display-name="Accent 1" style:family="table-cell" style:parent-style-name="Accent">
+   <style:table-cell-properties fo:background-color="#000000" fo:wrap-option="no-wrap" style:shrink-to-fit="false"/>
+   <style:text-properties fo:color="#ffffff"/>
+  </style:style>
+  <style:style style:name="Accent_20_2" style:display-name="Accent 2" style:family="table-cell" style:parent-style-name="Accent">
+   <style:table-cell-properties fo:background-color="#808080" fo:wrap-option="no-wrap" style:shrink-to-fit="false"/>
+   <style:text-properties fo:color="#ffffff"/>
+  </style:style>
+  <style:style style:name="Accent_20_3" style:display-name="Accent 3" style:family="table-cell" style:parent-style-name="Accent">
+   <style:table-cell-properties fo:background-color="#dddddd" fo:wrap-option="no-wrap" style:shrink-to-fit="false"/>
+  </style:style>
+  <style:style style:name="Result" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:wrap-option="no-wrap" style:shrink-to-fit="false"/>
+   <style:text-properties fo:font-style="italic" style:text-underline-style="solid" style:text-underline-width="auto" style:text-underline-color="font-color" fo:font-weight="bold" style:font-style-asian="italic" style:font-weight-asian="bold" style:font-style-complex="italic" style:font-weight-complex="bold"/>
+  </style:style>
+  <draw:marker draw:name="Стилі_20_стрілок_20_1" draw:display-name="Стилі стрілок 1" svg:viewBox="0 0 20 30" svg:d="M10 0l-10 30h20z"/>
+  <loext:theme loext:name="Office">
+   <loext:theme-colors loext:name="LibreOffice">
+    <loext:color loext:name="dark1" loext:color="#000000"/>
+    <loext:color loext:name="light1" loext:color="#ffffff"/>
+    <loext:color loext:name="dark2" loext:color="#000000"/>
+    <loext:color loext:name="light2" loext:color="#ffffff"/>
+    <loext:color loext:name="accent1" loext:color="#18a303"/>
+    <loext:color loext:name="accent2" loext:color="#0369a3"/>
+    <loext:color loext:name="accent3" loext:color="#a33e03"/>
+    <loext:color loext:name="accent4" loext:color="#8e03a3"/>
+    <loext:color loext:name="accent5" loext:color="#c99c00"/>
+    <loext:color loext:name="accent6" loext:color="#c9211e"/>
+    <loext:color loext:name="hyperlink" loext:color="#0000ee"/>
+    <loext:color loext:name="followed-hyperlink" loext:color="#551a8b"/>
+   </loext:theme-colors>
+  </loext:theme>
+ </office:styles>
+ <office:automatic-styles>
+  <style:style style:name="co1" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="2.551cm"/>
+  </style:style>
+  <style:style style:name="co2" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="2.258cm"/>
+  </style:style>
+  <style:style style:name="ro1" style:family="table-row">
+   <style:table-row-properties style:row-height="0.951cm" fo:break-before="auto" style:use-optimal-row-height="false"/>
+  </style:style>
+  <style:style style:name="ro2" style:family="table-row">
+   <style:table-row-properties style:row-height="1.304cm" fo:break-before="auto" style:use-optimal-row-height="false"/>
+  </style:style>
+  <style:style style:name="ro3" style:family="table-row">
+   <style:table-row-properties style:row-height="2.418cm" fo:break-before="auto" style:use-optimal-row-height="false"/>
+  </style:style>
+  <style:style style:name="ro4" style:family="table-row">
+   <style:table-row-properties style:row-height="2.046cm" fo:break-before="auto" style:use-optimal-row-height="false"/>
+  </style:style>
+  <style:style style:name="ro5" style:family="table-row">
+   <style:table-row-properties style:row-height="1.676cm" fo:break-before="auto" style:use-optimal-row-height="false"/>
+  </style:style>
+  <style:style style:name="ro6" style:family="table-row">
+   <style:table-row-properties style:row-height="2.79cm" fo:break-before="auto" style:use-optimal-row-height="false"/>
+  </style:style>
+  <style:style style:name="ro7" style:family="table-row">
+   <style:table-row-properties style:row-height="3.905cm" fo:break-before="auto" style:use-optimal-row-height="false"/>
+  </style:style>
+  <style:style style:name="ro8" style:family="table-row">
+   <style:table-row-properties style:row-height="4.277cm" fo:break-before="auto" style:use-optimal-row-height="false"/>
+  </style:style>
+  <style:style style:name="ta1" style:family="table" style:master-page-name="Default">
+   <style:table-properties table:display="true" style:writing-mode="lr-tb"/>
+  </style:style>
+  <number:number-style style:name="N2">
+   <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1"/>
+  </number:number-style>
+  <style:style style:name="ce1" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#55308d" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+   <style:text-properties fo:color="#ffffff" style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" style:font-name="Liberation Sans" fo:font-size="10pt" fo:language="uk" fo:country="UA" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="bold" style:text-underline-mode="continuous" style:text-overline-mode="continuous" style:text-line-through-mode="continuous" style:font-name-asian="Microsoft YaHei" style:font-size-asian="10pt" style:language-asian="zh" style:country-asian="CN" style:font-style-asian="normal" style:font-weight-asian="bold" style:font-name-complex="Arial" style:font-size-complex="10pt" style:language-complex="hi" style:country-complex="IN" style:font-style-complex="normal" style:font-weight-complex="bold" style:text-emphasize="none" style:font-relief="none" style:text-overline-style="none" style:text-overline-color="font-color"/>
+  </style:style>
+  <style:style style:name="ce2" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#55308d" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border="0.74pt solid #000000" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+   <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="ce3" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#000000" style:text-align-source="fix" style:repeat-content="false"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce6" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#55308d" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border="0.74pt solid #000000" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+   <style:text-properties style:use-window-font-color="true" style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" style:font-name="Liberation Serif" fo:font-size="10pt" fo:language="uk" fo:country="UA" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="normal" style:text-underline-mode="continuous" style:text-overline-mode="continuous" style:text-line-through-mode="continuous" style:font-name-asian="Segoe UI" style:font-size-asian="10pt" style:language-asian="zh" style:country-asian="CN" style:font-style-asian="normal" style:font-weight-asian="normal" style:font-name-complex="Tahoma" style:font-size-complex="10pt" style:language-complex="hi" style:country-complex="IN" style:font-style-complex="normal" style:font-weight-complex="normal" style:text-emphasize="none" style:font-relief="none" style:text-overline-style="none" style:text-overline-color="font-color"/>
+  </style:style>
+  <style:style style:name="ce17" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce21" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#158466" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce11" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#2a6099" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border="0.74pt solid #000000" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+   <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="ce12" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#2a6099" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border="0.74pt solid #000000" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce13" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#2a6099" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border="0.74pt solid #000000" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+   <style:text-properties style:text-underline-style="none"/>
+  </style:style>
+  <style:style style:name="ce28" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#2a6099" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border-left="0.74pt solid #000000" fo:border-right="0.74pt solid #000000" fo:border-top="0.74pt solid #000000" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce29" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#2a6099" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border-left="0.74pt solid #000000" fo:border-right="none" fo:border-top="none" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce30" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#2a6099" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border-left="0.74pt solid #000000" fo:border-right="0.74pt solid #000000" fo:border-top="none" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce31" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.74pt solid #000000" fo:background-color="#2a6099" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border-left="0.74pt solid #000000" fo:border-right="0.74pt solid #000000" fo:border-top="none" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce33" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#2a6099" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border-left="none" fo:border-right="none" fo:border-top="0.74pt solid #000000" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce34" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#2a6099" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border="none" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce35" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.74pt solid #000000" fo:background-color="#2a6099" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border-left="none" fo:border-right="none" fo:border-top="0.74pt solid #000000" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce36" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.74pt solid #000000" fo:background-color="#2a6099" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border-left="none" fo:border-right="none" fo:border-top="none" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce37" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#2a6099" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border-left="none" fo:border-right="0.74pt solid #000000" fo:border-top="0.74pt solid #000000" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce38" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#2a6099" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border-left="none" fo:border-right="0.74pt solid #000000" fo:border-top="none" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce39" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.74pt solid #000000" fo:background-color="#2a6099" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border-left="none" fo:border-right="0.74pt solid #000000" fo:border-top="0.74pt solid #000000" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce40" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.74pt solid #000000" fo:background-color="#2a6099" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border-left="none" fo:border-right="0.74pt solid #000000" fo:border-top="none" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce27" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#55308d" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border="0.74pt solid #000000" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+   <style:text-properties fo:color="#ffffff" style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" style:font-name="Liberation Sans" fo:font-size="10pt" fo:language="uk" fo:country="UA" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="bold" style:text-underline-mode="continuous" style:text-overline-mode="continuous" style:text-line-through-mode="continuous" style:font-name-asian="Microsoft YaHei" style:font-size-asian="10pt" style:language-asian="zh" style:country-asian="CN" style:font-style-asian="normal" style:font-weight-asian="bold" style:font-name-complex="Arial" style:font-size-complex="10pt" style:language-complex="hi" style:country-complex="IN" style:font-style-complex="normal" style:font-weight-complex="bold" style:text-emphasize="none" style:font-relief="none" style:text-overline-style="none" style:text-overline-color="font-color"/>
+  </style:style>
+  <style:style style:name="ce32" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#55308d" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border="0.74pt solid #000000" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+   <style:text-properties style:use-window-font-color="true" style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" style:font-name="Liberation Serif" fo:font-size="10pt" fo:language="uk" fo:country="UA" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="bold" style:text-underline-mode="continuous" style:text-overline-mode="continuous" style:text-line-through-mode="continuous" style:font-name-asian="Segoe UI" style:font-size-asian="10pt" style:language-asian="zh" style:country-asian="CN" style:font-style-asian="normal" style:font-weight-asian="bold" style:font-name-complex="Tahoma" style:font-size-complex="10pt" style:language-complex="hi" style:country-complex="IN" style:font-style-complex="normal" style:font-weight-complex="bold" style:text-emphasize="none" style:font-relief="none" style:text-overline-style="none" style:text-overline-color="font-color"/>
+  </style:style>
+  <style:style style:name="ce41" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#158466" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border="0.74pt solid #000000" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+   <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="ce49" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#ff0000" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border="0.74pt solid #000000" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce45" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#666666" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border="0.74pt solid #000000" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+   <style:text-properties style:font-name="Liberation Serif" style:font-name-asian="Segoe UI" style:font-name-complex="Tahoma"/>
+  </style:style>
+  <style:style style:name="ce52" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#ffff00" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border="0.74pt solid #000000" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce47" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#2a6099" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce50" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.74pt solid #000000" fo:background-color="#2a6099" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" fo:border-left="0.74pt solid #000000" fo:border-right="none" fo:border-top="0.74pt solid #000000" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:page-layout style:name="pm1">
+   <style:page-layout-properties style:writing-mode="lr-tb"/>
+   <style:header-style>
+    <style:header-footer-properties fo:min-height="0.75cm" fo:margin-left="0cm" fo:margin-right="0cm" fo:margin-bottom="0.25cm"/>
+   </style:header-style>
+   <style:footer-style>
+    <style:header-footer-properties fo:min-height="0.75cm" fo:margin-left="0cm" fo:margin-right="0cm" fo:margin-top="0.25cm"/>
+   </style:footer-style>
+  </style:page-layout>
+  <style:page-layout style:name="pm2">
+   <style:page-layout-properties style:writing-mode="lr-tb"/>
+   <style:header-style>
+    <style:header-footer-properties fo:min-height="0.75cm" fo:margin-left="0cm" fo:margin-right="0cm" fo:margin-bottom="0.25cm" fo:border="1.5pt solid #000000" fo:padding="0.018cm" fo:background-color="#c0c0c0">
+     <style:background-image/>
+    </style:header-footer-properties>
+   </style:header-style>
+   <style:footer-style>
+    <style:header-footer-properties fo:min-height="0.75cm" fo:margin-left="0cm" fo:margin-right="0cm" fo:margin-top="0.25cm" fo:border="1.5pt solid #000000" fo:padding="0.018cm" fo:background-color="#c0c0c0">
+     <style:background-image/>
+    </style:header-footer-properties>
+   </style:footer-style>
+  </style:page-layout>
+  <style:style style:name="T1" style:family="text">
+   <style:text-properties fo:color="#ffffff" style:font-name="Liberation Sans" fo:font-size="10pt" fo:font-weight="bold" style:text-underline-style="none" style:text-underline-color="font-color" style:text-line-through-type="none" fo:font-style="normal" style:text-outline="false" fo:text-shadow="none" style:text-line-through-mode="continuous" fo:language="uk" fo:country="UA" style:language-asian="zh" style:country-asian="CN" style:language-complex="hi" style:country-complex="IN" style:font-name-asian="Microsoft YaHei" style:font-name-complex="Arial" style:font-size-asian="10pt" style:font-size-complex="10pt" style:font-weight-asian="bold" style:font-weight-complex="bold" style:font-style-asian="normal" style:font-style-complex="normal" style:text-emphasize="none" style:font-relief="none" style:text-overline-style="none" style:text-overline-color="font-color"/>
+  </style:style>
+  <style:style style:name="T2" style:family="text">
+   <style:text-properties fo:color="#ffffff" fo:font-size="10pt" fo:font-weight="bold" style:text-underline-style="none" style:text-underline-color="font-color" style:text-line-through-type="none" fo:font-style="normal" style:text-outline="false" fo:text-shadow="none" style:text-line-through-mode="continuous" fo:language="uk" fo:country="UA" style:language-asian="zh" style:country-asian="CN" style:language-complex="hi" style:country-complex="IN" style:font-size-asian="10pt" style:font-size-complex="10pt" style:font-weight-asian="bold" style:font-weight-complex="bold" style:font-style-asian="normal" style:font-style-complex="normal" style:text-emphasize="none" style:font-relief="none" style:text-overline-style="none" style:text-overline-color="font-color" style:font-name="Liberation Serif" style:font-name-asian="Segoe UI" style:font-name-complex="Tahoma"/>
+  </style:style>
+  <style:style style:name="T3" style:family="text">
+   <style:text-properties fo:font-weight="bold" style:text-underline-style="none" style:text-underline-color="font-color" fo:font-style="normal" style:font-weight-asian="bold" style:font-weight-complex="bold" style:font-style-asian="normal" style:font-style-complex="normal"/>
+  </style:style>
+ </office:automatic-styles>
+ <office:master-styles>
+  <style:master-page style:name="Default" style:page-layout-name="pm1">
+   <style:header>
+    <text:p><text:sheet-name>???</text:sheet-name></text:p>
+   </style:header>
+   <style:header-left style:display="false"/>
+   <style:header-first style:display="false"/>
+   <style:footer>
+    <text:p>Сторінка <text:page-number>1</text:page-number></text:p>
+   </style:footer>
+   <style:footer-left style:display="false"/>
+   <style:footer-first style:display="false"/>
+  </style:master-page>
+  <style:master-page style:name="Report" style:page-layout-name="pm2">
+   <style:header>
+    <style:region-left>
+     <text:p><text:sheet-name>???</text:sheet-name><text:s/>(<text:title>???</text:title>)</text:p>
+    </style:region-left>
+    <style:region-right>
+     <text:p><text:date style:data-style-name="N2" text:date-value="2026-04-10">00.00.0000</text:date>, <text:time style:data-style-name="N2" text:time-value="18:32:51.965845500">00:00:00</text:time></text:p>
+    </style:region-right>
+   </style:header>
+   <style:header-left style:display="false"/>
+   <style:header-first style:display="false"/>
+   <style:footer>
+    <text:p>Сторінка <text:page-number>1</text:page-number><text:s/>/ <text:page-count>99</text:page-count></text:p>
+   </style:footer>
+   <style:footer-left style:display="false"/>
+   <style:footer-first style:display="false"/>
+  </style:master-page>
+ </office:master-styles>
+ <office:body>
+  <office:spreadsheet>
+   <table:calculation-settings table:automatic-find-labels="false" table:use-regular-expressions="false" table:use-wildcards="true"/>
+   <table:table table:name="Аркуш1" table:style-name="ta1">
+    <table:table-column table:style-name="co1" table:number-columns-repeated="5" table:default-cell-style-name="ce17"/>
+    <table:table-column table:style-name="co2" table:number-columns-repeated="14" table:default-cell-style-name="ce17"/>
+    <table:table-column table:style-name="co2" table:number-columns-repeated="16365"/>
+    <table:table-row table:style-name="ro1">
+     <table:table-cell table:style-name="ce1" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="8" table:number-rows-spanned="1"><text:p><text:span text:style-name="T1">IEEE Std 2030.1.1™-2015 </text:span><text:span text:style-name="T2">Requirement Traceability Matrix  (RTM)</text:span></text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="7" table:style-name="ce21"/>
+     <table:table-cell table:style-name="ce27" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="9" table:number-rows-spanned="1"><text:p>Software implementation of charger logic «<text:span text:style-name="T3">chademo_se.h»</text:span></text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="3" table:style-name="ce41"/>
+     <table:covered-table-cell table:number-columns-repeated="5" table:style-name="ce21"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce2" office:value-type="string" calcext:value-type="string">
+      <text:p>Requirement number</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce11" office:value-type="string" calcext:value-type="string">
+      <text:p>Section &amp; Page</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce11" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>Requirement text</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce11"/>
+     <table:table-cell table:style-name="ce11" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>Notes</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce11"/>
+     <table:table-cell table:style-name="ce32" office:value-type="string" calcext:value-type="string">
+      <text:p>Requirement number</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce11" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Completion</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce47"/>
+     <table:table-cell table:style-name="ce11" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>Notes</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce11"/>
+     <table:table-cell table:style-name="ce11" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>Verification method</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce11"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro1">
+     <table:table-cell table:style-name="ce3" table:number-columns-repeated="17"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>001</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>5.2 a.1 (p. 6)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>Device shall be able to indicate to the user the status of the charging process and take corrective actions if required.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce12"/>
+     <table:table-cell table:style-name="ce28" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1"><text:p>These requirements are “common” requirements for the specifications in Annex A and Annex B.</text:p><text:p/><text:p>a) General</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce33"/>
+     <table:covered-table-cell table:style-name="ce37"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-001</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce49" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Not complete</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce49"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro4">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>002</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>5.2 a.2 (p. 6)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1"><text:p>Both the charger and the vehicle shall be equipped with a means to confirm they stay</text:p><text:p>physically and/or electrically connected with each other during charging.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce12"/>
+     <table:table-cell table:style-name="ce29" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-002</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce49" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Not complete</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce49"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro4">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>003</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>5.2 a.3 (p. 6)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1"><text:p> The charger shall be equipped with a means to stop charging in the case that communication</text:p><text:p>between the vehicle and the charger (via the communications interface) is interrupted.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce12"/>
+     <table:table-cell table:style-name="ce29" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-003</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce49" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Not complete</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce49"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro5">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>004</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>5.2 a.4 (p. 6)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1"><text:p>When the protective conductor between the charger and the vehicle is disconnected, the</text:p><text:p>charger shall stop charging within 10 s.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce29" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-004</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce49" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Not complete</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce49"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>005</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>5.2 a.5 (p. 6)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>The charger shall be able to detect loss of isolation, short circuit, and earth faults.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce29" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-005</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce49" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Not complete</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce49"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>006</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>5.2 a.6 (p. 6)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>The charger shall be equipped with an overvoltage protection function.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce29" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-006</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce49" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Not complete</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce49"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>007</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>5.2 a.7 (p. 6)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1"><text:p>The system shall be designed so that a level of voltage that is dangerous to the human body</text:p><text:p>shall not be applied on the charging connector when the connector is not connected to the</text:p><text:p>Vehicle.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce29" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-007</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce49" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Not complete</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce49"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro5">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>008</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>5.2 a.8 (p. 6)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1"><text:p>The system shall be designed to prevent users from touching electrically energized parts on</text:p><text:p>the vehicle and the charger.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce29" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-008</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce45" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Out of Scope </text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce12"/>
+     <table:table-cell table:style-name="ce50" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>Not a responsibility of software</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro5">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>009</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>5.2 a.9 (p. 6)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1"><text:p>The charger shall be equipped with a means of earth leakage current detection and automatic</text:p><text:p>Disconnection to help prevent electric shock.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce29" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-009</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce49" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Not complete</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce49"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro6">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>010</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>5.2 a.10 (p. 6)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1"><text:p>The charger or charging connector shall be equipped with measures (e.g., plastic cap on</text:p><text:p>connector power terminals) to reduce the risk of contact with exposed live parts as a measure</text:p><text:p>against remaining electric charge on the charging connector.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce29" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-010</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce45" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Out of Scope </text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce12"/>
+     <table:table-cell table:style-name="ce50" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>Not a responsibility of software</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro4">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>011</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>5.2 a.11 (p. 6)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1"><text:p>The charger shall be equipped with a means of protection against overload and short circuit in</text:p><text:p>the ac main circuit or internal circuit of the charger.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce29" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-011</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce49" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Not complete</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce49"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro6">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>012</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>5.2 a.12 (p. 6)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1"><text:p>The charging system shall be designed so that the voltage level between any accessible</text:p><text:p>conductive parts, including charging cable and charging connector, and any grounding parts</text:p><text:p>decreases to less than 60 V within 1 s or less, after connector removal from station or vehicle.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce29" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-012</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce49" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Not complete</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce49"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:style-name="ce50" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>013</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>5.2 b (p. 6)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1"><text:p>A data communications interface shall be used to transmit parameters required for charging control.</text:p><text:p>The charger and vehicle shall exchange the parameters through the interface.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>b) Communications</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-013</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Partially done. Needs further revision</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce49"/>
+     <table:table-cell table:style-name="ce50" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>Two interfaces responsible for sending and receiving charging control parameters has been implemented</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:style-name="ce50" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1"><text:p>see implementation of:</text:p><text:p><text:tab/>struct _chademo_se_vcan_tx;</text:p><text:p><text:tab/>struct _chademo_se_vcan_rx;</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce35"/>
+     <table:covered-table-cell table:style-name="ce39"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro5">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>014</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>5.2 c.1 (p. 6)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>The charger enclosure shall have a rating of IP33 or higher.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce28" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1"><text:p>c) Outdoor/indoor conductive charging</text:p><text:p>The charger shall be designed to endure the following environmental conditions</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce33"/>
+     <table:covered-table-cell table:style-name="ce37"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-014</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce45" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Out of Scope </text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce12"/>
+     <table:table-cell table:style-name="ce28" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>Not a responsibility of software</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce33"/>
+     <table:covered-table-cell table:style-name="ce37"/>
+     <table:table-cell table:style-name="ce28" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce33"/>
+     <table:covered-table-cell table:style-name="ce37"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>015</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>5.2 c.2 (p. 6)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>Ambient temperature (outdoor): −25 °C to 40 °C.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce30" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-015</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce45" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Out of Scope </text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce12"/>
+     <table:table-cell table:style-name="ce30" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce30" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro1">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>016</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>5.2 c.3 (p. 6)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>Ambient temperature (indoor): −5 °C to 40 °C.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce30" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-016</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce45" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Out of Scope </text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce12"/>
+     <table:table-cell table:style-name="ce30" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce30" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro1">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>017</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>5.2 c.4 (p. 6)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>Ambient humidity: 5% to 95%.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce30" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-017</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce45" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Out of Scope </text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce12"/>
+     <table:table-cell table:style-name="ce30" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce30" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro5">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>018</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>5.2 c.5 (p. 6)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>Altitude: Charger shall work between the atmospheric pressures of 860 hPa and 1060 hPa.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce31" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce36"/>
+     <table:covered-table-cell table:style-name="ce40"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-018</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce45" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Out of Scope </text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce12"/>
+     <table:table-cell table:style-name="ce31" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce36"/>
+     <table:covered-table-cell table:style-name="ce40"/>
+     <table:table-cell table:style-name="ce31" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce36"/>
+     <table:covered-table-cell table:style-name="ce40"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro1">
+     <table:table-cell table:style-name="ce3" table:number-columns-repeated="17"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro7">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>019</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>A.1.1 (p. 7)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1"><text:p>Any revisions to specification documents shall be recorded in the revision history, along with the description</text:p><text:p>of the changes or additions made. The CHAdeMO control protocol number is assigned to manage software</text:p><text:p>compatibility between charger and vehicle developed under different specification versions.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>A.1.1 Protocol number and changing protocol in case of the different versions</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-019</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce49" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Not complete</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce49"/>
+     <table:table-cell table:style-name="ce31" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>Software is only responsible for assigning version number and managing compatiblity between charger and vehicle</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce36"/>
+     <table:covered-table-cell table:style-name="ce40"/>
+     <table:table-cell table:style-name="ce31" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce36"/>
+     <table:covered-table-cell table:style-name="ce40"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>020</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>A.2 (p. 7)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1"><text:p>Vehicle coupler shall conform to IEC 62196-3 Standard sheets for configuration “AA.” Shapes and</text:p><text:p>dimensions of the vehicle coupler in A.17 are given for information only.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>A.2 Vehicle coupler</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-020</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce45" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Out of Scope </text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce12"/>
+     <table:table-cell table:style-name="ce28" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>Not a responsibility of software</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce33"/>
+     <table:covered-table-cell table:style-name="ce37"/>
+     <table:table-cell table:style-name="ce31" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce36"/>
+     <table:covered-table-cell table:style-name="ce40"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro8">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>021</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>A.3 (p. 7)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1"><text:p>The manufacturer shall manufacture the charger with a design that conforms to the following:</text:p><text:p>a) Standard usage conditions as shown in Table A.1</text:p><text:p>b) Panel-related specifications as shown in Table A.2</text:p><text:p>c) Device specifications as shown in Table A.3 7</text:p><text:p>d) Design specifications as shown in Table A.4</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>A.3 Installation conditions and main specifications</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-021</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Partially done. Needs further revision</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce49"/>
+     <table:table-cell table:style-name="ce28" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>Buttons in table A.4 might be reflected in software</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce33"/>
+     <table:covered-table-cell table:style-name="ce37"/>
+     <table:table-cell table:style-name="ce31" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce36"/>
+     <table:covered-table-cell table:style-name="ce40"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro8">
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>022</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string">
+      <text:p>A.4.1 (p. 9)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce13" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1"><text:p>Constant current charging method is used for charging. The vehicle shall transmit a charging current</text:p><text:p>request to the charger at a constant time interval. The charger shall output current that corresponds to the</text:p><text:p>order value. If the order value from the vehicle changes, the charger shall vary output current that follows</text:p><text:p>the new value.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce13"/>
+     <table:table-cell table:style-name="ce12" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1"><text:p>A.4 Requirements for basic design of the charger and the vehicle</text:p><text:p/><text:p>A.4.1 Charging method</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:covered-table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>R-SW-022</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce49" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Not complete</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce49"/>
+     <table:table-cell table:style-name="ce28" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce33"/>
+     <table:covered-table-cell table:style-name="ce37"/>
+     <table:table-cell table:style-name="ce31" table:number-columns-spanned="3" table:number-rows-spanned="1"/>
+     <table:covered-table-cell table:style-name="ce36"/>
+     <table:covered-table-cell table:style-name="ce40"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro1" table:number-rows-repeated="1048549">
+     <table:table-cell table:number-columns-repeated="19"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro1">
+     <table:table-cell table:number-columns-repeated="19"/>
+     <table:table-cell table:style-name="ce17" table:number-columns-repeated="16365"/>
+    </table:table-row>
+   </table:table>
+   <table:named-expressions/>
+  </office:spreadsheet>
+ </office:body>
+</office:document>

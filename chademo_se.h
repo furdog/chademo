@@ -675,7 +675,8 @@ void _chademo_se_psuctl_step(struct _chademo_se_psuctl *self,
 struct _chademo_se_vgpio_in {
 	bool oc_j; /**< Opto-coupler: vehicle charge permission */
 
-	/* Not a part of main CHAdeMO circuit
+	/* R-SW-021
+	 * Not a part of main CHAdeMO circuit
 	 * ( Colors: O - obligatory, R - recomended ): */
 	bool bt_emergency; /**< Button (O: red): emergency stop signal */
 	bool bt_start;	   /**< Button (R: blue): charge start signal */
