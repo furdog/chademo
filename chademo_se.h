@@ -738,8 +738,14 @@ enum chademo_se_event {
 struct chademo_se {
 	enum _chademo_se_state_cf _state_cf;
 
+	/* R-SW-013:
+	 * A data communications interface shall be used to transmit parameters
+	 * required for charging control.
+	 * The charger and vehicle shall exchange the parameters
+	 * through the interface.*/
 	struct _chademo_se_vcan_tx _can_tx;
 	struct _chademo_se_vcan_rx _can_rx;
+
 	struct chademo_se_vsensors _sensors;
 	struct chademo_se_vgpio	   _gpio;
 	struct _chademo_se_psuctl  _psuctl;
