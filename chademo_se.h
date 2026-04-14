@@ -488,11 +488,15 @@ void _chademo_se_vcan_rx_step(struct _chademo_se_vcan_rx *self,
 /******************************************************************************
  * CHADEMO_SE VIRTUAL SENSORS (VOLTAGE, CURRENT, LEAKAGE, ETC)
  *****************************************************************************/
+/* R-SW-036
+   The charger shall be equipped with a means of measuring
+   charging cable voltage in order to judge whether voltage may be applied to
+   the vehicle circuit and charging connector may be removed. */
 /** Virtual sensor inputs.
  *  Everything from outside hardware should be mapped here. */
 struct chademo_se_vsensors {
 	/** Measures voltage on EV terminals */
-	uint16_t out_terminals_voltage_V;
+	uint16_t out_terminals_voltage_V; /* TODO rename to cable voltage */
 };
 
 void _chademo_se_vsensors_init(struct chademo_se_vsensors *self)
@@ -690,6 +694,9 @@ struct _chademo_se_vgpio_out {
 	bool sw_d2; /**< Switch: charge sequence signal 2 */
 };
 
+/* R-SW-023
+ * Dedicated control signal lines shall be used to transmit signals
+ * concerning the start and termination of Charging. */
 /** Virtual GPIO consist of inputs and outputs */
 struct chademo_se_vgpio {
 	struct _chademo_se_vgpio_in  in;  /**< Input  virtual GPIO */
@@ -739,7 +746,7 @@ enum chademo_se_event {
 struct chademo_se {
 	enum _chademo_se_state_cf _state_cf;
 
-	/* R-SW-013:
+	/* R-SW-013
 	 * A data communications interface shall be used to transmit parameters
 	 * required for charging control.
 	 * The charger and vehicle shall exchange the parameters
@@ -885,7 +892,11 @@ enum chademo_se_event chademo_se_step(struct chademo_se *self,
 		break;
 
 	/* Receive initial vehicle CAN data and
-	   transmit charger CAN data in return */
+	   transmit charger CAN data in return
+
+	   R-SW-024
+	   The charger and vehicle
+	   shall exchange the parameters through the circuit. */
 	case _CHADEMO_SE_STATE_CF_AWAIT_CAN_RX_AND_START_TX_AFTER:
 		/* TODO timeout */
 
