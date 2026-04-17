@@ -55,27 +55,20 @@ The design is hardware-agnostic, requiring an external adaptation layer for hard
 
 ---
 ## Implementation example (hardware)
-![IMG_20260417_140016886_HDR.jpg](media\IMG_20260417_140016886_HDR.jpg)![IMG_20260417_135955142_HDR.jpg](media\IMG_20260417_135955142_HDR.jpg)
+![IMG_20260417_140016886_HDR.jpg](media/IMG_20260417_140016886_HDR.jpg)![IMG_20260417_135955142_HDR.jpg](media/IMG_20260417_135955142_HDR.jpg)
 Our example **CHAdeMO** controller is implemented inside charging plug itself!
 Basic stm32f103 controller, INA226 to measure terminals voltage, few relays, optocouplers.
 12v DC/DC.
 
 Initial intention is to charge vehicle with power less than 30kw and use SAE J1772 compatible
 cable. This is very unique, but cheap design. It has several challenges:
-
 - There is no CAN interface in SAE j1772 compatible cable (No CAN communication).
 Since our main controller is within plug itself it enables asymetrical communication:
 Generic charging device `->` single communication line (MODBUS) `->` **CHAdeMO** plug with main controller `->` CAN communication with vehicle.
 Communication is done via PP line (single wire UART 0v-12v range), and 12v power supply via CP line.
-
-- Power limit is 30kWt
-Due to cable physical limits.
-
-* Communication line noise
-Single line communication may be distorted by DC line EMI.
-
-* Higher communication latency
-Due to EMI, single line and master/slave nature - there's considerable latency assumed.
+- Power limit is 30kWt (Due to cable physical limits)
+- Communication line noise (Single line communication may be distorted by DC line EMI)
+- Higher communication latency (Due to EMI, single line and master/slave nature - there's considerable latency assumed)
 
 In our example **generic charging device** is a special block that is consist of multiple parts:
 Inverters, displays, buttons, power providers, relays, safety systems, etc.
@@ -88,8 +81,8 @@ and software driver on every part, aligned with our **Internal requirements**.
 Alternative communication and power supply (for our example **CHAdeMO** controller) design approaches include:
 - using DC power line for communication as done in CCS protocol. (expensive)
 - using both CP and PP lines for communication, harvesting 12v from parasitic voltage on a communication line (tricky)
-* using wireless interfaces for communication (highly questionable)
-* using other communication protocols other than MODBUS.
+- using wireless interfaces for communication (highly questionable)
+- using other communication protocols other than MODBUS.
 
 ### Internal requirements
 (Our example **CHAdeMO** controller)
