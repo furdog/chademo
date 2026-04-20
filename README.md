@@ -54,7 +54,7 @@ The design is hardware-agnostic, requiring an external adaptation layer for hard
 - **WIP:** Actively work in progress (not for production)
 
 ---
-## Implementation example (hardware)
+## Implementation example
 ![IMG_20260417_140016886_HDR.jpg](media/IMG_20260417_140016886_HDR.jpg)![IMG_20260417_135955142_HDR.jpg](media/IMG_20260417_135955142_HDR.jpg)
 Our example **CHAdeMO** controller is implemented inside charging plug itself!
 Basic stm32f103 controller, INA226 to measure terminals voltage, few relays, optocouplers.
@@ -96,6 +96,11 @@ After boot 12v in, check initial conditions:
 
 #### Communication specs
 to be continued
+
+### Software implementation details
+Our example **CHAdeMO** controller software implementation lies within `examples/main_plug_board/firmware/`.
+Is written on C99, utilising STM32CubeMX code generator software. Is based on simple makefile.
+Uses OpenOCD + GDB + SEGGER RTT for debugging. For details see: `examples/main_plug_board/firmware/README.md`
 
 ## License
 ```LICENSE

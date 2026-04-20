@@ -1,6 +1,13 @@
+# **CHAdeMO** controller inside charging plug
+This page describes **CHAdeMO** controller implemented inside charger plug.
+The software utilises [Segger RTT](#debug-segger) for now. Though other debug methods are available.
+
 # Debug (basics)
-Note: this section explains basics of working with gdb. This does not covers logging.
-Logging capabilities are explained in other debug sections.
+> [!NOTE]
+>
+> this section explains basics of working with gdb. This does not covers logging.
+>
+> Logging capabilities are explained in other debug sections.
 
 #setup:
 Assumes windows, msys2, gdb-none-eabi-multiarch, openocd, two terminal instances, at least ST-LINK-V2.
@@ -42,9 +49,11 @@ gdb-multiarch.exe build/stm32f103c8tx_chademo.elf
 * **0x20:** `HAL_CAN_ERROR_TIMEOUT` (**Most Likely**)
 
 # Debug (semihosting)
-> Note
+> [!NOTE]
 > This section explains how to log stuff from firmware into gdb session.
+> 
 > This method requires GDB. Without it, your program will step on the breakpoint and freezes until gdb tells to continue.
+> 
 > This debugging method is based on breakpoints. Thus very slow and is not recomended for truly real time debugging.
 
 To proceed, modify makefile:
@@ -93,13 +102,6 @@ target extended-remote | openocd -d1 -f interface/stlink.cfg \
 monitor arm semihosting enable
 monitor reset halt
 
-break gdb_log_trigger
-commands
-    silent
-    printf "%s", gdb_log_buffer
-    continue
-end
-
 continue
 ```
 
@@ -110,10 +112,13 @@ To run gdb session:
 (may differ under various OS)
 
 # Debug (Alternative to semihosting)
-> Note
+> [!NOTE]
 > This section explains how to log stuff from firmware into gdb session.
+>
 > This method has simpler setup than semihosting.
+>
 > It also doesn't freezes program without gdb running.
+>
 > This debugging method is based on breakpoints. Thus very slow and is not recomended for truly real time debugging.
 
 Edit `main.c`:
@@ -166,11 +171,15 @@ Not implemented yet… (Requires flashing hardware modifications or other flashi
 Use the MCUViewer software to debug memory in real time.
 available https://github.com/klonyyy/MCUViewer
 
-Note: this debugging method is only good for monitoring variables and registers and is not suitable for logging
+> [!NOTE]
+>
+> This debugging method is only good for monitoring variables and is not suitable for logging
 
 # Debug (SEGGER)
-> Note
+> [!NOTE]
+>
 > This method is complicated to setup, but is superior for real time logging.
+>
 > This method assumes running of separate telnet terminal
 
 download https://github.com/SEGGERMicro/RTT, unpack into SEGGER directory.

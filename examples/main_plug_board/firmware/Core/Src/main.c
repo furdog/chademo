@@ -67,19 +67,6 @@ static void MX_CAN_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-/*int _write(int file, char *ptr, int len) {
-	for(int i = 0; i < len; i++) {
-		ITM_SendChar(*ptr++);
-	}
-
-	return len;
-}
-
-int __io_putchar(int ch) {
-    // Send the character to the ITM stimulus port 0
-    ITM_SendChar(ch);
-    return(ch);
-}*/
 bool onbled = false;
 /* USER CODE END 0 */
 
@@ -117,10 +104,9 @@ int main(void)
   MX_I2C1_Init();
   MX_CAN_Init();
   /* USER CODE BEGIN 2 */
-	if (HAL_CAN_Start(&hcan) != HAL_OK)
-	  {
+  if (HAL_CAN_Start(&hcan) != HAL_OK) {
 	      Error_Handler();
-	  }
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
