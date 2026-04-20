@@ -1,0 +1,222 @@
+# Debug (basics)
+Note: this section explains basics of working with gdb. This does not covers logging.
+Logging capabilities are explained in other debug sections.
+
+#setup:
+Assumes windows, msys2, gdb-none-eabi-multiarch, openocd, two terminal instances, at least ST-LINK-V2.
+Linux setup migh be similar.
+
+---
+#terminal1 example (use flag `-c "set CPUTAPID ***"` for stm32 clones):
+```
+openocd -f interface/stlink.cfg -c "set CPUTAPID 0x2ba01477" -f target/stm32f1x.cfg
+```
+---
+#terminal2 example:
+```
+gdb-multiarch.exe build/stm32f103c8tx_chademo.elf
+(gdb) target remote :3333          # Use :4242 if using st-util
+(gdb) monitor reset halt           # Resets the chip and freezes it
+(gdb) continue                     # Starts the program
+
+#CTRL+C to return from the program to gdb shell
+(gdb) backtrace or bt              # for backtrace
+(gdb) info registers               # print registers
+(gdb) list                         # to see the C code around the crash point.
+(gdb) break #func_name             # to set breakpoint at #func_name
+(gdb) print #variable_name         # to print variable name
+```
+
+### Example steps to debug `MX_CAN_Init`
+* **Reset the chip:** `monitor reset halt`
+* **Set a breakpoint at the start of CAN init:** `break MX_CAN_Init`
+* **Run:** `continue`
+* **Step through the code:** Type `n` (next) line by line.
+* **Watch the return value:** Look for a line like `if (HAL_CAN_Init(&hcan) != HAL_OK)`.
+* When you hit the `Error_Handler()`, type `print hcan.ErrorCode`.
+
+### What the ErrorCode bits mean:
+* **0x01:** `HAL_CAN_ERROR_EWG` (Protocol Error)
+* **0x02:** `HAL_CAN_ERROR_EPV` (Passive Error)
+* **0x04:** `HAL_CAN_ERROR_BOF` (Bus Off)
+* **0x20:** `HAL_CAN_ERROR_TIMEOUT` (**Most Likely**)
+
+# Debug (semihosting)
+> Note
+> This section explains how to log stuff from firmware into gdb session.
+> This method requires GDB. Without it, your program will step on the breakpoint and freezes until gdb tells to continue.
+> This debugging method is based on breakpoints. Thus very slow and is not recomended for truly real time debugging.
+
+To proceed, modify makefile:
+Remove `Core/Src/syscalls.c \` from build files list.
+
+Use `-lrdimon` instead of `-lnosys`
+```makefile
+#LIBS = -lc -lm -lnosys 
+LIBS = -lc -lm -lrdimon
+```
+
+Use `--specs=rdimon.specs` instead `-specs=nano.specs`
+```makefile
+LIBDIR = 
+#LDFLAGS = $(MCU) -specs=nano.specs ...
+LDFLAGS = $(MCU) --specs=rdimon.specs ...
+```
+
+Edit `main.c`:
+```c
+/* USER CODE BEGIN Includes */
+#include <stdbool.h>
+#include <stdio.h>
+
+extern void initialise_monitor_handles(void);
+
+#define GDB_PRINTF(fmt, ...) \
+    printf(fmt, ##__VA_ARGS__);
+
+/* USER CODE END Includes */
+```
+
+```C
+/* USER CODE BEGIN 1 */
+	void initialise_monitor_handles();
+/* USER CODE END 1 */
+```
+
+Call `GDB_PRINTF("fmt", ...)` inside code wenever you like.
+
+Run debugger.
+`.gdbinit` script may look like this:
+```bash
+target extended-remote | openocd -d1 -f interface/stlink.cfg \
+	-c "set CPUTAPID 0x2ba01477" -f target/stm32f1x.cfg -c "gdb_port pipe"
+monitor arm semihosting enable
+monitor reset halt
+
+break gdb_log_trigger
+commands
+    silent
+    printf "%s", gdb_log_buffer
+    continue
+end
+
+continue
+```
+
+Take note that `set CPUTAPID 0x2ba01477` is only for stm32f103 clones
+
+To run gdb session:
+`gdb-multiarch build/stm32f103c8tx_chademo.elf --command=.gdbinit`
+(may differ under various OS)
+
+# Debug (Alternative to semihosting)
+> Note
+> This section explains how to log stuff from firmware into gdb session.
+> This method has simpler setup than semihosting.
+> It also doesn't freezes program without gdb running.
+> This debugging method is based on breakpoints. Thus very slow and is not recomended for truly real time debugging.
+
+Edit `main.c`:
+```c
+/* USER CODE BEGIN Includes */
+#include <stdbool.h>
+#include <stdio.h>
+
+char gdb_log_buffer[128]; // Global buffer to avoid stack issues
+
+__attribute__((noinline)) void gdb_log_trigger(void) {
+	asm volatile("nop"); // Just a place for the breakpoint to land
+}
+
+#define GDB_PRINTF(fmt, ...) \
+	snprintf(gdb_log_buffer, sizeof(gdb_log_buffer), fmt, ##__VA_ARGS__); \
+	gdb_log_trigger();
+
+/* USER CODE END Includes */
+```
+
+Call `GDB_PRINTF("fmt", ...)` inside code wenever you like.
+
+Run debugger.
+`.gdbinit` script may look like this:
+```bash
+target extended-remote | openocd -d1 -f interface/stlink.cfg \
+	-c "set CPUTAPID 0x2ba01477" -f target/stm32f1x.cfg -c "gdb_port pipe"
+monitor reset halt
+
+break gdb_log_trigger
+commands
+    silent
+    printf "%s", gdb_log_buffer
+    continue
+end
+
+continue
+```
+Take note that `set CPUTAPID 0x2ba01477` is only for stm32f103 clones
+
+To run gdb session:
+`gdb-multiarch build/stm32f103c8tx_chademo.elf --command=.gdbinit`
+(may differ under various OS)
+
+# Debug (ITM)
+Not implemented yet… (Requires flashing hardware modifications or other flashing tools)
+
+# Debug (MCUViewer)
+Use the MCUViewer software to debug memory in real time.
+available https://github.com/klonyyy/MCUViewer
+
+Note: this debugging method is only good for monitoring variables and registers and is not suitable for logging
+
+# Debug (SEGGER)
+> Note
+> This method is complicated to setup, but is superior for real time logging.
+> This method assumes running of separate telnet terminal
+
+download https://github.com/SEGGERMicro/RTT, unpack into SEGGER directory.
+
+To proceed, modify makefile:
+
+Remove from sources: `#Core/Src/syscalls.c \`
+
+Add to sources:
+`SEGGER/Syscalls/SEGGER_RTT_Syscalls_GCC.c \
+SEGGER/RTT/SEGGER_RTT.c \
+SEGGER/RTT/SEGGER_RTT_printf.c`
+
+Add to includes:
+`-ISEGGER/Config \
+-ISEGGER/RTT`
+
+Edit `main.c`:
+```c
+  /* USER CODE BEGIN 1 */
+  SEGGER_RTT_Init();
+  /* USER CODE END 1 */
+```
+Now you can log by using printf-like function:
+```c
+SEGGER_RTT_printf(0, "Hello world! %i", some_int_number);
+```
+
+Run debugger.
+`.gdbinit` script may look like this:
+```bash
+target extended-remote | openocd -d1 -f interface/stlink.cfg \
+	-c "set CPUTAPID 0x2ba01477" -f target/stm32f1x.cfg -c "gdb_port pipe"
+
+monitor reset halt
+
+monitor rtt setup 0x20000000 0x5000 "SEGGER RTT"
+monitor rtt start
+monitor rtt server start 53663 0
+
+continue
+```
+Take note that `set CPUTAPID 0x2ba01477` is only for stm32f103 clones
+
+To run gdb session:
+`gdb-multiarch build/stm32f103c8tx_chademo.elf --command=.gdbinit`
+(may differ under various OS)
+
+Run in separate terminal `telnet localhost 53663` (53663 is a leetspeak for (SEGGE)r. Easy to memorize)
