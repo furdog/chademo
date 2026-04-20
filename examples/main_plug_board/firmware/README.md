@@ -2,6 +2,10 @@
 This page describes **CHAdeMO** controller implemented inside charger plug.
 The software utilises [Segger RTT](#debug-segger) for now. Though other debug methods are available.
 
+> This software is on early stage of development (WIP)
+
+see [Implementation notes](#implementation-notes) for more info.
+
 # Debug (basics)
 > [!NOTE]
 >
@@ -229,3 +233,22 @@ To run gdb session:
 (may differ under various OS)
 
 Run in separate terminal `telnet localhost 53663` (53663 is a leetspeak for (SEGGE)r. Easy to memorize)
+
+# Implementation notes
+(20.04.2026)
+First step was to use [Segger RTT](#debug-segger) and other tools for debugging.
+
+For now there is a need to manage self test.
+In order to do that, i define volatile variables:
+```C
+volatile bool dbg_self_test_enabled = false;
+```
+This variable should be flagged by debugger at start to:
+- enable all relays, communication channels, etc one after another
+- read and validate inputs, so everything is in valid state
+- log status into a telnet session (`telnet localhost 53663`)
+
+Self-test procedure should be interactive and implemented as simple automata
+that guides user about further steps (shorting specific pins, sending messages, etc).
+
+I have created `run_self_test_procedure.sh` script to provide this functionality fully automated.
