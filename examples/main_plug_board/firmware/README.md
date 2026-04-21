@@ -209,7 +209,10 @@ Edit `main.c`:
 ```
 Now you can log by using printf-like function:
 ```c
-SEGGER_RTT_printf(0, "Hello world! %i", some_int_number);
+SEGGER_RTT_printf(0, "Hello world! %i\n", some_int_number);
+
+/* Normal printf will work too! */
+printf("Hello world! %i\n", some_int_number);
 ```
 
 Run debugger.

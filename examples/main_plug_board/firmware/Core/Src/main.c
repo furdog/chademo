@@ -67,6 +67,8 @@ static void MX_CAN_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+volatile bool dbg_self_test_enabled = false;
+
 bool onbled = false;
 /* USER CODE END 0 */
 
@@ -76,6 +78,7 @@ bool onbled = false;
   */
 int main(void)
 {
+	(void)dbg_self_test_enabled;
 
   /* USER CODE BEGIN 1 */
   SEGGER_RTT_Init();
@@ -150,7 +153,7 @@ int main(void)
 			ITM_SendChar(*p);
 		}
 
-		SEGGER_RTT_printf(0, "Hello world! cur_ms: %lu, led: %s\n", cur_ms,
+		printf("Hello world! cur_ms: %lu, led: %s\n", cur_ms,
 		       onbled ? "true" : "false");
 
 		//GDB_PRINTF("%s\n", onbled ? "true" : "false");
