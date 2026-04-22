@@ -38,8 +38,8 @@ enum dbg_self_test_state {
 	DBG_SELF_TEST_STATE_TEST_SW1,
 	DBG_SELF_TEST_STATE_TEST_SW2,
 
-	DBG_SELF_TEST_STATE_TEST_DOUT_WAIT_ON,
-	DBG_SELF_TEST_STATE_TEST_DOUT_WAIT_OFF,
+	DBG_SELF_TEST_STATE_TEST_DOUT_DELAY_ON,
+	DBG_SELF_TEST_STATE_TEST_DOUT_DELAY_OFF,
 
 	DBG_SELF_TEST_STATE_TERMINAL
 };
@@ -78,7 +78,7 @@ static void dbg_self_test_init(struct dbg_self_test *self)
 
 static void _dbg_self_test_dout(struct dbg_self_test *self, bool *target)
 {
-	self->_state		 = DBG_SELF_TEST_STATE_TEST_DOUT_WAIT_ON;
+	self->_state		 = DBG_SELF_TEST_STATE_TEST_DOUT_DELAY_ON;
 	self->_wait_ms		 = 2000u;
 	self->_timer_ms		 = 0u;
 	self->_counter		 = 0u;
@@ -110,33 +110,42 @@ static void dbg_self_test_step(struct dbg_self_test *self,
 		self->_state_after_dout_test = DBG_SELF_TEST_STATE_TERMINAL;
 		break;
 
-	case DBG_SELF_TEST_STATE_TEST_DOUT_WAIT_ON:
+	case DBG_SELF_TEST_STATE_TEST_DOUT_DELAY_OFF:
 		self->_timer_ms += delta_time_ms;
 
-		if (self->_timer_ms >= self->_wait_ms) {
-			self->_state = DBG_SELF_TEST_STATE_TEST_DOUT_WAIT_OFF;
-			self->_timer_ms		 = 0u;
-			self->_wait_ms		 = 500u;
-			*self->_dout_test_target = true;
+		if (self->_timer_ms < self->_wait_ms) {
+			break;
 		}
+
+		*self->_dout_test_target = false;
+
+		self->_state	= DBG_SELF_TEST_STATE_TEST_DOUT_DELAY_ON;
+		self->_timer_ms = 0u;
+		self->_wait_ms	= 500u;
+
+		/* At this point device made full ON/OFF cycle */
+		self->_counter += 1u;
 
 		break;
 
-	case DBG_SELF_TEST_STATE_TEST_DOUT_WAIT_OFF:
+	case DBG_SELF_TEST_STATE_TEST_DOUT_DELAY_ON:
 		self->_timer_ms += delta_time_ms;
 
-		if (self->_timer_ms >= self->_wait_ms) {
-			self->_state = DBG_SELF_TEST_STATE_TEST_DOUT_WAIT_ON;
-			self->_timer_ms		  = 0u;
-			self->_wait_ms		  = 500u;
-			*self->_dout_test_target  = false;
-			self->_counter		 += 1u;
+		if (self->_timer_ms < self->_wait_ms) {
+			break;
 		}
 
-		if ((self->_state == DBG_SELF_TEST_STATE_TEST_DOUT_WAIT_ON) &&
-				   (self->_counter >= 5u)) {
+		/* Skip the last ON cycle */
+		if (self->_counter >= 5u) {
 			self->_state = self->_state_after_dout_test;
+			break;
 		}
+
+		*self->_dout_test_target = true;
+
+		self->_state	= DBG_SELF_TEST_STATE_TEST_DOUT_DELAY_OFF;
+		self->_timer_ms = 0u;
+		self->_wait_ms	= 500u;
 
 		break;
 

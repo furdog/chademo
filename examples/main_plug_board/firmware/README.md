@@ -255,3 +255,10 @@ Self-test procedure should be interactive and implemented as simple automata
 that guides user about further steps (shorting specific pins, sending messages, etc).
 
 I have created `run_self_test_procedure.sh` script to provide this functionality fully automated.
+
+(22.04.2026)
+I have implemented `self_test.h` automata to self test hardware. Then i defined in `main.c`:
+```C
+volatile struct dbg_self_test dbg_self_test;
+```
+This automata should be only ran if `dbg_self_test_enabled` is true

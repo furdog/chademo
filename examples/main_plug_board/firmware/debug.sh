@@ -1,4 +1,5 @@
 #!/bin/bash
 
 # Run GDB
-gdb-multiarch build/stm32f103c8tx_chademo.elf --command=.gdbinit
+gdb-multiarch build/stm32f103c8tx_chademo.elf --command=.gdbinit \
+	-ex "continue"

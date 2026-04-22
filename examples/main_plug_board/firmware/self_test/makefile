@@ -67,7 +67,7 @@ coverage:
 	# Compile the test source file(s)
 	gcc $(SOURCE_FILES) -std=c89 -pedantic -Wall -Wextra -g \
 	  -fsanitize=undefined -fsanitize-undefined-trap-on-error -fanalyzer \
-	  --coverage -o coverage/$(TEST_OUTPUT)
+	  -DNDEBUG --coverage -o coverage/$(TEST_OUTPUT)
 
 	# Run the compiled test executable
 	cd coverage && ./$(TEST_OUTPUT)

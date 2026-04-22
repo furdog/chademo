@@ -6,5 +6,3 @@ monitor reset halt
 monitor rtt setup 0x20000000 0x5000 "SEGGER RTT"
 monitor rtt start
 monitor rtt server start 53663 0
-
-continue
