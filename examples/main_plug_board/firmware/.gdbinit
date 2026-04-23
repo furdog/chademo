@@ -1,3 +1,5 @@
+set pagination off
+
 target extended-remote | openocd -d1 -f interface/stlink.cfg \
 	-c "set CPUTAPID 0x2ba01477" -f target/stm32f1x.cfg -c "gdb_port pipe"
 

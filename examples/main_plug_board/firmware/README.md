@@ -262,3 +262,22 @@ I have implemented `self_test.h` automata to self test hardware. Then i defined 
 volatile struct dbg_self_test dbg_self_test;
 ```
 This automata should be only ran if `dbg_self_test_enabled` is true
+
+(23.04.2026)
+So, for now my automata just automatically enables and disables certain outputs
+5 times with certain intervals. LED's and relays are tested
+
+I have wrote script:
+```bash
+gdb-multiarch build/stm32f103c8tx_chademo.elf --command=.gdbinit \
+	-ex "tbreak main" \
+	-ex "continue" \
+	-ex "set var dbg_self_test_enabled = 1" \
+	-ex "continue&" \
+	-ex "shell telnet localhost 53663"
+```
+Cool stuff: some commands can run in background by providing & after
+
+Everything works as intended. The next step is to make rtt more interactive.
+So my plan is to send and parse telnet input. For example: `press enter to
+go to the next testing phase.`
