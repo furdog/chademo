@@ -201,6 +201,11 @@ Add to includes:
 `-ISEGGER/Config \
 -ISEGGER/RTT`
 
+add to ASSM sources (optional):
+`# ASMM sources
+ASMM_SOURCES =  \
+SEGGER/RTT/SEGGER_RTT_ASM_ARMv7M.S`
+
 Edit `main.c`:
 ```c
   /* USER CODE BEGIN 1 */
@@ -278,10 +283,6 @@ gdb-multiarch build/stm32f103c8tx_chademo.elf --command=.gdbinit \
 ```
 Cool stuff: some commands can run in background by providing & after
 
-Everything works as intended. The next step is to make rtt more interactive.
-So my plan is to send and parse telnet input. For example: `press enter to
-go to the next testing phase.`
-
 > [!WARNING]
 > Ok. I have found out that there is no safe way to run `-ex "shell telnet localhost 53663"`.
 > It causes keep_alive() error, while openocd runs in pipe mode
@@ -290,4 +291,17 @@ go to the next testing phase.`
 (24.04.2026)
 Resolved gdb+openocd in the same window, by just moving gdb onto backgound.
 
-I have added `monitor verify_image build/stm32f103c8tx_chademo.elf` so, now debugging wont start until firmware matches
+I have added `monitor verify_image build/stm32f103c8tx_chademo.elf` so, now debugging wont start until there firmware matches
+
+I have decided to add custom targets to simplify build process 
+```makefile
+#######################################
+# CUSTOM TARGETS
+#######################################
+```
+Everything works as intended. The next step is to make rtt more interactive.
+So my plan is to send and parse telnet input. For example: `press enter to
+go to the next testing phase.`
+
+I have added a copy of RTT knowledge base wiki: `RTT - SEGGER Knowledge Base.mhtml`
+

@@ -64,10 +64,10 @@ Core/Src/self_test.c
 # ASM sources
 ASM_SOURCES =  \
 startup_stm32f103xb.s
-#SEGGER/RTT/SEGGER_RTT_ASM_ARMv7M.S
 
 # ASMM sources
-ASMM_SOURCES = 
+ASMM_SOURCES =  \
+SEGGER/RTT/SEGGER_RTT_ASM_ARMv7M.S
 
 
 
@@ -156,8 +156,23 @@ LIBDIR =
 LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
 # default action: build all
-all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
+all: tests $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
 
+#######################################
+# CUSTOM TARGETS
+#######################################
+.PHONY: debug self_test flash
+debug:
+	./gdb/debug.sh
+
+tests:
+	$(MAKE) -C self_test/ test
+
+selftest:
+	./gdb/self_test.sh
+
+flash:
+	./flash.sh
 
 #######################################
 # build the application

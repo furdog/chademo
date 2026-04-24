@@ -29,12 +29,13 @@ UART_HandleTypeDef huart2; other/diagnostics
 extern void self_test_stm32_init();
 extern void self_test_stm32_run();
 
-#include "main.h"
-
 #include <stdbool.h>
 #include <stdio.h>
 
-#define DBG_SELF_TEST_LOG(x) printf(x)
+#include "main.h"
+#include "SEGGER_RTT.h"
+
+#define DBG_SELF_TEST_LOG(x) printf x
 #define DBG_SELF_TEST_LOG_IMPL
 #include "self_test.h"
 
@@ -59,6 +60,11 @@ void self_test_stm32_run(uint32_t delta_time_ms)
 		dt_ms = cur_ms - prev_ms;
 		prev_ms = cur_ms;
 		/*--- Time stuff end ---*/
+
+		if (SEGGER_RTT_HasKey()) {
+			int c = SEGGER_RTT_GetKey();
+			dbg_self_test_feed_shell_char(&dbg_self_test, (const char)c);
+		}
 
 		dbg_self_test_step(&dbg_self_test, dt_ms);
 

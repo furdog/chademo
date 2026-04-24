@@ -9,3 +9,9 @@ monitor verify_image build/stm32f103c8tx_chademo.elf
 monitor rtt setup 0x20000000 0x5000 "SEGGER RTT"
 monitor rtt start
 monitor rtt server start 53663 0
+
+tbreak self_test_stm32_run
+continue
+set var dbg_self_test_enabled = 1
+set var dbg_self_test.interactive_mode = 1
+continue&

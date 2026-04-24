@@ -25,18 +25,25 @@ struct dbg_self_test {
 	uint32_t _timer_ms;
 	uint32_t _counter;
 
-	/* Target value for triggering output multiple times */
+	/** Target value for triggering output multiple times */
 	bool *_dout_test_target;
 
 	uint8_t _state;
 	uint8_t _state_after_dout_test;
+
+	/** If interactive mode is selected, the user will be prompted
+	 *  to proceed */
+	bool	interactive_mode;
+	char	shell_str[32];
+	uint8_t shell_len;
+	bool    shell_ready;
 
 	bool onboard_led;
 	bool sw1;
 	bool sw2;
 };
 
-#ifdef   DBG_SELF_TEST_LOG_IMPL
+#ifdef DBG_SELF_TEST_LOG_IMPL
 static void dbg_self_test_init(struct dbg_self_test *self)
 {
 	self->_wait_ms	= 0u;
@@ -47,6 +54,10 @@ static void dbg_self_test_init(struct dbg_self_test *self)
 
 	self->_state		     = 0u;
 	self->_state_after_dout_test = 0u;
+
+	self->interactive_mode = false;
+	self->shell_len	       = 0u;
+	self->shell_ready      = false;
 
 	self->onboard_led = false;
 	self->sw1	  = false;
@@ -63,6 +74,53 @@ static void _dbg_self_test_dout(struct dbg_self_test *self, bool *target)
 	*self->_dout_test_target = false;
 }
 
+/** Feed single input character into interactive shell */
+static void dbg_self_test_feed_shell_char(struct dbg_self_test *self,
+					  const char		c)
+{
+	if (self->shell_len < 31u) {
+		self->shell_str[self->shell_len] = c;
+		self->shell_len++;
+	}
+
+	if (c == '\n') {
+		self->shell_str[self->shell_len] = '\0';
+		self->shell_ready = true;
+	}
+}
+
+static void _dbg_self_test_log_validate_shell_op(struct dbg_self_test *self)
+{
+	/* Interactive shell confirmation query */
+	const char *confirmation_query = "To confirm, enter 'y' \n>> ";
+
+	if (self->interactive_mode) {
+		DBG_SELF_TEST_LOG(
+		    ("Please, validate operation. %s", confirmation_query));
+		    fflush(0);
+	}
+}
+
+/** Check answer from interactive shell (yes or no) */
+static bool dbg_self_test_shell_confirm_action(struct dbg_self_test *self)
+{
+	bool result = false;
+
+	if (self->interactive_mode && self->shell_ready) {
+		if (self->shell_str[0] == 'y') {
+			result		= true;
+		} else {
+			DBG_SELF_TEST_LOG(("Invalid input: %s", self->shell_str));
+			_dbg_self_test_log_validate_shell_op(self);
+		}
+
+		self->shell_len = 0u;
+		self->shell_ready = false;
+	}
+
+	return result;
+}
+
 static void dbg_self_test_step(struct dbg_self_test *self,
 			       uint32_t		     delta_time_ms)
 {
@@ -72,6 +130,7 @@ static void dbg_self_test_step(struct dbg_self_test *self,
 		    ("Testing main board LED (blinking 5 times)\n"));
 		_dbg_self_test_dout(self, &self->onboard_led);
 		self->_state_after_dout_test = DBG_SELF_TEST_STATE_TEST_SW1;
+		_dbg_self_test_log_validate_shell_op(self);
 		break;
 
 	case DBG_SELF_TEST_STATE_TEST_SW1:
@@ -79,12 +138,14 @@ static void dbg_self_test_step(struct dbg_self_test *self,
 		    ("Testing main board SW1 (triggering 5 times)\n"));
 		_dbg_self_test_dout(self, &self->sw1);
 		self->_state_after_dout_test = DBG_SELF_TEST_STATE_TEST_SW2;
+		_dbg_self_test_log_validate_shell_op(self);
 		break;
 	case DBG_SELF_TEST_STATE_TEST_SW2:
 		DBG_SELF_TEST_LOG(
 		    ("Testing main board SW2 (triggering 5 times)\n"));
 		_dbg_self_test_dout(self, &self->sw2);
 		self->_state_after_dout_test = DBG_SELF_TEST_STATE_TERMINAL;
+		_dbg_self_test_log_validate_shell_op(self);
 		break;
 
 	case DBG_SELF_TEST_STATE_TEST_DOUT_DELAY_OFF:
@@ -112,8 +173,14 @@ static void dbg_self_test_step(struct dbg_self_test *self,
 			break;
 		}
 
+		/* Confirm shell action (interactive mode) */
+		if (dbg_self_test_shell_confirm_action(self)) {
+			self->_state = self->_state_after_dout_test;
+			break;
+		}
+
 		/* Skip the last ON cycle */
-		if (self->_counter >= 5u) {
+		if (!self->interactive_mode && (self->_counter >= 5u)) {
 			self->_state = self->_state_after_dout_test;
 			break;
 		}
