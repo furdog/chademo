@@ -26,8 +26,6 @@
 
 #include "SEGGER_RTT.h"
 
-#define DBG_SELF_TEST_LOG(x) printf(x)
-#include "self_test.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -65,14 +63,12 @@ static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_CAN_Init(void);
 /* USER CODE BEGIN PFP */
-
+extern void self_test_stm32_init();
+extern void self_test_stm32_run();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-volatile bool dbg_self_test_enabled = false;
-struct dbg_self_test dbg_self_test;
-
 bool onbled = false;
 /* USER CODE END 0 */
 
@@ -84,7 +80,7 @@ int main(void)
 {
 	/* USER CODE BEGIN 1 */
 	SEGGER_RTT_Init();
-	dbg_self_test_init(&dbg_self_test);
+	self_test_stm32_init();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -142,27 +138,7 @@ int main(void)
 	/*--- Time stuff end ---*/
 
 	/* Self test */
-	if (dbg_self_test_enabled) {
-		dbg_self_test_step(&dbg_self_test, dt_ms);
-
-		/* --- Physical Pin Updates --- */
-
-		// Onboard LED (Active Low on many STM32 boards, but logic follows the struct)
-		HAL_GPIO_WritePin(onboard_led_GPIO_Port, onboard_led_Pin, 
-				(GPIO_PinState)dbg_self_test.onboard_led);
-
-		// Switch D1
-		HAL_GPIO_WritePin(out_sw_d1_GPIO_Port, out_sw_d1_Pin, 
-				  (GPIO_PinState)dbg_self_test.sw1);
-
-		// Switch D2
-		HAL_GPIO_WritePin(out_sw_d2_GPIO_Port, out_sw_d2_Pin, 
-				 (GPIO_PinState)dbg_self_test.sw2);
-
-		/* We don't do anything else if self-test is enabled
-		 * So, just skip rest of the loop */
-		continue;
-	}
+	self_test_stm32_run();
 
 	/* --- exec with 1s interval begin --- */
 	interval_1s += dt_ms;

@@ -57,7 +57,8 @@ Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_can.c \
 SEGGER/Syscalls/SEGGER_RTT_Syscalls_GCC.c \
 SEGGER/RTT/SEGGER_RTT.c \
-SEGGER/RTT/SEGGER_RTT_printf.c
+SEGGER/RTT/SEGGER_RTT_printf.c \
+Core/Src/self_test.c
 #Core/Src/syscalls.c \
 
 # ASM sources
