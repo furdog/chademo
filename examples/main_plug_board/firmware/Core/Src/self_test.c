@@ -32,20 +32,19 @@ extern void self_test_stm32_run();
 #include <stdbool.h>
 #include <stdio.h>
 
-#include "main.h"
 #include "SEGGER_RTT.h"
+#include "main.h"
 
-#define DBG_SELF_TEST_LOG(x) printf x
+#define DBG_SELF_TEST_LOG(x)                                                  \
+	printf x;                                                             \
+	fflush(0)
 #define DBG_SELF_TEST_LOG_IMPL
 #include "self_test.h"
 
-volatile bool dbg_self_test_enabled = false;
-struct   dbg_self_test dbg_self_test;
+volatile bool	     dbg_self_test_enabled = false;
+struct dbg_self_test dbg_self_test;
 
-void self_test_stm32_init()
-{
-	dbg_self_test_init(&dbg_self_test);
-}
+void self_test_stm32_init() { dbg_self_test_init(&dbg_self_test); }
 
 void self_test_stm32_run(uint32_t delta_time_ms)
 {
@@ -53,33 +52,54 @@ void self_test_stm32_run(uint32_t delta_time_ms)
 	while (dbg_self_test_enabled) {
 		/*--- Time stuff begin ---*/
 		static uint32_t prev_ms = 0u;
-		uint32_t        cur_ms  = 0u;
-		uint32_t        dt_ms   = 0u; /* Delta time */
+		uint32_t	cur_ms	= 0u;
+		uint32_t	dt_ms	= 0u; /* Delta time */
 
-		cur_ms = HAL_GetTick();
-		dt_ms = cur_ms - prev_ms;
+		cur_ms	= HAL_GetTick();
+		dt_ms	= cur_ms - prev_ms;
 		prev_ms = cur_ms;
 		/*--- Time stuff end ---*/
 
 		if (SEGGER_RTT_HasKey()) {
 			int c = SEGGER_RTT_GetKey();
-			dbg_self_test_feed_shell_char(&dbg_self_test, (const char)c);
+			dbg_self_test_feed_shell_char(&dbg_self_test,
+						      (const char)c);
 		}
 
 		dbg_self_test_step(&dbg_self_test, dt_ms);
 
 		/* --- Physical Pin Updates --- */
 
-		// Onboard LED (Active Low on many STM32 boards, but logic follows the struct)
-		HAL_GPIO_WritePin(onboard_led_GPIO_Port, onboard_led_Pin, 
-				(GPIO_PinState)dbg_self_test.onboard_led);
+		// Onboard LED (Active Low on many STM32 boards, but logic
+		// follows the struct)
+		HAL_GPIO_WritePin(onboard_led_GPIO_Port, onboard_led_Pin,
+				  (GPIO_PinState)dbg_self_test.onboard_led);
 
 		// Switch D1
-		HAL_GPIO_WritePin(out_sw_d1_GPIO_Port, out_sw_d1_Pin, 
+		HAL_GPIO_WritePin(out_sw_d1_GPIO_Port, out_sw_d1_Pin,
 				  (GPIO_PinState)dbg_self_test.sw1);
 
 		// Switch D2
-		HAL_GPIO_WritePin(out_sw_d2_GPIO_Port, out_sw_d2_Pin, 
-				 (GPIO_PinState)dbg_self_test.sw2);
+		HAL_GPIO_WritePin(out_sw_d2_GPIO_Port, out_sw_d2_Pin,
+				  (GPIO_PinState)dbg_self_test.sw2);
+
+		/* Inverted inputs. Because pressed state is defined as
+		 * grounded by the hardware designer */
+
+		/* Not really used */
+		dbg_self_test.bt_start =
+		    !HAL_GPIO_ReadPin(in_bt_start_GPIO_Port, in_bt_start_Pin);
+
+		dbg_self_test.bt_stop =
+		    !HAL_GPIO_ReadPin(in_bt_stop_GPIO_Port, in_bt_stop_Pin);
+
+		/* Not really used */
+		dbg_self_test.bt_emergency = HAL_GPIO_ReadPin(
+		    !in_bt_emergency_GPIO_Port, in_bt_emergency_Pin);
+
+		dbg_self_test.oc_j =
+		    HAL_GPIO_ReadPin(in_oc_j_GPIO_Port, in_oc_j_Pin);
+		dbg_self_test.oc_conchk =
+		    HAL_GPIO_ReadPin(in_oc_conchk_GPIO_Port, in_oc_conchk_Pin);
 	}
 }

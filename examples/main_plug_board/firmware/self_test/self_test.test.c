@@ -1,7 +1,11 @@
 #include <stdio.h>
 
+/* TODO test interactive mode */
+
 #define DBG_SELF_TEST_LOG_IMPL
-#define DBG_SELF_TEST_LOG(x) printf x
+#define DBG_SELF_TEST_LOG(x)                                                  \
+	printf x;                                                             \
+	fflush(0)
 #include "self_test.h"
 
 struct dbg_self_test st;
