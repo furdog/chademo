@@ -13,5 +13,3 @@ monitor rtt server start 53663 0
 tbreak self_test_stm32_run
 continue
 set var dbg_self_test_enabled = 1
-set var dbg_self_test.interactive_mode = 1
-continue&

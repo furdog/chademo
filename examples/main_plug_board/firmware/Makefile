@@ -169,7 +169,7 @@ tests:
 	$(MAKE) -C self_test/ test
 
 selftest:
-	./gdb/self_test.sh
+	interactive=$(interactive) ./gdb/self_test.sh
 
 flash:
 	./flash.sh
