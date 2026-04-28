@@ -243,6 +243,11 @@ To run gdb session:
 Run in separate terminal `telnet localhost 53663` (53663 is a leetspeak for (SEGGE)r. Easy to memorize)
 
 # Implementation notes
+> [!NOTE]
+> Pretty much information here added iteratively.
+> Older information **MIGHT AND WILL BE OUTDATED** and no longer correct.
+> This section reflects my though process, as well as implementation progress
+
 (20.04.2026)
 First step was to use [Segger RTT](#debug-segger) and other tools for debugging.
 
@@ -305,3 +310,80 @@ go to the next testing phase.`
 
 I have added a copy of RTT knowledge base wiki: `RTT - SEGGER Knowledge Base.mhtml`
 
+(28.04.2026)
+So i've been working with `self_test` module lately and realized it scales pretty badly. Almost every input-output must be checked manually and tested separately, which is not cool. So my plan is to design more generalized hardware test system.
+
+To do that i plan to have virtual description of most common entities: digital inputs, digital outputs, can devices, uart devices, i2c, spi, etc…
+I do not need to write tests for every pin manually, but write an engine that takes brief pin description and then performs all tests automatically.
+
+Example of digital input/output pin description:
+``` C
+struct dbg_self_test_din_desc {
+	/** Label, for example "in_oc_j" */
+	const char *label;
+
+	/** physical pin label "A15" */
+	const char *phy_label;
+
+	/** Initial (expected) state */
+	bool expected_state;
+
+	/** Current state */
+	bool state;
+
+	/** Previous (delta) state */
+	bool state_d;
+
+	...
+};
+
+struct dbg_self_test_dout_desc {
+	/** Label, for example "out_sw_d1" */
+	const char *label;
+
+	/** physical pin label, for examble "B4" */
+	const char *phy_label;
+
+	/** Current state */
+	bool state;
+
+	...
+};
+```
+
+Take note that this description may not represent real (physical) pin states and can be altered by any means or be inverted.
+
+I didn't overcomplicate it, and did initialization pretty straighforward:
+```C
+void dbg_self_test_init_descriptors(struct dbg_self_test *self)
+{
+	uint8_t c = 0u;
+
+	dout[c].label	  = "onboard_led_Pin";
+	dout[c].phy_label = "C13";
+	dout[c].state	  = false;
+	c++;
+
+	dout[c].label	  = "out_sw_d2";
+	dout[c].phy_label = "B3";
+	dout[c].state	  = false;
+	c++;
+
+	dout[c].label	  = "out_sw_d1";
+	dout[c].phy_label = "B4";
+	dout[c].state	  = false;
+	c++;
+
+	self->dout_array = dout;
+	self->dout_count = c;
+
+	...
+}
+```
+This configuration should be done right after initialization and before first FSM step to correctly initialize.
+
+I have noticed serious flaw in PCB: Current software uses single wire USART1, but in reality it's assumed to have two wires (RX and TX). The board will then convert it to single wire.
+The bad news is that RX is physically wired to PA8 instead of PA10, which basically makes hardware defined UART unusable.
+Temporary solution: connect physically PA8 with PA10.
+
+I have an idea to turn this `self_test` library into hardware description layer. This might become standard way to define and test peripherals before use.

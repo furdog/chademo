@@ -44,7 +44,76 @@ extern void self_test_stm32_run();
 volatile bool	     dbg_self_test_enabled = false;
 struct dbg_self_test dbg_self_test;
 
-void self_test_stm32_init() { dbg_self_test_init(&dbg_self_test); }
+struct dbg_self_test_din_desc  din[5u];
+struct dbg_self_test_dout_desc dout[5u];
+
+void dbg_self_test_init_descriptors(struct dbg_self_test *self)
+{
+	uint8_t c = 0u;
+
+	/* Outputs */
+	dout[c].label	  = "onboard_led_Pin";
+	dout[c].phy_label = "C13";
+	dout[c].state	  = false;
+	c++;
+
+	dout[c].label	  = "out_sw_d2";
+	dout[c].phy_label = "B3";
+	dout[c].state	  = false;
+	c++;
+
+	dout[c].label	  = "out_sw_d1";
+	dout[c].phy_label = "B4";
+	dout[c].state	  = false;
+	c++;
+
+	self->dout_array = dout;
+	self->dout_count = c;
+	c = 0u;
+
+	/* Inputs */
+	/*
+	din[c].label	  = "in_bt_start";
+	din[c].phy_label = "B15";
+	din[c].expected_state = false;
+	din[c].state	  = false;
+	c++;
+	*/
+
+	/* din[c].label	  = "in_bt_stop";
+	din[c].phy_label = "A8";
+	din[c].expected_state = true;
+	din[c].state	  = false;
+	c++;*/
+
+	/*
+	din[c].label	  = "in_bt_emergency";
+	din[c].phy_label = "A10";
+	din[c].expected_state = false;
+	din[c].state	  = false;
+	c++;
+	*/
+
+	din[c].label	  = "in_oc_j";
+	din[c].phy_label = "A15";
+	din[c].expected_state = true;
+	din[c].state	  = false;
+	c++;
+
+	din[c].label	  = "in_oc_conchk";
+	din[c].phy_label = "B5";
+	din[c].expected_state = true;
+	din[c].state	  = false;
+	c++;
+
+	self->din_array = din;
+	self->din_count = c;
+}
+
+void self_test_stm32_init() {
+	dbg_self_test_init(&dbg_self_test);
+	dbg_self_test_init_descriptors(&dbg_self_test);
+}
 
 void self_test_stm32_run(uint32_t delta_time_ms)
 {
@@ -73,33 +142,35 @@ void self_test_stm32_run(uint32_t delta_time_ms)
 		// Onboard LED (Active Low on many STM32 boards, but logic
 		// follows the struct)
 		HAL_GPIO_WritePin(onboard_led_GPIO_Port, onboard_led_Pin,
-				  (GPIO_PinState)dbg_self_test.onboard_led);
-
-		// Switch D1
-		HAL_GPIO_WritePin(out_sw_d1_GPIO_Port, out_sw_d1_Pin,
-				  (GPIO_PinState)dbg_self_test.sw1);
+				  (GPIO_PinState)dout[0].state);
 
 		// Switch D2
 		HAL_GPIO_WritePin(out_sw_d2_GPIO_Port, out_sw_d2_Pin,
-				  (GPIO_PinState)dbg_self_test.sw2);
+				  (GPIO_PinState)dout[1].state);
+
+		// Switch D1
+		HAL_GPIO_WritePin(out_sw_d1_GPIO_Port, out_sw_d1_Pin,
+				  (GPIO_PinState)dout[2].state);
 
 		/* Inverted inputs. Because pressed state is defined as
 		 * grounded by the hardware designer */
 
 		/* Not really used */
-		dbg_self_test.bt_start =
-		    !HAL_GPIO_ReadPin(in_bt_start_GPIO_Port, in_bt_start_Pin);
-
-		dbg_self_test.bt_stop =
-		    !HAL_GPIO_ReadPin(in_bt_stop_GPIO_Port, in_bt_stop_Pin);
+		/*din[0].state =
+		    !HAL_GPIO_ReadPin(in_bt_start_GPIO_Port, in_bt_start_Pin);*/
 
 		/* Not really used */
-		dbg_self_test.bt_emergency = HAL_GPIO_ReadPin(
-		    !in_bt_emergency_GPIO_Port, in_bt_emergency_Pin);
+		/*din[0].state =
+		    HAL_GPIO_ReadPin(in_bt_stop_GPIO_Port, in_bt_stop_Pin);*/
 
-		dbg_self_test.oc_j =
+		/* Not really used */
+		/*din[2].state = HAL_GPIO_ReadPin(
+		    !in_bt_emergency_GPIO_Port, in_bt_emergency_Pin);*/
+
+		din[0].state =
 		    HAL_GPIO_ReadPin(in_oc_j_GPIO_Port, in_oc_j_Pin);
-		dbg_self_test.oc_conchk =
+
+		din[1].state =
 		    HAL_GPIO_ReadPin(in_oc_conchk_GPIO_Port, in_oc_conchk_Pin);
 	}
 }

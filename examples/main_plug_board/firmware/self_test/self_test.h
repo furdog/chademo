@@ -1,4 +1,6 @@
 /*
+#define onboard_led_Pin GPIO_PIN_13
+#define onboard_led_GPIO_Port GPIOC
 #define in_bt_start_Pin GPIO_PIN_15
 #define in_bt_start_GPIO_Port GPIOB
 #define in_bt_stop_Pin GPIO_PIN_8
@@ -7,6 +9,10 @@
 #define in_bt_emergency_GPIO_Port GPIOA
 #define in_oc_j_Pin GPIO_PIN_15
 #define in_oc_j_GPIO_Port GPIOA
+#define out_sw_d2_Pin GPIO_PIN_3
+#define out_sw_d2_GPIO_Port GPIOB
+#define out_sw_d1_Pin GPIO_PIN_4
+#define out_sw_d1_GPIO_Port GPIOB
 #define in_oc_conchk_Pin GPIO_PIN_5
 #define in_oc_conchk_GPIO_Port GPIOB
 
@@ -30,10 +36,7 @@ UART_HandleTypeDef huart2; other/diagnostics
 #define DBG_SELF_TEST_SHELL_MAX_CHARACTERS 32u
 
 enum dbg_self_test_state {
-	DBG_SELF_TEST_STATE_TEST_LED,
-	DBG_SELF_TEST_STATE_TEST_SW1,
-	DBG_SELF_TEST_STATE_TEST_SW2,
-
+	DBG_SELF_TEST_STATE_TEST_DOUT,
 	DBG_SELF_TEST_STATE_TEST_DOUT_DELAY_ON,
 	DBG_SELF_TEST_STATE_TEST_DOUT_DELAY_OFF,
 
@@ -48,82 +51,86 @@ struct dbg_self_test_shell {
 	bool	ready;
 };
 
+struct dbg_self_test_din_desc {
+	/** Label, for example "in_oc_j" */
+	const char *label;
+
+	/** physical pin label "A15" */
+	const char *phy_label;
+
+	/** Initial (expected) state */
+	bool expected_state;
+
+	/** Current state */
+	bool state;
+
+	/** Previous (delta) state */
+	bool _state_d;
+};
+
+struct dbg_self_test_dout_desc {
+	/** Label, for example "out_sw_d1" */
+	const char *label;
+
+	/** physical pin label, for examble "B4" */
+	const char *phy_label;
+
+	/** Current state */
+	bool state;
+};
+
 struct dbg_self_test {
 	uint32_t _wait_ms;
 	uint32_t _timer_ms;
 	uint32_t _counter;
 	uint32_t _dio_check_timer_ms;
 
-	/** Target value for triggering output multiple times */
-	bool *_dout_test_target;
-
 	uint8_t _state;
-	uint8_t _state_after_dout_test;
 
 	/** If interactive mode is selected, the user will be prompted
 	 *  to proceed */
 	bool			   interactive_mode;
 	struct dbg_self_test_shell _shell;
 
-	/* Outputs */
-	bool onboard_led;
-	bool sw1;
-	bool sw2;
+	/* Output specific */
+	struct dbg_self_test_dout_desc *dout_array;
+	uint8_t				dout_count;
+	uint8_t				_dout_iter;
 
-	/* Inputs */
-	bool bt_start;
-	bool bt_stop;
-	bool bt_emergency;
-	bool oc_j;
-	bool oc_conchk;
+	/* Input specific */
+	struct dbg_self_test_din_desc *din_array;
+	uint8_t			       din_count;
+	uint8_t			       _din_iter;
 
-	/* Deltas (to track changes) */
-	bool d_oc_j;
-	bool d_oc_conchk;
+	/* first run */
+	bool init;
 };
 
 #ifdef DBG_SELF_TEST_LOG_IMPL
 static void dbg_self_test_init(struct dbg_self_test *self)
 {
-	self->_wait_ms	= 0u;
-	self->_timer_ms = 0u;
-	self->_counter	= 0u;
+	self->_wait_ms		  = 0u;
+	self->_timer_ms		  = 0u;
+	self->_counter		  = 0u;
 	self->_dio_check_timer_ms = 0u;
 
-	self->_dout_test_target = NULL;
-
-	self->_state		     = 0u;
-	self->_state_after_dout_test = 0u;
+	self->_state = 0u;
 
 	self->interactive_mode = false;
 	self->_shell.len       = 0u;
 	self->_shell.ready     = false;
 
-	/* Outputs */
-	self->onboard_led = false;
-	self->sw1	  = false;
-	self->sw2	  = false;
+	/* Output specific */
+	self->dout_array = NULL;
+	self->dout_count = 0u;
+	self->_dout_iter = 0u;
 
-	/* Inputs */
-	self->bt_start	   = false;
-	self->bt_stop	   = false;
-	self->bt_emergency = false;
-	self->oc_j	   = false;
-	self->oc_conchk	   = false;
+	/* Input specific */
+	self->din_array = NULL;
+	self->din_count = 0u;
+	self->_din_iter = 0u;
 
-	/* Deltas (to track changes) */
-	self->d_oc_j	  = false;
-	self->d_oc_conchk = false;
-}
-
-static void _dbg_self_test_dout(struct dbg_self_test *self, bool *target)
-{
-	self->_state		 = DBG_SELF_TEST_STATE_TEST_DOUT_DELAY_ON;
-	self->_wait_ms		 = 2000u;
-	self->_timer_ms		 = 0u;
-	self->_counter		 = 0u;
-	self->_dout_test_target	 = target;
-	*self->_dout_test_target = false;
+	self->init = true;
 }
 
 /** Feed single input character into interactive shell */
@@ -173,32 +180,51 @@ static bool _dbg_self_test_shell_confirm_action(struct dbg_self_test *self)
 	return result;
 }
 
-static void _dbg_self_test_dout_log_name(struct dbg_self_test *self,
-					 const char	      *name)
+static void _dbg_self_test_dout_log_name(struct dbg_self_test *self)
 {
+	struct dbg_self_test_dout_desc *dout =
+	    &self->dout_array[self->_dout_iter];
+
 	const char *trig =
 	    self->interactive_mode ? "" : "(triggering 5 times)";
 
-	DBG_SELF_TEST_LOG(("Testing main board %s %s\n", name, trig));
+	DBG_SELF_TEST_LOG(
+	    ("Testing %s (%s) %s\n", dout->label, dout->phy_label, trig));
 }
 
 static void _dbg_self_test_track_dio_changes(struct dbg_self_test *self)
 {
-	if (self->oc_j != self->d_oc_j) {
-		self->d_oc_j = self->oc_j;
+	uint8_t i;
 
-		DBG_SELF_TEST_LOG(("oc_j changed to %s\n", self->oc_j ? "true" : "false"));
-	}
+	for (i = 0u; i < self->din_count; i++) {
+		struct dbg_self_test_din_desc *din = &self->din_array[i];
 
-	if (self->oc_conchk != self->d_oc_conchk) {
-		self->d_oc_conchk = self->oc_conchk;
-		DBG_SELF_TEST_LOG(("oc_conchk changed to %s\n", self->oc_conchk ? "true" : "false"));
+		if (din->state == din->_state_d) {
+			continue;
+		}
+
+		DBG_SELF_TEST_LOG(("%s (%s) changed state to %s\n", din->label,
+				   din->phy_label,
+				   din->state ? "true" : "false"));
+
+		din->_state_d = din->state;
 	}
 }
 
 static void dbg_self_test_step(struct dbg_self_test *self,
 			       uint32_t		     delta_time_ms)
 {
+	if (self->init) {
+		uint8_t i;
+
+		self->init = false;
+
+		for (i = 0u; i < self->din_count; i++) {
+			self->din_array[i]._state_d =
+			    !self->din_array[i].state;
+		}
+	}
+
 	self->_dio_check_timer_ms += delta_time_ms;
 	if (self->_dio_check_timer_ms >= 100u) {
 		self->_dio_check_timer_ms = 0u;
@@ -206,81 +232,19 @@ static void dbg_self_test_step(struct dbg_self_test *self,
 	}
 
 	switch (self->_state) {
-	case DBG_SELF_TEST_STATE_TEST_LED:
-		_dbg_self_test_dout_log_name(self, "LED");
-		_dbg_self_test_dout(self, &self->onboard_led);
-		self->_state_after_dout_test = DBG_SELF_TEST_STATE_TEST_SW1;
-		_dbg_self_test_log_validate_shell_op(self);
-		break;
-
-	case DBG_SELF_TEST_STATE_TEST_SW1:
-		_dbg_self_test_dout_log_name(self, "SW1 (B4)");
-		_dbg_self_test_dout(self, &self->sw1);
-		self->_state_after_dout_test = DBG_SELF_TEST_STATE_TEST_SW2;
-		_dbg_self_test_log_validate_shell_op(self);
-		break;
-
-	case DBG_SELF_TEST_STATE_TEST_SW2:
-		_dbg_self_test_dout_log_name(self, "SW2 (B3)");
-		_dbg_self_test_dout(self, &self->sw2);
-		self->_state_after_dout_test =
-		    DBG_SELF_TEST_STATE_VALIDATE_DIN;
-		_dbg_self_test_log_validate_shell_op(self);
-		break;
-
-	case DBG_SELF_TEST_STATE_VALIDATE_DIN: {
-		bool	    invalid  = false;
-		bool	    expected = false;
-		const char *name     = "unknown";
-
-		DBG_SELF_TEST_LOG(("Validating digital inputs state:\n"));
-		self->_state = DBG_SELF_TEST_STATE_TERMINAL;
-
-		/* Inputs */
-		/* Not used by board (inside connector) */
-		/*if (self->bt_start == false) {
-			name	 = "bt_start";
-			expected = true;
-			invalid	 = true;
-		}*/
-
-		if (self->bt_stop == false) {
-			name	 = "bt_stop";
-			expected = false;
-			invalid	 = true;
+	case DBG_SELF_TEST_STATE_TEST_DOUT:
+		if (self->_dout_iter >= self->dout_count) {
+			self->_state = DBG_SELF_TEST_STATE_VALIDATE_DIN;
+			break;
 		}
 
-		/* Not used by board (inside connector) */
-		/*if (self->bt_emergency == false) {
-			name	 = "bt_emergency";
-			expected = true;
-			invalid	 = true;
-		}*/
-
-		if (self->oc_j == false) {
-			name	 = "oc_j (A15)";
-			expected = true;
-			invalid	 = true;
-		}
-
-		if (self->oc_conchk == false) {
-			name	 = "oc_conchk (B5)";
-			expected = true;
-			invalid	 = true;
-		}
-
-		if (invalid) {
-			DBG_SELF_TEST_LOG(
-			    ("%s state is invalid! (expected: %s)\n", name,
-			     expected ? "true" : "false"));
-		} else {
-			DBG_SELF_TEST_LOG(("All digital input states are valid!\n"));
-		}
-
+		_dbg_self_test_dout_log_name(self);
 		_dbg_self_test_log_validate_shell_op(self);
-
+		self->_state	= DBG_SELF_TEST_STATE_TEST_DOUT_DELAY_ON;
+		self->_wait_ms	= 2000u;
+		self->_timer_ms = 0u;
+		self->_counter	= 0u;
 		break;
-	}
 
 	case DBG_SELF_TEST_STATE_TEST_DOUT_DELAY_OFF:
 		self->_timer_ms += delta_time_ms;
@@ -289,7 +253,7 @@ static void dbg_self_test_step(struct dbg_self_test *self,
 			break;
 		}
 
-		*self->_dout_test_target = false;
+		self->dout_array[self->_dout_iter].state = false;
 
 		self->_state	= DBG_SELF_TEST_STATE_TEST_DOUT_DELAY_ON;
 		self->_timer_ms = 0u;
@@ -309,17 +273,19 @@ static void dbg_self_test_step(struct dbg_self_test *self,
 
 		/* Confirm shell action (interactive mode) */
 		if (_dbg_self_test_shell_confirm_action(self)) {
-			self->_state = self->_state_after_dout_test;
+			self->_state = DBG_SELF_TEST_STATE_TEST_DOUT;
+			self->_dout_iter++;
 			break;
 		}
 
 		/* Skip the last ON cycle */
 		if (!self->interactive_mode && (self->_counter >= 5u)) {
-			self->_state = self->_state_after_dout_test;
+			self->_state = DBG_SELF_TEST_STATE_TEST_DOUT;
+			self->_dout_iter++;
 			break;
 		}
 
-		*self->_dout_test_target = true;
+		self->dout_array[self->_dout_iter].state = true;
 
 		self->_state	= DBG_SELF_TEST_STATE_TEST_DOUT_DELAY_OFF;
 		self->_timer_ms = 0u;
@@ -327,11 +293,49 @@ static void dbg_self_test_step(struct dbg_self_test *self,
 
 		break;
 
+	case DBG_SELF_TEST_STATE_VALIDATE_DIN: {
+		bool	invalid = false;
+		uint8_t i;
+
+		DBG_SELF_TEST_LOG(("Validating digital inputs state:\n"));
+		self->_state = DBG_SELF_TEST_STATE_TERMINAL;
+
+		for (i = 0u; i < self->din_count; i++) {
+			struct dbg_self_test_din_desc *din =
+			    &self->din_array[i];
+
+			if (din->state == din->expected_state) {
+				continue;
+			}
+
+			DBG_SELF_TEST_LOG(
+			    ("%s (%s) state is invalid. Expected: %s\n",
+			     din->label, din->phy_label,
+			     din->state ? "false, got: true"
+					: "true, got: false"));
+
+			invalid = true;
+		}
+
+		if (invalid) {
+			DBG_SELF_TEST_LOG(("Some checks has failed\n"));
+		} else {
+			DBG_SELF_TEST_LOG(
+			    ("All digital input states are valid!\n"));
+		}
+
+		_dbg_self_test_log_validate_shell_op(self);
+
+		break;
+	}
+
 	default:
 		/* Confirm shell action (interactive mode) */
-		if (!self->interactive_mode || _dbg_self_test_shell_confirm_action(self)) {
+		if (!self->interactive_mode ||
+		    _dbg_self_test_shell_confirm_action(self)) {
 			/* Repeat all again */
-			self->_state = DBG_SELF_TEST_STATE_TEST_LED;
+			self->_state	 = DBG_SELF_TEST_STATE_TEST_DOUT;
+			self->_dout_iter = 0u;
 			break;
 		}
 		break;
