@@ -63,7 +63,7 @@ void Error_Handler(void);
 #define in_bt_start_GPIO_Port GPIOB
 #define in_bt_stop_Pin GPIO_PIN_8
 #define in_bt_stop_GPIO_Port GPIOA
-#define in_bt_emergency_Pin GPIO_PIN_10
+#define in_bt_emergency_Pin GPIO_PIN_11
 #define in_bt_emergency_GPIO_Port GPIOA
 #define in_oc_j_Pin GPIO_PIN_15
 #define in_oc_j_GPIO_Port GPIOA
