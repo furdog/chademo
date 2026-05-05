@@ -58,7 +58,8 @@ Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_can.c \
 SEGGER/Syscalls/SEGGER_RTT_Syscalls_GCC.c \
 SEGGER/RTT/SEGGER_RTT.c \
 SEGGER/RTT/SEGGER_RTT_printf.c \
-Core/Src/self_test.c
+Core/Src/self_test.c \
+Drivers/INA226/F7_INA226.c \
 #Core/Src/syscalls.c \
 
 # ASM sources
@@ -128,7 +129,8 @@ C_INCLUDES =  \
 -IDrivers/CMSIS/Include \
 -ISEGGER/Config \
 -ISEGGER/RTT \
--Iself_test
+-Iself_test \
+-IDrivers/INA226
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
@@ -154,6 +156,7 @@ LDSCRIPT = STM32F103XX_FLASH.ld
 LIBS = -lc -lm -lnosys 
 LIBDIR = 
 LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
+LDFLAGS += -u _printf_float
 
 # default action: build all
 all: tests $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin

@@ -25,6 +25,7 @@
 #include <stdio.h>
 
 #include "SEGGER_RTT.h"
+#include "F7_INA226.h"
 
 /* USER CODE END Includes */
 
@@ -109,6 +110,8 @@ int main(void)
   if (HAL_CAN_Start(&hcan) != HAL_OK) {
 	      Error_Handler();
   }
+
+  INA226_setConfig(&hi2c1, INA226_ADDRESS, INA226_MODE_CONT_SHUNT_AND_BUS | INA226_VBUS_140uS | INA226_VBUS_140uS | INA226_AVG_1024);
   /* USER CODE END 2 */
 
   /* Infinite loop */

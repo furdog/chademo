@@ -25,15 +25,12 @@ UART_HandleTypeDef huart1; modbus
 UART_HandleTypeDef huart2; other/diagnostics
 */
 
-/* Insert prototypes into main code */
-extern void self_test_stm32_init();
-extern void self_test_stm32_run();
-
 #include <stdbool.h>
 #include <stdio.h>
 
-#include "SEGGER_RTT.h"
 #include "main.h"
+#include "SEGGER_RTT.h"
+#include "F7_INA226.h"
 
 #define DBG_SELF_TEST_LOG(x)                                                  \
 	printf x;                                                             \
@@ -41,12 +38,23 @@ extern void self_test_stm32_run();
 #define DBG_SELF_TEST_LOG_IMPL
 #include "self_test.h"
 
+/* Prototypes */
+extern I2C_HandleTypeDef  hi2c1;
+extern UART_HandleTypeDef huart1;
+
+/* Variables */
 volatile bool	     dbg_self_test_enabled = false;
 struct dbg_self_test dbg_self_test;
 
 struct dbg_self_test_din_desc  din[5u];
 struct dbg_self_test_dout_desc dout[5u];
 
+volatile float dbg_ina226_self_test_bus_V       = 0u;
+volatile uint32_t dbg_ina226_self_test_timer_ms = 0u;
+volatile uint32_t dbg_uart_self_test_timer_ms   = 0u;
+volatile char dbg_uart_self_test_str[255u]  = "Пyтін xyйлo!!!\r\n\0";
+
+/* Functions */
 void dbg_self_test_init_descriptors(struct dbg_self_test *self)
 {
 	uint8_t c = 0u;
@@ -172,5 +180,20 @@ void self_test_stm32_run(uint32_t delta_time_ms)
 
 		din[1].state =
 		    HAL_GPIO_ReadPin(in_oc_conchk_GPIO_Port, in_oc_conchk_Pin);
+
+		dbg_ina226_self_test_bus_V = INA226_getBusV(&hi2c1, INA226_ADDRESS);
+
+		dbg_ina226_self_test_timer_ms += dt_ms;
+		if (dbg_ina226_self_test_timer_ms > 2500u) {
+			dbg_ina226_self_test_timer_ms = 0u;
+			printf("INA226_bus_V: %f\n", dbg_ina226_self_test_bus_V);
+		}
+
+		dbg_uart_self_test_timer_ms += dt_ms;
+		if (dbg_uart_self_test_timer_ms > 100u) {
+			dbg_uart_self_test_timer_ms = 0u;
+			
+			HAL_UART_Transmit(&huart1, dbg_uart_self_test_str, strlen(dbg_uart_self_test_str), 1000);
+		}
 	}
 }

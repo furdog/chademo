@@ -387,3 +387,16 @@ The bad news is that RX is physically wired to PA8 instead of PA10, which basica
 Temporary solution: connect physically PA8 with PA10.
 
 I have an idea to turn this `self_test` library into hardware description layer. This might become standard way to define and test peripherals before use.
+
+(04.05.2026)
+
+Now i am testing ina226 peripherals.
+The driver is taken from `https://github.com/macgeorge/STM32-example-codes/tree/master` and placed into `Drivers/INA226/`.
+
+The project is very old and uses legacy DSP headers, adjusting…
+
+There's again some mistakes in main board. No pulling resistors for SDA and SCL at all...
+
+(04.04.2026)
+
+I have decided to focus on modbus implementation today.
