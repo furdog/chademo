@@ -1,27 +1,3 @@
-/*
-#define onboard_led_Pin GPIO_PIN_13
-#define onboard_led_GPIO_Port GPIOC
-#define in_bt_start_Pin GPIO_PIN_15
-#define in_bt_start_GPIO_Port GPIOB
-#define in_bt_stop_Pin GPIO_PIN_8
-#define in_bt_stop_GPIO_Port GPIOA
-#define in_bt_emergency_Pin GPIO_PIN_10
-#define in_bt_emergency_GPIO_Port GPIOA
-#define in_oc_j_Pin GPIO_PIN_15
-#define in_oc_j_GPIO_Port GPIOA
-#define out_sw_d2_Pin GPIO_PIN_3
-#define out_sw_d2_GPIO_Port GPIOB
-#define out_sw_d1_Pin GPIO_PIN_4
-#define out_sw_d1_GPIO_Port GPIOB
-#define in_oc_conchk_Pin GPIO_PIN_5
-#define in_oc_conchk_GPIO_Port GPIOB
-
-CAN_HandleTypeDef hcan; main can
-I2C_HandleTypeDef hi2c1; ina225
-UART_HandleTypeDef huart1; modbus
-UART_HandleTypeDef huart2; other/diagnostics
-*/
-
 #ifndef DBG_SELF_TEST_LOG_HEADER_GUARD
 #define DBG_SELF_TEST_LOG_HEADER_GUARD
 

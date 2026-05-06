@@ -55,9 +55,9 @@ Core/Src/sysmem.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_can.c \
-SEGGER/Syscalls/SEGGER_RTT_Syscalls_GCC.c \
-SEGGER/RTT/SEGGER_RTT.c \
-SEGGER/RTT/SEGGER_RTT_printf.c \
+Drivers/SEGGER/Syscalls/SEGGER_RTT_Syscalls_GCC.c \
+Drivers/SEGGER/RTT/SEGGER_RTT.c \
+Drivers/SEGGER/RTT/SEGGER_RTT_printf.c \
 Core/Src/self_test.c \
 Drivers/INA226/F7_INA226.c \
 #Core/Src/syscalls.c
@@ -68,7 +68,7 @@ startup_stm32f103xb.s
 
 # ASMM sources
 ASMM_SOURCES =  \
-SEGGER/RTT/SEGGER_RTT_ASM_ARMv7M.S
+Drivers/SEGGER/RTT/SEGGER_RTT_ASM_ARMv7M.S
 
 
 
@@ -127,9 +127,9 @@ C_INCLUDES =  \
 -IDrivers/STM32F1xx_HAL_Driver/Inc \
 -IDrivers/CMSIS/Device/ST/STM32F1xx/Include \
 -IDrivers/CMSIS/Include \
--ISEGGER/Config \
--ISEGGER/RTT \
--Iself_test \
+-IDrivers/SEGGER/Config \
+-IDrivers/SEGGER/RTT \
+-Iagnostic/self_test \
 -IDrivers/INA226
 
 # compile gcc flags
@@ -169,7 +169,7 @@ debug:
 	./gdb/debug.sh
 
 tests:
-	$(MAKE) -C self_test/ test
+	$(MAKE) -C agnostic/self_test/ test
 
 selftest:
 	interactive=$(interactive) ./gdb/self_test.sh

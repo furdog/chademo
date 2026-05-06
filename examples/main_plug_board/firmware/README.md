@@ -400,3 +400,17 @@ There's again some mistakes in main board. No pulling resistors for SDA and SCL 
 (04.04.2026)
 
 I have decided to focus on modbus implementation today.
+So i focused on `https://github.com/Jacajack/liblightmodbus` as hardware agnostic library.
+
+Currently i'll try to establish serial communication.
+
+(06.05.2026)
+I have decided to use git subtrees to avoid managing submodules.
+Moving `SEGGER` implementation into `Drivers/` directory
+
+I have found that `liblightmodbus` license is gpl3 which forces the whole project under gpl3.
+Good news - i am not obligated to use this library. I'll keep it for a while, but later i'll get rid of it.
+
+I have decided to move hardware agnostic modules into `agnostic/` directory
+
+There's also `sync_subtrees.sh` script to synchronize remote libraries.
