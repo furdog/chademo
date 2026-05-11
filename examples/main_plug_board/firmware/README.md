@@ -414,3 +414,30 @@ Good news - i am not obligated to use this library. I'll keep it for a while, bu
 I have decided to move hardware agnostic modules into `agnostic/` directory
 
 There's also `sync_subtrees.sh` script to synchronize remote libraries.
+
+Unfortunately i2c doesn't work.
+I have decided to use i2c display on raw board to test it.
+
+Ok. The problem has resolved. Opto coupling circuit was faulty.
+I2c works now.
+
+(07.05.2026)
+I decided to create system board project: `../../system_board/firmware`
+
+I have created simple serial communication attempt.
+Everything works in both ways through LIN-like single-wire
+interface.
+
+I check line for idle, disabling receiver, transmitting, waiting for transmission end, then reenable receiver and clear
+idle flag. This is very raw and not super stable, but as proof of concept...
+```C
+if(!__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE)) {
+			ATOMIC_CLEAR_BIT(huart1.Instance->CR1, USART_CR1_RE); // Disable Receiver
+			HAL_UART_Transmit(&huart1, dbg_uart_self_test_str, strlen(dbg_uart_self_test_str), 1000);
+			while(__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TC) == RESET); // Wait for physical end
+			ATOMIC_SET_BIT(huart1.Instance->CR1, USART_CR1_RE); // Re-enable Receiver
+			__HAL_UART_CLEAR_IDLEFLAG(&huart1);
+}
+```
+
+(08.05.2026)

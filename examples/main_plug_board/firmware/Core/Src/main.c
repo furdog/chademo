@@ -27,6 +27,9 @@
 #include "SEGGER_RTT.h"
 #include "F7_INA226.h"
 
+#include "ssd1306.h"
+#include "fonts.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -112,11 +115,22 @@ int main(void)
   MX_I2C1_Init();
   MX_CAN_Init();
   /* USER CODE BEGIN 2 */
-  if (HAL_CAN_Start(&hcan) != HAL_OK) {
-	      Error_Handler();
-  }
+  //if (HAL_CAN_Start(&hcan) != HAL_OK) {
+  //	      Error_Handler();
+  //}
 
   INA226_setConfig(&hi2c1, INA226_ADDRESS, INA226_MODE_CONT_SHUNT_AND_BUS | INA226_VBUS_140uS | INA226_VBUS_140uS | INA226_AVG_1024);
+
+	// Init lcd using one of the stm32HAL i2c typedefs
+	ssd1306_Init(&hi2c1);
+
+	// Write data to local screenbuffer
+	ssd1306_SetCursor(0, 36);
+	ssd1306_WriteString("Hello World!", Font_11x18, White);
+
+	// Copy all data from local screenbuffer to the screen
+	ssd1306_UpdateScreen(&hi2c1);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -323,14 +337,13 @@ static void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
+  huart1.Init.BaudRate = 9600;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
   huart1.Init.Mode = UART_MODE_TX_RX;
   huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart1) != HAL_OK)
+  if (HAL_LIN_Init(&huart1, UART_LINBREAKDETECTLENGTH_10B) != HAL_OK)
   {
     Error_Handler();
   }

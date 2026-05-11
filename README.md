@@ -83,6 +83,7 @@ Alternative communication and power supply (for our example **CHAdeMO** controll
 - using both CP and PP lines for communication, harvesting 12v from parasitic voltage on a communication line (tricky)
 - using wireless interfaces for communication (highly questionable)
 - using other communication protocols other than MODBUS.
+- using LIN transciever, for example tja1020 (made exactly for this purpose)
 
 ### Internal requirements
 (Our example **CHAdeMO** controller)
