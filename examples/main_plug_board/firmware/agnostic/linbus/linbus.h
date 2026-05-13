@@ -37,10 +37,45 @@
 #include <string.h>
 
 /** linbus fsm emited event */
-enum linbus_event { LINBUS_EVENT_NONE, LINBUS_EVENT_SEND_BREAK };
+enum linbus_event {
+	/** No events */
+	LINBUS_EVENT_NONE,
+
+	/** Signal to send break symbol */
+	LINBUS_EVENT_SEND_BREAK,
+
+	/** Signal to send data */
+	LINBUS_EVENT_TX_READY,
+
+	LINBUS_EVENT_FRAME_SENT
+};
 
 /** linbus internal states */
-enum linbus_state { LINBUS_STATE_IDLE, LINBUS_STATE_SEND_BREAK };
+enum linbus_state {
+	/** Not doing anything */
+	LINBUS_STATE_IDLE,
+
+	/** Wait for event acknowledge */
+	LINBUS_STATE_EACK,
+
+	/** State that sends break event */
+	LINBUS_STATE_SEND_BREAK,
+
+	/** State that sends sync byte */
+	LINBUS_STATE_SEND_SYNC,
+
+	/** State that sends sync Parity bits + ID */
+	LINBUS_STATE_SEND_PID,
+
+	/** Send actual packet data */
+	LINBUS_STATE_SEND_DATA,
+
+	/** Send checksum */
+	LINBUS_STATE_SEND_CHECKSUM,
+
+	/** Frame has been sent */
+	LINBUS_STATE_FRAME_SENT
+};
 
 /** linbus main instance data structure */
 struct linbus {
@@ -50,18 +85,31 @@ struct linbus {
 
 	uint8_t _data[8u];
 	uint8_t _data_len;
+	uint8_t _data_it; /**< Iterator */
+
+	uint8_t _tx; /**< Current TX data byte */
+	uint8_t _rx; /**< Current RX data byte */
 
 	uint8_t _checksum;
 
 	bool _legacy; /**< Legacy, pre 2.1 version mode */
+	bool _nack;   /**< Event has not been acknowledged */
 };
 
 /** Initializes linbus main instance data structure */
 void linbus_init(struct linbus *self);
 
 /** Queues packet to be sent */
-bool linbus_queue_packet(struct linbus *self, const uint8_t pid,
-			 const uint8_t *data, const uint8_t len);
+bool linbus_queue_frame(struct linbus *self, const uint8_t id,
+			const uint8_t *data, const uint8_t len);
+
+/** Returns tx data (single byte).
+ * This is only to be called when LINBUS_EVENT_TX_READY occurs.
+ * Calling this in any other case is undefined behaviour. */
+uint8_t linbus_get_tx_data(struct linbus *self);
+
+/** Acknowledge linbus event */
+void linbus_ack_event(struct linbus *self) { self->_nack = false; }
 
 /** Returns event, if any occurs.
  *  May be run in a while loop until returns LINBUS_EVENT_NONE */
@@ -90,7 +138,7 @@ void _linbus_calc_checksum(struct linbus *self)
 	uint8_t i;
 
 	/* Classic uses PID, Legacy (1.x) skips it */
-	uint16_t sum = (self->_legacy) ? self->_pid : 0u;
+	uint16_t sum = (self->_legacy) ? 0u : self->_pid;
 
 	assert(self->_data_len <= 8u);
 
@@ -117,14 +165,19 @@ void linbus_init(struct linbus *self)
 
 	(void)memset(self->_data, 0u, 8u);
 	self->_data_len = 0u;
+	self->_data_it	= 0u;
+
+	self->_tx = 0u;
+	self->_rx = 0u;
 
 	self->_checksum = 0u;
 
 	self->_legacy = false;
+	self->_nack   = false;
 }
 
-bool linbus_queue_packet(struct linbus *self, const uint8_t id,
-			 const uint8_t *data, const uint8_t len)
+bool linbus_queue_frame(struct linbus *self, const uint8_t id,
+			const uint8_t *data, const uint8_t len)
 {
 	bool success = false;
 
@@ -151,21 +204,71 @@ bool linbus_queue_packet(struct linbus *self, const uint8_t id,
 	return success;
 }
 
+uint8_t linbus_get_tx_data(struct linbus *self) { return self->_tx; }
+
 uint8_t linbus_step(struct linbus *self)
 {
-	uint8_t ev = LINBUS_EVENT_NONE;
+	uint8_t ev    = LINBUS_EVENT_NONE;
+	uint8_t state = self->_state;
 
-	switch (self->_state) {
+	if (self->_nack == true) {
+		state = LINBUS_STATE_EACK;
+	}
+
+	switch (state) {
 	case LINBUS_STATE_IDLE:
 		/* Wait for external events */
 		break;
 
+	case LINBUS_STATE_EACK:
+		/* User must acknowledge event here */
+		break;
+
 	case LINBUS_STATE_SEND_BREAK:
+		self->_state = LINBUS_STATE_SEND_SYNC;
+
 		ev = LINBUS_EVENT_SEND_BREAK;
+		break;
+
+	case LINBUS_STATE_SEND_SYNC:
+		self->_state = LINBUS_STATE_SEND_PID;
+
+		self->_tx = 0x55u;
+		ev	  = LINBUS_EVENT_TX_READY;
+		break;
+
+	case LINBUS_STATE_SEND_PID:
+		self->_state = LINBUS_STATE_SEND_DATA;
+
+		self->_tx = self->_pid;
+		ev	  = LINBUS_EVENT_TX_READY;
+		break;
+
+	case LINBUS_STATE_SEND_DATA:
+		if (self->_data_it < self->_data_len) {
+			self->_tx	= self->_data[self->_data_it];
+			self->_data_it += 1u;
+
+			ev = LINBUS_EVENT_TX_READY;
+		} else {
+			self->_tx    = self->_checksum;
+			ev	     = LINBUS_EVENT_TX_READY;
+			self->_state = LINBUS_STATE_FRAME_SENT;
+		}
+
+		break;
+
+	case LINBUS_STATE_FRAME_SENT:
+		self->_state = LINBUS_STATE_IDLE;
+		ev	     = LINBUS_EVENT_FRAME_SENT;
 		break;
 
 	default:
 		break;
+	}
+
+	if (ev > (uint8_t)LINBUS_EVENT_NONE) {
+		self->_nack = true;
 	}
 
 	return ev;
