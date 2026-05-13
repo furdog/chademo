@@ -3,9 +3,11 @@
 #define LINBUS_IMPLEMENTATION
 #include "linbus.h"
 
-#ifdef    NDEBUG
+#ifdef NDEBUG
 #undef assert
-#define assert(e) if (e) {};
+#define assert(e)                                                             \
+	if (e) {                                                              \
+	};
 #endif /* NDEBUG */
 
 #define DATA_LEN 8u
@@ -30,16 +32,16 @@ int main()
 	assert(linbus_step(&lb) == LINBUS_EVENT_SEND_BREAK);
 	linbus_ack_event(&lb);
 
-	assert(linbus_step(&lb) == LINBUS_EVENT_TX_READY);
+	assert(linbus_step(&lb) == LINBUS_EVENT_SEND_DATA);
 	linbus_ack_event(&lb);
 	assert(linbus_get_tx_data(&lb) == 0x55u);
 
-	assert(linbus_step(&lb) == LINBUS_EVENT_TX_READY);
+	assert(linbus_step(&lb) == LINBUS_EVENT_SEND_DATA);
 	linbus_ack_event(&lb);
 	printf("pid: 0x%02X\n", linbus_get_tx_data(&lb));
 
 	for (i = 0; i < DATA_LEN; i++) {
-		assert(linbus_step(&lb) == LINBUS_EVENT_TX_READY);
+		assert(linbus_step(&lb) == LINBUS_EVENT_SEND_DATA);
 		linbus_ack_event(&lb);
 		assert(linbus_get_tx_data(&lb) == "Hlowrld!"[i]);
 		printf("data[%u]: %c (0x%02X)\n", i,
@@ -47,7 +49,7 @@ int main()
 		       (char)linbus_get_tx_data(&lb));
 	}
 
-	assert(linbus_step(&lb) == LINBUS_EVENT_TX_READY);
+	assert(linbus_step(&lb) == LINBUS_EVENT_SEND_DATA);
 	linbus_ack_event(&lb);
 	printf("sum: 0x%02X\n", linbus_get_tx_data(&lb));
 

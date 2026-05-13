@@ -44,9 +44,10 @@ enum linbus_event {
 	/** Signal to send break symbol */
 	LINBUS_EVENT_SEND_BREAK,
 
-	/** Signal to send data */
-	LINBUS_EVENT_TX_READY,
+	/** Signal to send binary data */
+	LINBUS_EVENT_SEND_DATA,
 
+	/** Frame has been sent */
 	LINBUS_EVENT_FRAME_SENT
 };
 
@@ -104,8 +105,8 @@ bool linbus_queue_frame(struct linbus *self, const uint8_t id,
 			const uint8_t *data, const uint8_t len);
 
 /** Returns tx data (single byte).
- * This is only to be called when LINBUS_EVENT_TX_READY occurs.
- * Calling this in any other case is undefined behaviour. */
+ * This is only to be called after LINBUS_EVENT_SEND_DATA occurs.
+ * Calling this after any other event is undefined behaviour. */
 uint8_t linbus_get_tx_data(struct linbus *self);
 
 /** Acknowledge linbus event */
@@ -125,9 +126,10 @@ uint8_t linbus_step(struct linbus *self);
 void _linbus_calc_pid(struct linbus *self, const uint8_t id)
 {
 	/* Calculate parity bits */
-	uint8_t p0 = ((id >> 0) ^ (id >> 1) ^ (id >> 2) ^ (id >> 4)) & 0x01u;
+	uint8_t p0 =
+	    ((id >> 0u) ^ (id >> 1u) ^ (id >> 2u) ^ (id >> 4u)) & 0x1u;
 	uint8_t p1 =
-	    ~(((id >> 1) ^ (id >> 3) ^ (id >> 4) ^ (id >> 5)) & 0x01u);
+	    !(((id >> 1u) ^ (id >> 3u) ^ (id >> 4u) ^ (id >> 5u)) & 0x1u)
 
 	/* Combine ID and Parity bits into the final PID */
 	self->_pid = id | (p0 << 6u) | (p1 << 7u);
@@ -234,14 +236,14 @@ uint8_t linbus_step(struct linbus *self)
 		self->_state = LINBUS_STATE_SEND_PID;
 
 		self->_tx = 0x55u;
-		ev	  = LINBUS_EVENT_TX_READY;
+		ev	  = LINBUS_EVENT_SEND_DATA;
 		break;
 
 	case LINBUS_STATE_SEND_PID:
 		self->_state = LINBUS_STATE_SEND_DATA;
 
 		self->_tx = self->_pid;
-		ev	  = LINBUS_EVENT_TX_READY;
+		ev	  = LINBUS_EVENT_SEND_DATA;
 		break;
 
 	case LINBUS_STATE_SEND_DATA:
@@ -249,12 +251,19 @@ uint8_t linbus_step(struct linbus *self)
 			self->_tx	= self->_data[self->_data_it];
 			self->_data_it += 1u;
 
-			ev = LINBUS_EVENT_TX_READY;
-		} else {
-			self->_tx    = self->_checksum;
-			ev	     = LINBUS_EVENT_TX_READY;
-			self->_state = LINBUS_STATE_FRAME_SENT;
+			ev = LINBUS_EVENT_SEND_DATA;
 		}
+
+		if (self->_data_it >= self->_data_len) {
+			self->_state = LINBUS_STATE_SEND_CHECKSUM;
+		}
+
+		break;
+
+	case LINBUS_STATE_SEND_CHECKSUM:
+		self->_tx    = self->_checksum;
+		ev	     = LINBUS_EVENT_SEND_DATA;
+		self->_state = LINBUS_STATE_FRAME_SENT;
 
 		break;
 
