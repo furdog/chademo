@@ -1,5 +1,9 @@
 #include <stdio.h>
 
+#define LINBUS_LOG(e)                                                         \
+	printf("%s %i: ", __FILE__, __LINE__);                                \
+	printf e
+#define LINBUS_DEBUG_STATES
 #define LINBUS_IMPLEMENTATION
 #include "linbus.h"
 
@@ -38,20 +42,15 @@ int main()
 
 	assert(linbus_step(&lb) == LINBUS_EVENT_SEND_DATA);
 	linbus_ack_event(&lb);
-	printf("pid: 0x%02X\n", linbus_get_tx_data(&lb));
 
 	for (i = 0; i < DATA_LEN; i++) {
 		assert(linbus_step(&lb) == LINBUS_EVENT_SEND_DATA);
 		linbus_ack_event(&lb);
 		assert(linbus_get_tx_data(&lb) == "Hlowrld!"[i]);
-		printf("data[%u]: %c (0x%02X)\n", i,
-		       (char)linbus_get_tx_data(&lb),
-		       (char)linbus_get_tx_data(&lb));
 	}
 
 	assert(linbus_step(&lb) == LINBUS_EVENT_SEND_DATA);
 	linbus_ack_event(&lb);
-	printf("sum: 0x%02X\n", linbus_get_tx_data(&lb));
 
 	assert(linbus_step(&lb) == LINBUS_EVENT_FRAME_SENT);
 	linbus_ack_event(&lb);

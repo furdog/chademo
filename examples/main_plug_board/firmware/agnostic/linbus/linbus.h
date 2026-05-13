@@ -31,6 +31,11 @@
 #ifndef LINBUS_HEADER_GUARD
 #define LINBUS_HEADER_GUARD
 
+#ifndef LINBUS_LOG
+/** Logging macro. Must be defined elsewhere */
+#define LINBUS_LOG(e)
+#endif /* LINBUS_LOG */
+
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -126,10 +131,9 @@ uint8_t linbus_step(struct linbus *self);
 void _linbus_calc_pid(struct linbus *self, const uint8_t id)
 {
 	/* Calculate parity bits */
-	uint8_t p0 =
-	    ((id >> 0u) ^ (id >> 1u) ^ (id >> 2u) ^ (id >> 4u)) & 0x1u;
+	uint8_t p0 = ((id >> 0u) ^ (id >> 1u) ^ (id >> 2u) ^ (id >> 4u)) & 1u;
 	uint8_t p1 =
-	    !(((id >> 1u) ^ (id >> 3u) ^ (id >> 4u) ^ (id >> 5u)) & 0x1u)
+	    (((id >> 1u) ^ (id >> 3u) ^ (id >> 4u) ^ (id >> 5u)) & 1u) ^ 1u;
 
 	/* Combine ID and Parity bits into the final PID */
 	self->_pid = id | (p0 << 6u) | (p1 << 7u);
@@ -155,6 +159,55 @@ void _linbus_calc_checksum(struct linbus *self)
 
 	/* Bitwise NOT of the final 8-bit sum */
 	self->_checksum = (uint8_t)~sum;
+}
+
+const char *_linbus_get_state_name(const uint8_t state)
+{
+	const char *name = "UNDEFINED";
+
+	switch (state) {
+	case LINBUS_STATE_IDLE:
+		name = "IDLE";
+		break;
+	case LINBUS_STATE_EACK:
+		name = "EACK";
+		break;
+	case LINBUS_STATE_SEND_BREAK:
+		name = "SEND_BREAK";
+		break;
+	case LINBUS_STATE_SEND_SYNC:
+		name = "SEND_SYNC";
+		break;
+	case LINBUS_STATE_SEND_PID:
+		name = "SEND_PID";
+		break;
+	case LINBUS_STATE_SEND_DATA:
+		name = "SEND_DATA";
+		break;
+	case LINBUS_STATE_SEND_CHECKSUM:
+		name = "SEND_CHECKSUM";
+		break;
+	case LINBUS_STATE_FRAME_SENT:
+		name = "FRAME_SENT";
+		break;
+	default:
+		break;
+	}
+
+	return name;
+}
+
+void _linbus_enter_state(struct linbus *self, const uint8_t state)
+{
+	const char *from = _linbus_get_state_name(self->_state);
+	const char *to	 = _linbus_get_state_name(state);
+
+	(void)from;
+	(void)to;
+
+	LINBUS_LOG(("state: %s -> %s\n", from, to));
+
+	self->_state = state;
 }
 
 void linbus_init(struct linbus *self)
@@ -198,7 +251,7 @@ bool linbus_queue_frame(struct linbus *self, const uint8_t id,
 		_linbus_calc_pid(self, id);
 		_linbus_calc_checksum(self);
 
-		self->_state = LINBUS_STATE_SEND_BREAK;
+		_linbus_enter_state(self, LINBUS_STATE_SEND_BREAK);
 
 		success = true;
 	}
@@ -227,49 +280,49 @@ uint8_t linbus_step(struct linbus *self)
 		break;
 
 	case LINBUS_STATE_SEND_BREAK:
-		self->_state = LINBUS_STATE_SEND_SYNC;
-
 		ev = LINBUS_EVENT_SEND_BREAK;
+		_linbus_enter_state(self, LINBUS_STATE_SEND_SYNC);
 		break;
 
 	case LINBUS_STATE_SEND_SYNC:
-		self->_state = LINBUS_STATE_SEND_PID;
-
 		self->_tx = 0x55u;
-		ev	  = LINBUS_EVENT_SEND_DATA;
+		LINBUS_LOG(("sync: 0x%02X\n", self->_tx));
+		ev = LINBUS_EVENT_SEND_DATA;
+		_linbus_enter_state(self, LINBUS_STATE_SEND_PID);
 		break;
 
 	case LINBUS_STATE_SEND_PID:
-		self->_state = LINBUS_STATE_SEND_DATA;
-
 		self->_tx = self->_pid;
-		ev	  = LINBUS_EVENT_SEND_DATA;
+		LINBUS_LOG(("pid: 0x%02X\n", self->_tx));
+		ev = LINBUS_EVENT_SEND_DATA;
+		_linbus_enter_state(self, LINBUS_STATE_SEND_DATA);
 		break;
 
 	case LINBUS_STATE_SEND_DATA:
 		if (self->_data_it < self->_data_len) {
-			self->_tx	= self->_data[self->_data_it];
+			self->_tx = self->_data[self->_data_it];
+			LINBUS_LOG(("data[%u]: %c (0x%02X)\n", self->_data_it,
+				    self->_tx, self->_tx));
 			self->_data_it += 1u;
-
-			ev = LINBUS_EVENT_SEND_DATA;
+			ev		= LINBUS_EVENT_SEND_DATA;
 		}
 
 		if (self->_data_it >= self->_data_len) {
-			self->_state = LINBUS_STATE_SEND_CHECKSUM;
+			_linbus_enter_state(self, LINBUS_STATE_SEND_CHECKSUM);
 		}
 
 		break;
 
 	case LINBUS_STATE_SEND_CHECKSUM:
-		self->_tx    = self->_checksum;
-		ev	     = LINBUS_EVENT_SEND_DATA;
-		self->_state = LINBUS_STATE_FRAME_SENT;
-
+		self->_tx = self->_checksum;
+		LINBUS_LOG(("sum: 0x%02X\n", self->_tx));
+		ev = LINBUS_EVENT_SEND_DATA;
+		_linbus_enter_state(self, LINBUS_STATE_FRAME_SENT);
 		break;
 
 	case LINBUS_STATE_FRAME_SENT:
-		self->_state = LINBUS_STATE_IDLE;
-		ev	     = LINBUS_EVENT_FRAME_SENT;
+		_linbus_enter_state(self, LINBUS_STATE_IDLE);
+		ev = LINBUS_EVENT_FRAME_SENT;
 		break;
 
 	default:
