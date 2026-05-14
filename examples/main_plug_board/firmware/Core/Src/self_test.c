@@ -42,6 +42,13 @@ UART_HandleTypeDef huart2; other/diagnostics
 #define DBG_SELF_TEST_LOG_IMPL
 #include "self_test.h"
 
+#define LINBUS_LOG(e)                                                         \
+	printf("%s %i: ", __FILE__, __LINE__);                                \
+	printf e
+#define LINBUS_DEBUG_STATES
+#define LINBUS_IMPLEMENTATION
+#include "linbus.h"
+
 /* Defines */
 #define DBG_I2C_SCAN_INTERVAL_MS 5000u
 
@@ -62,6 +69,8 @@ volatile uint32_t dbg_uart_self_test_timer_ms   = 0u;
 volatile char dbg_uart_self_test_str[255u]  = "Пyтін xyйлo!!!\r\n\0";
 
 volatile uint32_t dbg_i2c_scan_timer_ms = DBG_I2C_SCAN_INTERVAL_MS;
+
+struct linbus lb;
 
 /* Functions */
 void dbg_self_test_init_descriptors(struct dbg_self_test *self)
@@ -150,6 +159,88 @@ void scan_i2c()
 void self_test_stm32_init() {
 	dbg_self_test_init(&dbg_self_test);
 	dbg_self_test_init_descriptors(&dbg_self_test);
+	linbus_init(&lb);
+}
+
+void test_ina(uint32_t delta_time_ms) {
+	dbg_ina226_self_test_bus_V = INA226_getBusV(&hi2c1, INA226_ADDRESS);
+
+	dbg_ina226_self_test_timer_ms += delta_time_ms;
+	if (dbg_ina226_self_test_timer_ms > 2500u) {
+		static uint32_t timer_ms;
+		timer_ms += delta_time_ms;
+
+		char str[255u];
+		sprintf(str, "Hello t: %u!", timer_ms);
+
+		dbg_ina226_self_test_timer_ms = 0u;
+		printf("INA226_bus_V: %f\n", dbg_ina226_self_test_bus_V);
+
+		// Write data to local screenbuffer
+		ssd1306_SetCursor(0, 36);
+			
+		ssd1306_WriteString(str, Font_11x18, White);
+
+		// Copy all data from local screenbuffer to the screen
+		ssd1306_UpdateScreen(&hi2c1);
+	}
+}
+
+void test_i2c(uint32_t delta_time_ms) {
+	dbg_i2c_scan_timer_ms += delta_time_ms;
+	if (dbg_i2c_scan_timer_ms >= DBG_I2C_SCAN_INTERVAL_MS) {
+		dbg_i2c_scan_timer_ms = 0u;
+
+		scan_i2c();
+	}
+}
+
+void test_serial(uint32_t delta_time_ms) {
+	/* Send uart signal */
+	dbg_uart_self_test_timer_ms += delta_time_ms;
+	if (dbg_uart_self_test_timer_ms >= 100u) {
+		dbg_uart_self_test_timer_ms = 0u;
+
+		/*if(!__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE)) {
+			ATOMIC_CLEAR_BIT(huart1.Instance->CR1, USART_CR1_RE); // Disable Receiver
+			HAL_UART_Transmit(&huart1, dbg_uart_self_test_str, strlen(dbg_uart_self_test_str), 1000);
+			while(__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TC) == RESET); // Wait for physical end
+			ATOMIC_SET_BIT(huart1.Instance->CR1, USART_CR1_RE); // Re-enable Receiver
+			__HAL_UART_CLEAR_IDLEFLAG(&huart1);
+		}*/
+		
+		linbus_send_frame(&lb, 37, (uint8_t *)"HeartBT!", 8u);
+	}
+
+	/* Limited loop (upper bound) */
+	for (uint8_t i = 0u; i < 8u; i++) {
+		linbus_step(&lb);
+
+		if (lb._event == LINBUS_EVENT_SEND_BREAK) {
+			//HAL_LIN_SendBreak(&huart1);
+			linbus_ack_event(&lb);
+		/*} else if (lb._event == LINBUS_EVENT_SEND_DATA) {
+			if (HAL_UART_Transmit_IT(&huart1, &lb._tx, 1u) != HAL_OK) {
+				break;
+			}
+			linbus_ack_event(&lb);*/
+		} else if (lb._event == LINBUS_EVENT_FRAME_SENT) {
+			HAL_LIN_SendBreak(&huart1);
+			if (HAL_UART_Transmit_IT(&huart1, &lb._buf, 11u) != HAL_OK) {
+				break;
+			}
+			linbus_ack_event(&lb);
+		} else {
+			linbus_ack_event(&lb);
+		}
+	}
+
+	/* Print back response */
+	uint8_t c;
+
+	if (HAL_UART_Receive(&huart1, &c, 1u, 0u) == HAL_OK) {
+		putchar(c);
+	}
 }
 
 void self_test_stm32_run(uint32_t delta_time_ms)
@@ -210,51 +301,8 @@ void self_test_stm32_run(uint32_t delta_time_ms)
 		din[1].state =
 		    HAL_GPIO_ReadPin(in_oc_conchk_GPIO_Port, in_oc_conchk_Pin);
 
-		dbg_ina226_self_test_bus_V = INA226_getBusV(&hi2c1, INA226_ADDRESS);
-
-		dbg_ina226_self_test_timer_ms += dt_ms;
-		if (dbg_ina226_self_test_timer_ms > 2500u) {
-			char str[255u];
-			sprintf(str, "Hello t: %u!", cur_ms);
-
-			dbg_ina226_self_test_timer_ms = 0u;
-			printf("INA226_bus_V: %f\n", dbg_ina226_self_test_bus_V);
-
-			// Write data to local screenbuffer
-			ssd1306_SetCursor(0, 36);
-			
-			ssd1306_WriteString(str, Font_11x18, White);
-
-			// Copy all data from local screenbuffer to the screen
-			ssd1306_UpdateScreen(&hi2c1);
-		}
-
-		dbg_i2c_scan_timer_ms += dt_ms;
-		if (dbg_i2c_scan_timer_ms >= DBG_I2C_SCAN_INTERVAL_MS) {
-			dbg_i2c_scan_timer_ms = 0u;
-
-			scan_i2c();
-		}
-
-		/* Send uart signal */
-		dbg_uart_self_test_timer_ms += dt_ms;
-		if (dbg_uart_self_test_timer_ms >= 100u) {
-			dbg_uart_self_test_timer_ms = 0u;
-
-			if(!__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE)) {
-				ATOMIC_CLEAR_BIT(huart1.Instance->CR1, USART_CR1_RE); // Disable Receiver
-				HAL_UART_Transmit(&huart1, dbg_uart_self_test_str, strlen(dbg_uart_self_test_str), 1000);
-				while(__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TC) == RESET); // Wait for physical end
-				ATOMIC_SET_BIT(huart1.Instance->CR1, USART_CR1_RE); // Re-enable Receiver
-				__HAL_UART_CLEAR_IDLEFLAG(&huart1);
-			}
-		}
-
-		/* Print back response */
-		uint8_t c;
-
-		if (HAL_UART_Receive(&huart1, &c, 1u, 0u) == HAL_OK) {
-			putchar(c);
-		}
+		//test_i2c(dt_ms);
+		//test_ina(dt_ms);
+		test_serial(dt_ms);
 	}
 }

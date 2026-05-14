@@ -113,7 +113,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   MX_I2C1_Init();
-  MX_CAN_Init();
+  //MX_CAN_Init();
   /* USER CODE BEGIN 2 */
   //if (HAL_CAN_Start(&hcan) != HAL_OK) {
   //	      Error_Handler();

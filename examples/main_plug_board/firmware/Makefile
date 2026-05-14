@@ -132,6 +132,7 @@ C_INCLUDES =  \
 -IDrivers/SEGGER/Config \
 -IDrivers/SEGGER/RTT \
 -Iagnostic/self_test \
+-Iagnostic/linbus \
 -IDrivers/INA226 \
 -IDrivers/ssd1306/lib
 
