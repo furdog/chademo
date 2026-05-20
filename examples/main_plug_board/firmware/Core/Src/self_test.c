@@ -43,9 +43,7 @@ UART_HandleTypeDef huart2; other/diagnostics
 #include "self_test.h"
 
 #define LINBUS_LOG(e)                                                         \
-	printf("%s %i: ", __FILE__, __LINE__);                                \
-	printf e
-#define LINBUS_DEBUG_STATES
+	if (self->debug) { printf e; }
 #define LINBUS_IMPLEMENTATION
 #include "linbus.h"
 
@@ -237,26 +235,29 @@ void test_serial(uint32_t delta_time_ms) {
 		}
 	}
 
+	static bool idle = true;
+
+	if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_LBD)) {
+		printf("RXC\n");
+		linbus_ack_carrier(&lbrx);
+		__HAL_UART_CLEAR_FLAG(&huart1, UART_FLAG_LBD);
+		idle = false;
+
+		volatile uint32_t flush_dummy = huart1.Instance->DR; 
+		(void)flush_dummy; // Silence unused variable warning
+	} else if (!idle && __HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE)) {
+		printf("RXI\n");
+		linbus_ack_idle(&lbrx);
+		idle = true;
+	}
+
+	lbrx.debug = true;
+
 	for (uint8_t i = 0u; i < 8u; i++) {
 		linbus_step(&lbrx);
 
-		static bool idle = true;
-
-		if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_LBD)) {
-			printf("RX_______GOT_______CARRIER\n");
-			linbus_ack_carrier(&lbrx);
-			__HAL_UART_CLEAR_FLAG(&huart1, UART_FLAG_LBD);
-			idle = false;
-		}
-
-		if (!idle && __HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE)) {
-			printf("RX_______GOT_______IDLE\n");
-			linbus_ack_idle(&lbrx);
-			idle = true;
-		}
-
 		if (lbrx._event == LINBUS_EVENT_RECV_BREAK) {
-			//HAL_LIN_SendBreak(&huart1);
+			//printf("RXB\n");
 			linbus_ack_event(&lbrx);
 		} else if (lbrx._event == LINBUS_EVENT_RECV_DATA) {
 			static uint8_t c;
@@ -265,7 +266,18 @@ void test_serial(uint32_t delta_time_ms) {
 				break;
 			}
 
+			linbus_set_rx_data(&lbrx, c);
+			//printf("%02X ", c);
+
 			linbus_ack_event(&lbrx);
+		} else if (lbrx._event == LINBUS_EVENT_RECV_COMPLETE) {
+			for (int j = 0; j < 11u; j++) {
+				printf("%02X ", lbrx._buf[j]);
+			}
+			printf("\n");
+			linbus_ack_event(&lbrx);
+		} else if (lbrx._event == LINBUS_EVENT_RECV_FAULT) {
+			printf("FAULT line: %lu\n", lbrx.err_line);
 		} else {
 			linbus_ack_event(&lbrx);
 		}
@@ -273,11 +285,11 @@ void test_serial(uint32_t delta_time_ms) {
 
 
 	/* Print back response */
-	/*uint8_t c;
+	//uint8_t c;
 
-	if (HAL_UART_Receive(&huart1, &c, 1u, 0u) == HAL_OK) {
-		putchar(c);
-	}*/
+	//if (HAL_UART_Receive(&huart1, &c, 1u, 0u) == HAL_OK) {
+	//	putchar(c);
+	//}
 }
 
 void self_test_stm32_run(uint32_t delta_time_ms)

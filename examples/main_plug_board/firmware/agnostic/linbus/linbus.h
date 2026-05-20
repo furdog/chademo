@@ -139,6 +139,7 @@ enum linbus_mode {
 struct linbus {
 	/* Bus characteristics. */
 	uint32_t baud;
+	uint32_t err_line;
 
 	uint8_t _event;
 	uint8_t _state;
@@ -157,6 +158,7 @@ struct linbus {
 	bool _legacy; /**< Legacy, pre 2.1 version mode */
 	bool _nack;   /**< Event has not been acknowledged */
 	bool _idle;   /**< bus IDLE condition */
+	bool debug;
 };
 
 /** Initializes linbus main instance data structure */
@@ -308,9 +310,18 @@ void _linbus_enter_state(struct linbus *self, const uint8_t state)
 	self->_state = state;
 }
 
+void _linbus_fault(struct linbus *self, const uint8_t state, const uint32_t line)
+{
+	self->err_line = line;
+	_linbus_enter_state(self, state);
+}
+
 void linbus_init(struct linbus *self)
 {
 	assert(self);
+
+	self->baud     = 0u;
+	self->err_line = 0u;
 
 	self->_event = 0u;
 	self->_state = 0u;
@@ -327,6 +338,7 @@ void linbus_init(struct linbus *self)
 	self->_legacy = false;
 	self->_idle   = false;
 	/* self->_nack   = false; */
+	self->debug = false;
 }
 
 bool linbus_send_frame(struct linbus *self, const uint8_t id,
@@ -424,7 +436,7 @@ void linbus_set_rx_data(struct linbus *self, const uint8_t rx)
 			_linbus_enter_state(self, LINBUS_STATE_RECV_COMPLETE);
 		} else {
 			/* TODO better fault management */
-			_linbus_enter_state(self, LINBUS_STATE_RECV_FAULT);
+			_linbus_fault(self, LINBUS_STATE_RECV_FAULT, __LINE__);
 		}
 
 		break;
@@ -476,7 +488,10 @@ void linbus_ack_idle(struct linbus *self)
 	/* We need to stop any reception at this point and either:
 	 * 1. Make last received byte a checksum
 	 * 2. Exit gracefully if already got last byte
-	 * 3. Throw a fault if reception is incomplete */
+	 * 3. Throw a fault if reception is incomplete
+	 *
+	 * TODO if in rx and fault state - it will always fail
+	 * Ensure other states are safely left... */
 	if (self->_mode == (uint8_t)LINBUS_MODE_RX) {
 		/* If IDLE detected while receiving data, see: 1. && 2. */
 		if ((self->_state == (uint8_t)LINBUS_STATE_RECV_DATA) ||
@@ -495,7 +510,7 @@ void linbus_ack_idle(struct linbus *self)
 			_linbus_enter_state(self, LINBUS_STATE_IDLE);
 		} else {
 			/* TODO better fault management */
-			_linbus_enter_state(self, LINBUS_STATE_RECV_FAULT);
+			_linbus_fault(self, LINBUS_EVENT_RECV_FAULT, __LINE__);
 		}
 	}
 

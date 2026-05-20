@@ -63,3 +63,13 @@ enum linbus_state {
 };
 ```
 This will complicate automata and will require more careful RX/TX segragation.
+
+> (20.05.2026)
+
+So i faced more challenges with lin bus while testing it on real hardware.
+
+First of all - interface is straight disaster. Idea is good, but it's almost unmanageable.
+It requires major refactoring.
+
+Debugging - disaster as well. It is spammy and can't be filtered. I had to perform some
+adjustments while testing.
