@@ -20,7 +20,46 @@ The FSM must accept `IDLE` parameter `linbus_ack_idle(self)`
 
 `linbus_queue_frame` Must fail if `IDLE` is set to `false`
 
-TODO rename `linbus_queue_frame` to `linbus_send_frame`
-
 In order to check if there's active carrier on the line, the hardware either can look for idle condition (interrupt),
 or manually monitor recessive bit timeout. (Though this is not part of the implementation)
+
+> (19.05.2026)
+
+So i have finished initial LIN implementation, which now correctly transmits data.
+I have also finished carrier detection and RX related logic.
+
+Now i see that my automata is too big and there are too many similar, repetitive states and logic,
+that can be simplified. But i'll keep going as it is for now.
+
+Suggested change to refactor states:
+```C
+enum linbus_state {
+	/** Not doing anything */
+	LINBUS_STATE_IDLE,
+
+	/** Wait for break condition (RX/TX) */
+	LINBUS_STATE_LIN_BREAK,
+
+	/** Wait for sync byte (RX/TX) */
+	LINBUS_STATE_LIN_SYNC,
+
+	/** Wait for PID (RX/TX) */
+	LINBUS_STATE_LIN_PID,
+
+	/** Wait for data bytes (len<=8) (RX/TX) */
+	LINBUS_STATE_LIN_DATA,
+
+	/** Wait for checksum (RX/TX) */
+	LINBUS_STATE_LIN_CHECKSUM,
+
+	/** Wait for idle condition (RX/TX) */
+	LINBUS_STATE_LIN_IDLE,
+
+	/** Frame has been sent */
+	LINBUS_STATE_COMPLETE,
+
+	/** Frame has been received with fault */
+	LINBUS_STATE_FAULT
+};
+```
+This will complicate automata and will require more careful RX/TX segragation.

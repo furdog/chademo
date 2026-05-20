@@ -169,7 +169,7 @@ bool linbus_send_frame(struct linbus *self, const uint8_t id,
 /** Returns tx data (single byte).
  * This is only to be called after LINBUS_EVENT_SEND_DATA occurs.
  * Calling this after any other event is undefined behaviour. */
-uint8_t linbus_get_tx_data(struct linbus *self);
+uint8_t linbus_get_tx_data(const struct linbus *self);
 
 /** Set rx data (single byte).
  * This can be called at any time if there's a RX byte available */
@@ -371,7 +371,7 @@ bool linbus_send_frame(struct linbus *self, const uint8_t id,
 	return success;
 }
 
-uint8_t linbus_get_tx_data(struct linbus *self)
+uint8_t linbus_get_tx_data(const struct linbus *self)
 {
 	assert(self);
 
@@ -384,27 +384,26 @@ void linbus_set_rx_data(struct linbus *self, const uint8_t rx)
 
 	self->_rx = rx;
 
+	/* TODO wait for main FSM confirmation */
 	switch (self->_state) {
 	case LINBUS_STATE_RECV_SYNC:
 		LINBUS_SYN = self->_rx;
-		LINBUS_LOG(("sync: 0x%02X\n", self->_rx));
+		LINBUS_LOG(("rxsyn: 0x%02X\n", self->_rx));
 		_linbus_enter_state(self, LINBUS_STATE_RECV_PID);
 		break;
 
 	case LINBUS_STATE_RECV_PID:
 		LINBUS_PID = self->_rx;
-		LINBUS_LOG(("pid: 0x%02X\n", self->_rx));
+		LINBUS_LOG(("rxpid: 0x%02X\n", self->_rx));
 		_linbus_enter_state(self, LINBUS_STATE_RECV_DATA);
 		break;
 
 	case LINBUS_STATE_RECV_DATA:
 		LINBUS_DAT[self->_data_it] = self->_rx;
-		LINBUS_LOG(("data[%u]: %c (0x%02X)\n", self->_data_it,
+		LINBUS_LOG(("rx[%u]: %c (0x%02X)\n", self->_data_it,
 			    self->_rx, self->_rx));
 
 		self->_data_it += 1u;
-
-		self->_event = LINBUS_EVENT_RECV_DATA;
 
 		if (self->_data_it >= 8u) {
 			/* TODO: DATA OVERFLOW */
@@ -414,13 +413,14 @@ void linbus_set_rx_data(struct linbus *self, const uint8_t rx)
 
 		break;
 
-	case LINBUS_STATE_RECV_CHECKSUM:
-		LINBUS_SUM = self->_rx;
-		LINBUS_LOG(("sum: 0x%02X\n", self->_rx));
-		LINBUS_LOG(
-		    ("expected: 0x%02X\n", _linbus_calc_checksum(self)));
+	case LINBUS_STATE_RECV_CHECKSUM: {
+		uint8_t sum = _linbus_calc_checksum(self);
 
-		if (LINBUS_SUM == _linbus_calc_checksum(self)) {
+		LINBUS_SUM = self->_rx;
+		LINBUS_LOG(("rxsum: 0x%02X\n", self->_rx));
+		LINBUS_LOG(("expected: 0x%02X\n", sum));
+
+		if (LINBUS_SUM == sum) {
 			_linbus_enter_state(self, LINBUS_STATE_RECV_COMPLETE);
 		} else {
 			/* TODO better fault management */
@@ -428,6 +428,7 @@ void linbus_set_rx_data(struct linbus *self, const uint8_t rx)
 		}
 
 		break;
+	}
 
 	default:
 		break;
@@ -527,14 +528,14 @@ uint8_t linbus_step(struct linbus *self)
 
 	case LINBUS_STATE_SEND_SYNC:
 		self->_tx = LINBUS_SYN;
-		LINBUS_LOG(("sync: 0x%02X\n", self->_tx));
+		LINBUS_LOG(("txsyn: 0x%02X\n", self->_tx));
 		self->_event = LINBUS_EVENT_SEND_DATA;
 		_linbus_enter_state(self, LINBUS_STATE_SEND_PID);
 		break;
 
 	case LINBUS_STATE_SEND_PID:
 		self->_tx = LINBUS_PID;
-		LINBUS_LOG(("pid: 0x%02X\n", self->_tx));
+		LINBUS_LOG(("txpid: 0x%02X\n", self->_tx));
 		self->_event = LINBUS_EVENT_SEND_DATA;
 		_linbus_enter_state(self, LINBUS_STATE_SEND_DATA);
 		break;
@@ -542,7 +543,7 @@ uint8_t linbus_step(struct linbus *self)
 	case LINBUS_STATE_SEND_DATA:
 		if (self->_data_it < self->_data_len) {
 			self->_tx = LINBUS_DAT[self->_data_it];
-			LINBUS_LOG(("data[%u]: %c (0x%02X)\n", self->_data_it,
+			LINBUS_LOG(("tx[%u]: %c (0x%02X)\n", self->_data_it,
 				    self->_tx, self->_tx));
 			self->_data_it += 1u;
 			self->_event	= LINBUS_EVENT_SEND_DATA;
@@ -555,7 +556,7 @@ uint8_t linbus_step(struct linbus *self)
 
 	case LINBUS_STATE_SEND_CHECKSUM:
 		self->_tx = LINBUS_SUM;
-		LINBUS_LOG(("sum: 0x%02X\n", self->_tx));
+		LINBUS_LOG(("txsum: 0x%02X\n", self->_tx));
 		self->_event = LINBUS_EVENT_SEND_DATA;
 		_linbus_enter_state(self, LINBUS_STATE_SEND_COMPLETE);
 		break;

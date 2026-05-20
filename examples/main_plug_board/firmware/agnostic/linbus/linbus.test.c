@@ -122,11 +122,15 @@ int linbus_test_reception_partial(struct linbus *self, uint8_t *data)
 	uint8_t i;
 
 	/* We must accept data now */
-	for (i = 0u; i < 4u; i++) {
+	for (i = 0u; i < 3u; i++) {
 		assert(linbus_step(self) == LINBUS_EVENT_RECV_DATA);
 		linbus_set_rx_data(self, data[i]);
 		linbus_ack_event(self);
 	}
+
+	assert(linbus_step(self) == LINBUS_EVENT_RECV_DATA);
+	linbus_set_rx_data(self, 0x87u);
+	linbus_ack_event(self);
 
 	linbus_ack_idle(self);
 
@@ -135,6 +139,51 @@ int linbus_test_reception_partial(struct linbus *self, uint8_t *data)
 	assert(linbus_step(self) == LINBUS_EVENT_NONE);
 
 	return 0;
+}
+
+/** Testing both RX and TX automatas, coupled together */
+void linbus_test_rx_tx_loopback()
+{
+	uint8_t i;
+	uint8_t j;
+
+	struct linbus tx;
+	struct linbus rx;
+	bool	      success = false;
+
+	uint8_t *data = (uint8_t *)"HiFurdog";
+
+	printf("linbus_test_rx_tx_loopback\n");
+
+	linbus_init(&tx);
+	linbus_init(&rx);
+	tx.baud = 9600u;
+	rx.baud = 9600u;
+
+	assert(linbus_send_frame(&tx, 0u, data, DATA_LEN) == true);
+
+	for (j = 0; j < 30u; j++) {
+		switch (linbus_step(&tx)) {
+		case LINBUS_EVENT_SEND_BREAK:
+			/* RX must see the carrier */
+			linbus_ack_carrier(&rx);
+			break;
+
+		case LINBUS_EVENT_SEND_DATA:
+			/* RX must receive the data */
+			linbus_set_rx_data(&rx, linbus_get_tx_data(&tx));
+			break;
+		}
+
+		if (linbus_step(&rx) == (uint8_t)LINBUS_EVENT_RECV_COMPLETE) {
+			success = true;
+		}
+
+		linbus_ack_event(&tx);
+		linbus_ack_event(&rx);
+	}
+
+	assert(success);
 }
 
 int main()
@@ -164,6 +213,8 @@ int main()
 
 	printf("linbus_test_reception_full\n");
 	linbus_test_reception_full(&lb, data);
+
+	linbus_test_rx_tx_loopback();
 
 	return 0;
 }

@@ -70,7 +70,8 @@ volatile char dbg_uart_self_test_str[255u]  = "Пyтін xyйлo!!!\r\n\0";
 
 volatile uint32_t dbg_i2c_scan_timer_ms = DBG_I2C_SCAN_INTERVAL_MS;
 
-struct linbus lb;
+struct linbus lbtx;
+struct linbus lbrx;
 
 /* Functions */
 void dbg_self_test_init_descriptors(struct dbg_self_test *self)
@@ -159,7 +160,8 @@ void scan_i2c()
 void self_test_stm32_init() {
 	dbg_self_test_init(&dbg_self_test);
 	dbg_self_test_init_descriptors(&dbg_self_test);
-	linbus_init(&lb);
+	linbus_init(&lbtx);
+	linbus_init(&lbrx);
 }
 
 void test_ina(uint32_t delta_time_ms) {
@@ -198,7 +200,7 @@ void test_i2c(uint32_t delta_time_ms) {
 void test_serial(uint32_t delta_time_ms) {
 	/* Send uart signal */
 	dbg_uart_self_test_timer_ms += delta_time_ms;
-	if (dbg_uart_self_test_timer_ms >= 100u) {
+	if (dbg_uart_self_test_timer_ms >= 1000u) {
 		dbg_uart_self_test_timer_ms = 0u;
 
 		/*if(!__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE)) {
@@ -209,38 +211,73 @@ void test_serial(uint32_t delta_time_ms) {
 			__HAL_UART_CLEAR_IDLEFLAG(&huart1);
 		}*/
 		
-		linbus_send_frame(&lb, 37, (uint8_t *)"HeartBT!", 8u);
+		linbus_send_frame(&lbtx, 37, (uint8_t *)"HeartBT!", 8u);
 	}
 
 	/* Limited loop (upper bound) */
 	for (uint8_t i = 0u; i < 8u; i++) {
-		linbus_step(&lb);
+		linbus_step(&lbtx);
 
-		if (lb._event == LINBUS_EVENT_SEND_BREAK) {
+		if (lbtx._event == LINBUS_EVENT_SEND_BREAK) {
 			//HAL_LIN_SendBreak(&huart1);
-			linbus_ack_event(&lb);
-		/*} else if (lb._event == LINBUS_EVENT_SEND_DATA) {
-			if (HAL_UART_Transmit_IT(&huart1, &lb._tx, 1u) != HAL_OK) {
+			linbus_ack_event(&lbtx);
+		/*} else if (lbtx._event == LINBUS_EVENT_SEND_DATA) {
+			if (HAL_UART_Transmit_IT(&huart1, &lbtx._tx, 1u) != HAL_OK) {
 				break;
 			}
-			linbus_ack_event(&lb);*/
-		} else if (lb._event == LINBUS_EVENT_FRAME_SENT) {
+			linbus_ack_event(&lbtx);*/
+		} else if (lbtx._event == LINBUS_EVENT_SEND_COMPLETE) {
 			HAL_LIN_SendBreak(&huart1);
-			if (HAL_UART_Transmit_IT(&huart1, &lb._buf, 11u) != HAL_OK) {
+			if (HAL_UART_Transmit_IT(&huart1, lbtx._buf, 11u) != HAL_OK) {
 				break;
 			}
-			linbus_ack_event(&lb);
+			linbus_ack_event(&lbtx);
 		} else {
-			linbus_ack_event(&lb);
+			linbus_ack_event(&lbtx);
 		}
 	}
 
+	for (uint8_t i = 0u; i < 8u; i++) {
+		linbus_step(&lbrx);
+
+		static bool idle = true;
+
+		if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_LBD)) {
+			printf("RX_______GOT_______CARRIER\n");
+			linbus_ack_carrier(&lbrx);
+			__HAL_UART_CLEAR_FLAG(&huart1, UART_FLAG_LBD);
+			idle = false;
+		}
+
+		if (!idle && __HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE)) {
+			printf("RX_______GOT_______IDLE\n");
+			linbus_ack_idle(&lbrx);
+			idle = true;
+		}
+
+		if (lbrx._event == LINBUS_EVENT_RECV_BREAK) {
+			//HAL_LIN_SendBreak(&huart1);
+			linbus_ack_event(&lbrx);
+		} else if (lbrx._event == LINBUS_EVENT_RECV_DATA) {
+			static uint8_t c;
+			
+			if (HAL_UART_Receive(&huart1, &c, 1u, 0u) != HAL_OK) {
+				break;
+			}
+
+			linbus_ack_event(&lbrx);
+		} else {
+			linbus_ack_event(&lbrx);
+		}
+	}
+
+
 	/* Print back response */
-	uint8_t c;
+	/*uint8_t c;
 
 	if (HAL_UART_Receive(&huart1, &c, 1u, 0u) == HAL_OK) {
 		putchar(c);
-	}
+	}*/
 }
 
 void self_test_stm32_run(uint32_t delta_time_ms)
