@@ -144,7 +144,6 @@ int linbus_test_reception_partial(struct linbus *self, uint8_t *data)
 /** Testing both RX and TX automatas, coupled together */
 void linbus_test_rx_tx_loopback()
 {
-	uint8_t i;
 	uint8_t j;
 
 	struct linbus tx;

@@ -202,7 +202,7 @@ uint32_t linbus_calc_frame_us(const struct linbus *self,
  * ||  ID (0-5)
  * ||
  * Parity (6-7) */
-void _linbus_calc_pid(struct linbus *self, const uint8_t id)
+uint8_t _linbus_calc_pid(const uint8_t id)
 {
 	/* Calculate parity bits */
 	uint8_t p0 = ((id >> 0u) ^ (id >> 1u) ^ (id >> 2u) ^ (id >> 4u)) & 1u;
@@ -210,7 +210,7 @@ void _linbus_calc_pid(struct linbus *self, const uint8_t id)
 	    (((id >> 1u) ^ (id >> 3u) ^ (id >> 4u) ^ (id >> 5u)) & 1u) ^ 1u;
 
 	/* Combine ID and Parity bits into the final PID */
-	LINBUS_PID = id | (p0 << 6u) | (p1 << 7u);
+	return id | (p0 << 6u) | (p1 << 7u);
 }
 
 uint8_t _linbus_calc_checksum(struct linbus *self)
@@ -237,61 +237,15 @@ uint8_t _linbus_calc_checksum(struct linbus *self)
 
 const char *_linbus_get_state_name(const uint8_t state)
 {
-	const char *name = "UNDEFINED";
+	const char *name    = "UNDEFINED";
+	const char *names[] = {
+	    "IDLE",	     "EACK",	      "SEND_BREAK",    "SEND_SYNC",
+	    "SEND_PID",	     "SEND_DATA",     "SEND_CHECKSUM", "SEND_COMPLETE",
+	    "RECV_BREAK",    "RECV_SYNC",     "RECV_PID",      "RECV_DATA",
+	    "RECV_CHECKSUM", "RECV_COMPLETE", "RECV_IDLE",     "RECV_FAULT"};
 
-	switch (state) {
-	case LINBUS_STATE_IDLE:
-		name = "IDLE";
-		break;
-	/* Pseudo state.
-	case LINBUS_STATE_EACK:
-		name = "EACK";
-		break;
-	*/
-	case LINBUS_STATE_SEND_BREAK:
-		name = "SEND_BREAK";
-		break;
-	case LINBUS_STATE_SEND_SYNC:
-		name = "SEND_SYNC";
-		break;
-	case LINBUS_STATE_SEND_PID:
-		name = "SEND_PID";
-		break;
-	case LINBUS_STATE_SEND_DATA:
-		name = "SEND_DATA";
-		break;
-	case LINBUS_STATE_SEND_CHECKSUM:
-		name = "SEND_CHECKSUM";
-		break;
-	case LINBUS_STATE_SEND_COMPLETE:
-		name = "SEND_COMPLETE";
-		break;
-	case LINBUS_STATE_RECV_BREAK:
-		name = "RECV_BREAK";
-		break;
-	case LINBUS_STATE_RECV_SYNC:
-		name = "RECV_SYNC";
-		break;
-	case LINBUS_STATE_RECV_PID:
-		name = "RECV_PID";
-		break;
-	case LINBUS_STATE_RECV_DATA:
-		name = "RECV_DATA";
-		break;
-	case LINBUS_STATE_RECV_CHECKSUM:
-		name = "RECV_CHECKSUM";
-		break;
-	case LINBUS_STATE_RECV_COMPLETE:
-		name = "RECV_COMPLETE";
-		break;
-	case LINBUS_STATE_RECV_IDLE:
-		name = "RECV_IDLE";
-		break;
-	case LINBUS_STATE_RECV_FAULT:
-		name = "RECV_FAULT";
-		break;
-	default:
-		break;
+	if (state < (uint8_t)LINBUS_STATE_RECV_FAULT) {
+		name = names[state];
 	}
 
 	return name;
@@ -307,10 +261,16 @@ void _linbus_enter_state(struct linbus *self, const uint8_t state)
 
 	LINBUS_LOG(("state: %s -> %s\n", from, to));
 
+	/* Always reset mode if transitioning into idle state */
+	if (state == (uint8_t)LINBUS_STATE_IDLE) {
+		self->_mode = LINBUS_MODE_IDLE;
+	}
+
 	self->_state = state;
 }
 
-void _linbus_fault(struct linbus *self, const uint8_t state, const uint32_t line)
+void _linbus_fault(struct linbus *self, const uint8_t state,
+		   const uint32_t line)
 {
 	self->err_line = line;
 	_linbus_enter_state(self, state);
@@ -353,29 +313,20 @@ bool linbus_send_frame(struct linbus *self, const uint8_t id,
 	}
 
 	/* If id is valid and len is valid and state is idle */
-	if (self->_state != (uint8_t)LINBUS_STATE_IDLE) {
-		LINBUS_LOG(("Invalid state: %s\n",
-			    _linbus_get_state_name(self->_state)));
+	if (self->_mode != (uint8_t)LINBUS_MODE_IDLE) {
+		LINBUS_LOG(("ERR: resource busy\n"));
 	} else if (id > 0x3Fu) {
-		LINBUS_LOG(("Invalid ID: %u\n", id));
+		LINBUS_LOG(("ERR: bad id: %u\n", id));
 	} else if (len > 8u) {
-		LINBUS_LOG(("Invalid Len (>8): %u\n", len));
+		LINBUS_LOG(("ERR: bad len: %u\n", len));
 	} else {
-		/* SYNC[1] */
 		LINBUS_SYN = 0x55u;
-
-		/* PID[1] */
-		_linbus_calc_pid(self, id); /* PID */
-
-		/* DATA[L<=8] */
+		LINBUS_PID = _linbus_calc_pid(id); /* PID */
 		(void)memcpy(LINBUS_DAT, data, len);
 		self->_data_len = len;
 		self->_data_it	= 0u;
+		LINBUS_SUM	= _linbus_calc_checksum(self);
 
-		/* SUM[1] */
-		LINBUS_SUM = _linbus_calc_checksum(self);
-
-		_linbus_enter_state(self, LINBUS_STATE_SEND_BREAK);
 		self->_mode = LINBUS_MODE_TX;
 		success	    = true;
 	}
@@ -412,8 +363,8 @@ void linbus_set_rx_data(struct linbus *self, const uint8_t rx)
 
 	case LINBUS_STATE_RECV_DATA:
 		LINBUS_DAT[self->_data_it] = self->_rx;
-		LINBUS_LOG(("rx[%u]: %c (0x%02X)\n", self->_data_it,
-			    self->_rx, self->_rx));
+		LINBUS_LOG(("rx[%u]: %c (0x%02X)\n", self->_data_it, self->_rx,
+			    self->_rx));
 
 		self->_data_it += 1u;
 
@@ -475,7 +426,6 @@ void linbus_ack_carrier(struct linbus *self)
 		self->_data_it	= 0u;
 
 		self->_mode = LINBUS_MODE_RX;
-		_linbus_enter_state(self, LINBUS_STATE_RECV_BREAK);
 
 		self->_idle = false;
 	}
@@ -529,16 +479,19 @@ uint8_t linbus_step(struct linbus *self)
 	case LINBUS_STATE_IDLE:
 		/* In this state we either waiting for frame transmission
 		 * start, or reception from other node */
-		self->_mode = LINBUS_MODE_IDLE;
+		if (self->_mode == (uint8_t)LINBUS_MODE_TX) {
+			self->_event = LINBUS_EVENT_SEND_BREAK;
+			_linbus_enter_state(self, LINBUS_STATE_SEND_SYNC);
+		}
+
+		if (self->_mode == (uint8_t)LINBUS_MODE_RX) {
+			self->_event = LINBUS_EVENT_RECV_BREAK;
+			_linbus_enter_state(self, LINBUS_STATE_RECV_SYNC);
+		}
 		break;
 
 	case LINBUS_STATE_EACK:
 		/* User must acknowledge event here */
-		break;
-
-	case LINBUS_STATE_SEND_BREAK:
-		self->_event = LINBUS_EVENT_SEND_BREAK;
-		_linbus_enter_state(self, LINBUS_STATE_SEND_SYNC);
 		break;
 
 	case LINBUS_STATE_SEND_SYNC:
@@ -579,11 +532,6 @@ uint8_t linbus_step(struct linbus *self)
 	case LINBUS_STATE_SEND_COMPLETE:
 		self->_event = LINBUS_EVENT_SEND_COMPLETE;
 		_linbus_enter_state(self, LINBUS_STATE_IDLE);
-		break;
-
-	case LINBUS_STATE_RECV_BREAK:
-		self->_event = LINBUS_EVENT_RECV_BREAK;
-		_linbus_enter_state(self, LINBUS_STATE_RECV_SYNC);
 		break;
 
 	/* We use linbus_set_rx_data method to parse theese */
