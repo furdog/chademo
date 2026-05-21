@@ -73,3 +73,45 @@ It requires major refactoring.
 
 Debugging - disaster as well. It is spammy and can't be filtered. I had to perform some
 adjustments while testing.
+
+> (21.05.2026)
+
+Before refactoring i'd like to make clear some problems:
+
+- FSM step consist of partial steps.
+
+Current design implies partial step automata, where every step does not switch to final state immediately.
+After input parameters are changed. It does require multiple steps and every step may emit some events.
+PROS: internal simplicity, HOOKS without callbacks. CONS: external api become hard to manage.
+
+Switching to atomic steps, where one single step means all variety of outputs at the same time
+will make the whole behaviour very solid.
+PROS: Stable external behaviour. CONS: internal complexity.
+
+Hybrid approach where:
+External API kept atomic and internal API is partial unless explicitly told to be hooked.
+PROS: Internal simplicity, Stable external behaviour. CONS: Too much effort to implement.
+
+- Confirming events is devastating. There's certainly should be events confirmed selectively, via acknowledgement.
+
+- Half-duplex. There's only one, either transmission or reception can work at the same time.
+Though LIN is half-duplex protocol, there might be some deviations in the future that would
+require full duplex link. Currently two instances of LIN automata may run simultaneously to achieve the goal.
+
+- There's a high state overhead and state management is performed outside main FSM.
+It makes API unstable as a whole. 
+
+- Reading data should be symetrical to writing data and current implementation does not
+make it clearly symetrical. TX and RX routines quite different.
+
+- Debugging messages are too spammy and can't be selective.
+
+- Carrier detection and idle detection logic may create racing conditions with main FSM,
+as well as RX routine, where states are managed outside of main FSM.
+
+- There's no way to tell whats current state is, neither there is no pre- and post- states.
+
+- Events are emited only once and then never repeated, until previous event is acknowledged.
+There is also other way - always emit an event even if nothing has changed internally.
+Both kinds of emmiters are suitable for different purposes, but i suggest only one may exist to
+reduce complexity.
