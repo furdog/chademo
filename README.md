@@ -96,6 +96,11 @@ After boot 12v in, check initial conditions:
 **report succes or failure.**
 
 #### Communication specs
+- plug controller must send self test OK status
+- system controller must send self test OK status
+- system controller controls PSU
+- system controller 
+ 
 to be continued
 
 ### Software implementation details

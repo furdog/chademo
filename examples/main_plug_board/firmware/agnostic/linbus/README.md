@@ -115,3 +115,12 @@ as well as RX routine, where states are managed outside of main FSM.
 There is also other way - always emit an event even if nothing has changed internally.
 Both kinds of emmiters are suitable for different purposes, but i suggest only one may exist to
 reduce complexity.
+
+> (22.05.2026)
+
+I decided to simplify linbus.
+My steps are:
+- simplify _linbus_get_state_name
+- do not switch states outside of FSM (WIP)
+- deleting unnecessary states. (WIP)
+- get rid of event acknowledgement.
